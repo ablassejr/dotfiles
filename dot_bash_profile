@@ -36,3 +36,4 @@ if [ -d ~/.bashrc.d ]; then
 fi
 unset rc
 alias la='ls -a'
+alias cmx="sudo chmod +x"

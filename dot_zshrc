@@ -1,0 +1,71 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+
+# --- Zinit Setup ---
+if [[ ! -f ~/.zinit/bin/zinit.zsh ]]; then
+    print -P "%F{33}Installing zinit…%f"
+    mkdir -p ~/.zinit
+    git clone https://github.com/zdharma-continuum/zinit.git ~/.zinit/bin
+fi
+source ~/.zinit/bin/zinit.zsh
+
+# --- Basic settings ---
+export EDITOR="nvim"
+
+# Add common local bin paths (Linux-friendly)
+export PATH="$HOME/.local/bin:/usr/local/bin:$PATH"
+
+setopt autocd            # type folder name to cd
+setopt correct           # correct small typos in cd
+HISTSIZE=50000
+SAVEHIST=50000
+
+# --- Plugins ---
+# Syntax highlighting
+zinit light zsh-users/zsh-syntax-highlighting
+
+# Autosuggestions
+zinit light zsh-users/zsh-autosuggestions
+
+# Extra completions
+zinit light zsh-users/zsh-completions
+
+# Fuzzy finder tab completion
+zinit light Aloxaf/fzf-tab
+
+# Directory jumper (like autojump)
+zinit light rupa/z
+
+# Git helpers + aliases (Oh My Zsh git plugin, no framework needed)
+zinit light ohmyzsh/ohmyzsh path:plugins/git
+
+# Colorized man pages
+zinit light ael-code/zsh-colored-man-pages
+
+# Auto-close brackets/quotes
+zinit light hlissner/zsh-autopair
+
+# --- Theme / Prompt ---
+zinit light romkatv/powerlevel10k
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+
+# --- Aliases ---
+alias ll='ls -lh'
+alias la='ls -lha'
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+
+# --- fzf integration ---
+# If fzf installed via package manager, these may exist:
+[[ -r /usr/share/doc/fzf/examples/key-bindings.zsh ]] && source /usr/share/doc/fzf/examples/key-bindings.zsh
+[[ -r /usr/share/doc/fzf/examples/completion.zsh     ]] && source /usr/share/doc/fzf/examples/completion.zsh
+
+# If you installed fzf with its install script, use:
+# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

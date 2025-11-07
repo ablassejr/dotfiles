@@ -1,0 +1,16 @@
+{
+    "Alt-/": "lua:comment.comment",
+    "Alt-Down": "MoveLinesDown",
+    "Alt-Up": "MoveLinesUp",
+    "Ctrl-/": "comment.comment",
+    "Ctrl-d": "DuplicateLine",
+    "Ctrl-f": "Find",
+    "Ctrl-h": "Replace",
+    "Ctrl-k": "CutLine",
+    "Ctrl-q": "Quit",
+    "Ctrl-s": "Save",
+    "Ctrl-y": "Redo",
+    "Ctrl-z": "Undo",
+    "CtrlUnderscore": "lua:comment.comment",
+    "F4": "command:jumptag"
+}

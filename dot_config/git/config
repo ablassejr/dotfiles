@@ -4,9 +4,9 @@
 	ci = commit
 	st = status
 [pull]
-	rebase = true
+	rebase = merge
 [init]
-	defaultBranch = master
+	defaultBranch = main
 [user]
 	name = Ablasse Kingcaid-Ouedraogo
 	email = ablassecode@outlook.com

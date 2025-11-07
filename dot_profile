@@ -2,3 +2,4 @@
 export PATH="$PATH:/home/draogo/.local/share/JetBrains/Toolbox/scripts"
 alias bashconfig="mate ~/.bashrc"
 alias lmost="ls -la | most"
+alias scx="sudo chmod +x"

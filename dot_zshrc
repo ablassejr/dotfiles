@@ -98,7 +98,8 @@ source /usr/share/doc/git-extras/git-extras-completion.zsh
 source /home/draogo/.secrets
 if command -v tmux>/dev/null; then
   if [[ -z "$TMUX" ]]; then
-    tmux attach-session -t default || tmux new-session -s default
+    tmux attach-session -t default 
+    # || tmux new-session -s default
   fi
 fi
 
@@ -175,6 +176,7 @@ alias gs='git status'
 alias ga='git add'
 alias gc='git commit'
 alias gp='git push'
+alias ce='chezmoi edit'
 export ghosttyconfig='~/.config/ghostty/config'
 export PATH=/home/draogo/.local/bin:/home/draogo/.zinit/polaris/bin:/home/draogo/.cargo/bin:/home/draogo/.local/share/../bin:/home/draogo/.local/share/mise/installs/node/25.1.0/bin:/home/draogo/.local/share/omarchy/bin/:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/draogo/.local/share/JetBrains/Toolbox/scripts:/home/draogo/.local/share/JetBrains/Toolbox/scripts:/opt/nvim-linux-x86_64/bin
 export MISE_SHELL=zsh

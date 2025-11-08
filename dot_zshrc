@@ -173,3 +173,5 @@ if [ -z "${_mise_cmd_not_found:-}" ]; then
     }
 fi
 export SSH_AUTH_SOCK='/home/draogo/.config/Keeper Password Manager/keeper-ssh-agent.sock'
+
+source /home/draogo/.secrets

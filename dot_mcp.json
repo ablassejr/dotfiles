@@ -20,5 +20,9 @@
   "markitdown": {
     "command": "docker",
     "args": ["run", "--rm", "-i", "markitdown-mcp:latest"]
+  },
+  "word-document-server": {
+    "command": "uvx",
+    "args": ["--from", "office-word-mcp-server", "word_mcp_server"]
   }
 }

@@ -2,24 +2,32 @@
 config-file = ?"~/.config/omarchy/current/theme/ghostty.conf"
 
 # Font
-font-family = "Source Code Pro"
+font-family = "CaskaydiaMono Nerd Font"
+font-style = Regular
 font-size = 12
 
 # Window
 window-theme = ghostty
 window-padding-x = 14
 window-padding-y = 14
-confirm-close-surface = false
+confirm-close-surface=false
 resize-overlay = never
+gtk-toolbar-style = flat
 
-# General settings
-background-opacity = 0.85
+# Cursor styling
+cursor-style = "block"
+cursor-style-blink = false
+shell-integration-features = no-cursor
 
-# Keybindings
-keybind = ctrl+k=goto_split:up
-keybind = ctrl+j=goto_split:down
-keybind = ctrl+h=goto_split:left
-keybind = ctrl+l=goto_split:right
+# Keyboard bindings
+keybind = shift+insert=paste_from_clipboard
+keybind = control+insert=copy_to_clipboard
+
+# Window navigation (Vim-style)
+keybind = ctrl+shift+h=goto_split:left
+keybind = ctrl+shift+j=goto_split:down
+keybind = ctrl+shift+k=goto_split:up
+keybind = ctrl+shift+l=goto_split:right
 
 # SSH session terminfo
 shell-integration-features = ssh-env

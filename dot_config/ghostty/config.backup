@@ -4,7 +4,7 @@ config-file = ?"~/.config/omarchy/current/theme/ghostty.conf"
 # Font
 font-family = "CaskaydiaMono Nerd Font"
 font-style = Regular
-font-size = 9
+font-size = 12
 
 # Window
 window-theme = ghostty
@@ -26,6 +26,3 @@ keybind = control+insert=copy_to_clipboard
 # SSH session terminfo
 shell-integration-features = ssh-env
 
-# Disable enhanced keyboard protocol to prevent escape sequence issues
-# This prevents Shift+key combinations from outputting escape sequences
-keyboard-report-all-keys-as-escape-codes = false

@@ -175,3 +175,9 @@ fi
 export SSH_AUTH_SOCK='/home/draogo/.config/Keeper Password Manager/keeper-ssh-agent.sock'
 
 source /home/draogo/.secrets
+if command -v tmux>/dev/null; then
+  if [[ -z "$TMUX" ]]; then
+    tmux attach-session -t default || tmux new-session -s default
+  fi
+fi
+

@@ -1,1 +1,8 @@
 **/.claude/settings.local.json
+.claude/
+.obsidian/
+.vscode/
+**/node_modules/
+**/node_modules/**
+
+

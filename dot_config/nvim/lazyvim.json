@@ -2,13 +2,13 @@
   "extras": [
     "lazyvim.plugins.extras.ai.avante",
     "lazyvim.plugins.extras.ai.claudecode",
-    "lazyvim.plugins.extras.ai.codeium",
-    "lazyvim.plugins.extras.ai.copilot-chat",
     "lazyvim.plugins.extras.ai.copilot-native",
     "lazyvim.plugins.extras.ai.sidekick",
+    "lazyvim.plugins.extras.coding.luasnip",
     "lazyvim.plugins.extras.coding.mini-surround",
     "lazyvim.plugins.extras.dap.core",
     "lazyvim.plugins.extras.dap.nlua",
+    "lazyvim.plugins.extras.editor.fzf",
     "lazyvim.plugins.extras.editor.illuminate",
     "lazyvim.plugins.extras.editor.leap",
     "lazyvim.plugins.extras.editor.neo-tree",
@@ -25,6 +25,7 @@
     "lazyvim.plugins.extras.ui.indent-blankline",
     "lazyvim.plugins.extras.ui.mini-indentscope",
     "lazyvim.plugins.extras.ui.treesitter-context",
+    "lazyvim.plugins.extras.util.chezmoi",
     "lazyvim.plugins.extras.util.dot",
     "lazyvim.plugins.extras.vscode"
   ],

@@ -137,6 +137,9 @@ setopt hist_reduce_blanks    # remove superfluous blanks from history
 # If you installed fzf with its install script, use:
 # [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+source ~/.profile
+source ~/.env
+
 # --- Plugins ---
 # Load plugins asynchronously for faster startup
 autoload -Uz compinit && compinit

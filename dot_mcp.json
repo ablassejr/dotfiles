@@ -11,18 +11,18 @@
     "exa": {
       "command": "npx",
       "args": ["-y", "mcp-remote", "https://mcp.exa.ai/mcp"]
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "markitdown": {
+      "command": "docker",
+      "args": ["run", "--rm", "-i", "markitdown-mcp:latest"]
+    },
+    "word-document-server": {
+      "command": "uvx",
+      "args": ["--from", "office-word-mcp-server", "word_mcp_server"]
     }
-  },
-  "sequential-thinking": {
-    "command": "npx",
-    "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
-  },
-  "markitdown": {
-    "command": "docker",
-    "args": ["run", "--rm", "-i", "markitdown-mcp:latest"]
-  },
-  "word-document-server": {
-    "command": "uvx",
-    "args": ["--from", "office-word-mcp-server", "word_mcp_server"]
   }
 }

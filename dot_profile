@@ -1,5 +1,6 @@
 # Added by Toolbox App
 export PATH="$PATH:/home/draogo/.local/share/JetBrains/Toolbox/scripts"
-alias bashconfig="mate ~/.bashrc"
+alias bashconfig="micro ~/.bashrc"
+alias zshconfig="micro ~/.zshrc"
 alias lmost="ls -la | most"
 alias scx="sudo chmod +x"

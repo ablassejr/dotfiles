@@ -1,0 +1,32 @@
+# Machine-specific configurations
+.mcp.json
+
+# Claude Code local configuration
+.claude_utilities/
+
+# Ghostty local settings
+.config/ghostty/.claude/settings.local.json
+.config/ghostty/config.backup
+
+# Micro editor runtime files
+.config/micro/buffers/
+.config/micro/backups/
+.config/micro/plug/**/repo.json
+
+# Hyprland configs (system-specific: monitors, NVIDIA, etc.)
+.config/hypr/
+
+# SSH keys and machine-specific SSH config
+.ssh/id_*
+.ssh/known_hosts
+
+# Local environment files
+.env
+.env.local
+
+# Cache and temporary files
+.cache/
+*.log
+*.swp
+*.swo
+*~

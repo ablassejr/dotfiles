@@ -139,10 +139,10 @@ setopt hist_reduce_blanks    # remove superfluous blanks from history
 # If you installed fzf with its install script, use:
 # [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-if [[ -e ~/.profile ]]
+if [[ -e ~/.profile ]]; then
   source ~/.profile
 fi
-if [[ -e ~/.env ]]
+if [[ -e ~/.env ]]; then
   source ~/.env
 fi
 

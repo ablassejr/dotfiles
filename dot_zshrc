@@ -37,8 +37,8 @@ else
     return 1
 fi
 
-source /usr/share/doc/git-extras/git-extras-completion.zsh
-source /home/draogo/.secrets
+#source /usr/share/doc/git-extras/git-extras-completion.zsh
+#source /home/draogo/.secrets
 # --- TMUX Auto Attach ---
 # if command -v tmux>/dev/null; then
 #  if [[ -z "$TMUX" ]]; then
@@ -139,8 +139,12 @@ setopt hist_reduce_blanks    # remove superfluous blanks from history
 # If you installed fzf with its install script, use:
 # [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-source ~/.profile
-source ~/.env
+if [[ -e ~/.profile ]]; then
+  source ~/.profile
+fi
+if [[ -e ~/.env ]]; then
+  source ~/.env
+fi
 
 # --- Plugins ---
 # Load plugins asynchronously for faster startup
@@ -183,7 +187,12 @@ alias gp='git push'
 alias ce='chezmoi edit'
 alias ca='chezmoi apply'
 alias gmp='git magic -apm'
+<<<<<<< HEAD
+
+=======
+alias clr='clear'
 alias dockern8n='docker run -it --rm --name n8n -p 5678:5678 -v n8n_data:/home/node/.n8n docker.n8n.io/n8nio/n8n'
+>>>>>>> refs/remotes/origin/main
 export ghosttyconfig='~/.config/ghostty/config'
 export PATH=/home/draogo/.local/bin:/home/draogo/.zinit/polaris/bin:/home/draogo/.cargo/bin:/home/draogo/.local/share/../bin:/home/draogo/.local/share/mise/installs/node/25.1.0/bin:/home/draogo/.local/share/omarchy/bin/:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/draogo/.local/share/JetBrains/Toolbox/scripts:/home/draogo/.local/share/JetBrains/Toolbox/scripts:/opt/nvim-linux-x86_64/bin
 export MISE_SHELL=zsh

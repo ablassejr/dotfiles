@@ -4,3 +4,67 @@ alias bashconfig="micro ~/.bashrc"
 alias zshconfig="micro ~/.zshrc"
 alias lmost="ls -la | most"
 alias scx="sudo chmod +x"
+
+. "$HOME/.local/share/../bin/env"
+# shellcheck shell=bash
+
+# =============================================================================
+#
+# Utility functions for zoxide.
+#
+
+# pwd based on the value of _ZO_RESOLVE_SYMLINKS.
+function __zoxide_pwd() {
+    \builtin pwd -L
+}
+
+# cd + custom logic based on the value of _ZO_ECHO.
+function __zoxide_cd() {
+    # shellcheck disable=SC2164
+    \builtin cd -- "$@"
+}
+
+# =============================================================================
+#
+# Hook configuration for zoxide.
+#
+
+# Hook to add new entries to the database.
+__zoxide_oldpwd="$(__zoxide_pwd)"
+
+function __zoxide_hook() {
+    \builtin local -r retval="$?"
+    \builtin local pwd_tmp
+    pwd_tmp="$(__zoxide_pwd)"
+    if [[ ${__zoxide_oldpwd} != "${pwd_tmp}" ]]; then
+        __zoxide_oldpwd="${pwd_tmp}"
+        \command zoxide add -- "${__zoxide_oldpwd}"
+    fi
+    return "${retval}"
+}
+
+# Initialize hook.
+if [[ ${PROMPT_COMMAND:=} != *'__zoxide_hook'* ]]; then
+    PROMPT_COMMAND="__zoxide_hook;${PROMPT_COMMAND#;}"
+fi
+
+# Report common issues.
+function __zoxide_doctor() {
+    [[ ${_ZO_DOCTOR:-1} -eq 0 ]] && return 0
+    # shellcheck disable=SC2199
+    [[ ${PROMPT_COMMAND[@]:-} == *'__zoxide_hook'* ]] && return 0
+    # shellcheck disable=SC2199
+    [[ ${__vsc_original_prompt_command[@]:-} == *'__zoxide_hook'* ]] && return 0
+
+    _ZO_DOCTOR=0
+    \builtin printf '%s\n' \
+        'zoxide: detected a possible configuration issue.' \
+        'Please ensure that zoxide is initialized right at the end of your shell configuration file (usually ~/.bashrc).' \
+        '' \
+        'If the issue persists, consider filing an issue at:' \
+        'https://github.com/ajeetdsouza/zoxide/issues' \
+        '' \
+        'Disable this message by setting _ZO_DOCTOR=0.' \
+        '' >&2
+}
+

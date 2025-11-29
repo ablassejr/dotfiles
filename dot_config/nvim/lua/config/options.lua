@@ -2,6 +2,9 @@
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
 
+-- Python provider for remote plugins (molten.nvim)
+vim.g.python3_host_prog = "/home/draogo/.local/share/mise/shims/python3"
+
 -- Line numbers
 vim.opt.relativenumber = true
 vim.opt.number = true
@@ -34,3 +37,8 @@ vim.opt.guifont = "JetBrainsMono Nerd Font:h12"
 
 -- Performance: reduce redraws
 vim.opt.redrawtime = 300
+
+-- Command-line completion
+vim.opt.wildmenu = true
+vim.opt.wildmode = "longest:full,full"
+vim.opt.wildoptions = "pum" -- Show completion menu as popup

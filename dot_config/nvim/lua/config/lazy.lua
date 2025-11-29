@@ -48,7 +48,7 @@ require("lazy").setup({
         "tohtml",
         "tutor",
         "zipPlugin",
-        "rplugin",
+        -- "rplugin", -- Required for molten.nvim
       },
     },
   },

@@ -203,3 +203,65 @@ export SSH_AUTH_SOCK='/home/draogo/.config/Keeper Password Manager/keeper-ssh-ag
 export PATH="/home/draogo/.local/share/mise/shims:$PATH"
 
 . "$HOME/.local/share/../bin/env"
+
+# === Tmux Auto Background Window for Async Processes ===
+# Automatically create a tmux window in the background when running async processes
+if command -v tmux &>/dev/null; then
+  # Function to wrap background commands in tmux windows
+  function __tmux_bg_wrapper() {
+    local cmd="$@"
+    # Get the command being run (first word)
+    local cmd_name="${cmd%% *}"
+    # Generate a unique window name
+    local window_name="bg-${cmd_name}-$(date +%s)"
+    
+    # Check if we're inside tmux or outside
+    if [[ -n "$TMUX" ]]; then
+      # Inside tmux: create a new window in the current session
+      tmux new-window -d -n "$window_name" "$cmd; echo '\n--- Process completed. Press any key to close this window ---'; read -k 1"
+      echo "[tmux] Background process started in window: $window_name"
+    else
+      # Outside tmux: create or attach to a background session
+      local session_name="bg-tasks"
+      
+      # Check if the background session exists
+      if ! tmux has-session -t "$session_name" 2>/dev/null; then
+        # Create the background session
+        tmux new-session -d -s "$session_name" -n "$window_name" "$cmd; echo '\n--- Process completed. Press any key to close this window ---'; read -k 1"
+        echo "[tmux] Created session '$session_name' with background process in window: $window_name"
+      else
+        # Session exists, add a new window
+        tmux new-window -d -t "$session_name" -n "$window_name" "$cmd; echo '\n--- Process completed. Press any key to close this window ---'; read -k 1"
+        echo "[tmux] Background process started in session '$session_name', window: $window_name"
+      fi
+      echo "[tmux] Attach to view: tmux attach-session -t $session_name"
+    fi
+  }
+  
+  # Provide a helper function/alias
+  alias tmuxbg='__tmux_bg_wrapper'
+  
+  # Neovide wrapper - always launch in background tmux window
+  function neovide() {
+    __tmux_bg_wrapper "command neovide $@"
+  }
+  
+  # Hook into zsh's preexec to intercept commands ending with &
+  function __tmux_preexec_hook() {
+    local cmd="$1"
+    # Check if command ends with &
+    if [[ "$cmd" =~ [[:space:]]*\&[[:space:]]*$ ]]; then
+      # Remove the trailing &
+      local clean_cmd="${cmd%&}"
+      clean_cmd="${clean_cmd%% }"
+      __tmux_bg_wrapper "$clean_cmd"
+      # Prevent the original command from running
+      kill -INT $$
+    fi
+  }
+  
+  # Add to preexec hooks
+  autoload -Uz add-zsh-hook
+  add-zsh-hook preexec __tmux_preexec_hook
+fi
+# === End Tmux Auto Background Window ===

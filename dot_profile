@@ -4,6 +4,8 @@ alias bashconfig="micro ~/.bashrc"
 alias zshconfig="micro ~/.zshrc"
 alias lmost="ls -la | most"
 alias scx="sudo chmod +x"
+alias jupyter-tui="source ~/.local/share/jupyter-tui/.venv/bin/activate && python ~/.local/share/jupyter-tui/main.py"
+alias savesession="hyprsession --mode save-and-exit && shutdown now"
 
 . "$HOME/.local/share/../bin/env"
 # shellcheck shell=bash

@@ -265,3 +265,4 @@ if command -v tmux &>/dev/null; then
   add-zsh-hook preexec __tmux_preexec_hook
 fi
 # === End Tmux Auto Background Window ===
+source ~/.profile

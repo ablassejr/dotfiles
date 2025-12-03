@@ -14,7 +14,11 @@
 .config/micro/plug/**/repo.json
 
 # Hyprland configs (system-specific: monitors, NVIDIA, etc.)
-.config/hypr/
+.config/hypr/hyprland.conf
+.config/hypr/monitors.conf
+.config/hypr/nvidia.conf
+.config/hypr/startup.conf
+.config/hypr/windowrules.conf
 
 # SSH keys and machine-specific SSH config
 .ssh/id_*

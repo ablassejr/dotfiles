@@ -70,3 +70,4 @@ function __zoxide_doctor() {
         '' >&2
 }
 
+alias releasesudo='faillock --user draogo; faillock --user draogo --reset'

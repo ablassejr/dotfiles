@@ -37,3 +37,5 @@ fi
 unset rc
 alias la='ls -a'
 alias cmx="sudo chmod +x"
+
+. "$HOME/.local/share/../bin/env"

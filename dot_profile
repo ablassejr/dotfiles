@@ -72,3 +72,4 @@ function __zoxide_doctor() {
 }
 
 alias releasesudo='faillock --user draogo; faillock --user draogo --reset'
+alias claude-dev-mode='npx claude-code-templates@latest --setting=permissions/development-mode --yes'

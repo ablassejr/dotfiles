@@ -178,7 +178,7 @@ zinit light romkatv/powerlevel10k
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
 # --- Aliases ---
-alias -a -g la "exa --long --sort modified --tree --level 3 | most"
+alias la "exa --long --sort modified --tree --level 3 | most"
 alias ll='ls -lh'
 alias gs='git status'
 alias ga='git add'

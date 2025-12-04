@@ -1,9 +1,10 @@
 # Added by Toolbox App
 export PATH="$PATH:/home/draogo/.local/share/JetBrains/Toolbox/scripts"
+alias SUDO_PASS="lpass show --password 1279211307193658237OD"
 alias bashconfig="micro ~/.bashrc"
 alias zshconfig="micro ~/.zshrc"
 alias lmost="ls -la | most"
-alias mkexec="sudo chmod +x"
+alias mkexec="sudo -S chmod +x"
 alias jupyter-tui="source ~/.local/share/jupyter-tui/.venv/bin/activate && python ~/.local/share/jupyter-tui/main.py"
 alias savesession="hyprsession --mode save-and-exit && shutdown now"
 

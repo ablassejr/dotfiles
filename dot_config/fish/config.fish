@@ -7,7 +7,7 @@ abbr -a -g jupyter-tui "source ~/.local/share/jupyter-tui/.venv/bin/activate && 
 abbr -a -g savesession "hyprsession --mode save-and-exit && shutdown now"
 abbr -a -g clr clear
 abbr -a -g nvimc "NVIM_APPNAME=craftzdog/dotfiles-public/.config/nvim nvim --headless +"Lazy! sync" +qa"
-abbr -a -g nvidec "NVIM_APPNAME=craftzdog/dotfiles-public/.config/nvim neovide"
+abbr -a -g nvidec "NVIM_APPNAME=craftzdog/dotfiles-public/.config/nvim neovide &"
 
 source ~/.config/fish/conf.d/_tide_init.fish
 mise activate fish | source

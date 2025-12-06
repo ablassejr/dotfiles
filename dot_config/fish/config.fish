@@ -9,6 +9,8 @@ abbr -a -g clr clear
 abbr -a -g nvimc "NVIM_APPNAME=craftzdog/dotfiles-public/.config/nvim nvim"
 abbr -a -g nvidec "NVIM_APPNAME=craftzdog/dotfiles-public/.config/nvim neovide"
 abbr -a -g fzfrm "fzf | xargs -I {} rm {}"
+abbr -a -g nvimm "NVIM_APPNAME=mimikun/dotfiles/dot_config/nvim nvim"
+abbr -a -g nvidem "NVIM_APPNAME=mimikun/dotfiles/dot_config/nvim neovide"
 
 #source ~/.config/fish/conf.d/_tide_init.fish
 mise activate fish | source

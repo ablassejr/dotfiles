@@ -276,5 +276,4 @@ return {
       -- add options here if you wish to override the default settings
     },
   },
-  { "nvim-focus/focus.nvim", version = false },
 }

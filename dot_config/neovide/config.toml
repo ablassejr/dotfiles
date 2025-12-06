@@ -1,0 +1,30 @@
+# Neovide Configuration File
+# Location: ~/.config/neovide/config.toml
+# Documentation: https://neovide.dev/config-file
+
+# General Settings
+fork = false
+frame = "full"
+idle = true
+maximized = false
+tabs = true
+theme = "dark"  # Ethereal dark theme
+title-hidden = false
+vsync = true
+
+# Font Configuration
+[font]
+size = 12.0
+hinting = "full"
+edging = "antialias"
+
+[[font.normal]]
+family = "JetBrainsMono Nerd Font"
+style = "Regular"
+
+# Box Drawing
+[box-drawing]
+mode = "font-glyph"
+
+[box-drawing.sizes]
+default = [2, 4]  # Thin and thick values for all sizes

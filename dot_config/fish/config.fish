@@ -6,10 +6,11 @@ abbr -a -g mkexec "sudo -S chmod +x"
 abbr -a -g jupyter-tui "source ~/.local/share/jupyter-tui/.venv/bin/activate && python ~/.local/share/jupyter-tui/main.py"
 abbr -a -g savesession "hyprsession --mode save-and-exit && shutdown now"
 abbr -a -g clr clear
-abbr -a -g nvimc "NVIM_APPNAME=craftzdog/dotfiles-public/.config/nvim nvim --headless +"Lazy! sync" +qa"
-abbr -a -g nvidec "NVIM_APPNAME=craftzdog/dotfiles-public/.config/nvim neovide &"
+abbr -a -g nvimc "NVIM_APPNAME=craftzdog/dotfiles-public/.config/nvim nvim"
+abbr -a -g nvidec "NVIM_APPNAME=craftzdog/dotfiles-public/.config/nvim neovide"
+abbr -a -g fzfrm "fzf | xargs -I {} rm {}"
 
-source ~/.config/fish/conf.d/_tide_init.fish
+#source ~/.config/fish/conf.d/_tide_init.fish
 mise activate fish | source
 zoxide init fish | source
 

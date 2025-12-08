@@ -9,10 +9,10 @@ abbr -a -g clr clear
 abbr -a -g nvimc "NVIM_APPNAME=craftzdog/dotfiles-public/.config/nvim nvim"
 abbr -a -g nvidec "NVIM_APPNAME=craftzdog/dotfiles-public/.config/nvim neovide"
 abbr -a -g fzfrm "fzf | xargs -I {} rm {}"
-abbr -a -g nvimm "NVIM_APPNAME=mimikun/dotfiles/dot_config/nvim nvim"
+abbr -a -g nvimm "NVIM_APPNAME=mimikun/dot_config/nvim nvim"
 abbr -a -g nvidem "NVIM_APPNAME=mimikun/dotfiles/dot_config/nvim neovide"
-abbr -a -g nvim "NVIM_APPNAME=personal-nvim nvim"
-abbr -a -g nvide "NVIM_APPNAME=personal-nvim neovide"
+abbr -a -g nvimp "NVIM_APPNAME=nvim-personal nvim"
+abbr -a -g nvidep "NVIM_APPNAME=nvim-personal neovide"
 abbr -a -g releasesudo "faillock --user $(whoami) --reset"
 
 if test -d "~/.config/mimikun"

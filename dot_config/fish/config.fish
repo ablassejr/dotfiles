@@ -1,4 +1,4 @@
-abbr -a -g la "exa --long --sort modified --tree --level 3 | most"
+abbr -a -g la "exa --long --tree --level 3"
 abbr -a -g bashconfig "micro ~/.bashrc"
 abbr -a -g zshconfig "micro ~/.zshrc"
 abbr -a -g lmost "ls -la | most"
@@ -14,6 +14,7 @@ abbr -a -g nvidem "NVIM_APPNAME=mimikun/dotfiles/dot_config/nvim neovide"
 abbr -a -g nvimp "NVIM_APPNAME=nvim-personal nvim"
 abbr -a -g nvidep "NVIM_APPNAME=nvim-personal neovide"
 abbr -a -g releasesudo "faillock --user $(whoami) --reset"
+abbr -a -g nvide neovide
 
 if test -d "~/.config/mimikun"
     gh repo clone mimikun/dotfiles ~/.config/mimikun/dotfiles

@@ -1,0 +1,12 @@
+{
+  "enabledMcpjsonServers": [
+    "context7",
+    "memory",
+    "fetch",
+    "filesystem",
+    "executeautomation-playwright-server",
+    "browser-server",
+    "markitdown",
+    "serena"
+  ]
+}

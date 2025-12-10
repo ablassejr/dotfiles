@@ -1,0 +1,53 @@
+{
+  "env": {
+    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "8000",
+    "DISABLE_NON_ESSENTIAL_MODEL_CALLS": "1",
+    "DISABLE_COST_WARNINGS": "1",
+    "USE_BUILTIN_RIPGREP": "1",
+    "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1",
+    "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "0"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(done)"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "enabledMcpjsonServers": [
+    "context7",
+    "memory",
+    "fetch",
+    "filesystem",
+    "executeautomation-playwright-server",
+    "browser-server",
+    "markitdown",
+    "serena"
+  ],
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [[ -f package.json ]] && npm run test:quick --silent >/dev/null 2>&1; then echo '✅ Tests passed'; else echo '⚠️ Tests may need attention'; fi"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [[ \"$CLAUDE_TOOL_FILE_PATH\" == *.js || \"$CLAUDE_TOOL_FILE_PATH\" == *.ts || \"$CLAUDE_TOOL_FILE_PATH\" == *.jsx || \"$CLAUDE_TOOL_FILE_PATH\" == *.tsx || \"$CLAUDE_TOOL_FILE_PATH\" == *.json || \"$CLAUDE_TOOL_FILE_PATH\" == *.css || \"$CLAUDE_TOOL_FILE_PATH\" == *.html ]]; then npx prettier --write \"$CLAUDE_TOOL_FILE_PATH\" 2>/dev/null || true; elif [[ \"$CLAUDE_TOOL_FILE_PATH\" == *.py ]]; then black \"$CLAUDE_TOOL_FILE_PATH\" 2>/dev/null || true; elif [[ \"$CLAUDE_TOOL_FILE_PATH\" == *.go ]]; then gofmt -w \"$CLAUDE_TOOL_FILE_PATH\" 2>/dev/null || true; elif [[ \"$CLAUDE_TOOL_FILE_PATH\" == *.rs ]]; then rustfmt \"$CLAUDE_TOOL_FILE_PATH\" 2>/dev/null || true; elif [[ \"$CLAUDE_TOOL_FILE_PATH\" == *.php ]]; then php-cs-fixer fix \"$CLAUDE_TOOL_FILE_PATH\" 2>/dev/null || true; fi"
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash -c 'input=$(cat); MODEL=$(echo \"$input\" | jq -r \".model.display_name\"); DIR=$(echo \"$input\" | jq -r \".workspace.current_dir\"); SESSION=$(echo \"$input\" | jq -r \".session_id\" | cut -c1-8); CACHE=\"/tmp/spaceship_$SESSION\"; if [ ! -f \"$CACHE\" ]; then echo \"100 0 0\" > \"$CACHE\"; fi; read FUEL DISTANCE WARP < \"$CACHE\"; FUEL=$((FUEL - 1)); DISTANCE=$((DISTANCE + 5)); if [ $FUEL -le 0 ]; then FUEL=100; WARP=$((WARP + 1)); fi; echo \"$FUEL $DISTANCE $WARP\" > \"$CACHE\"; SHIP=$([ $FUEL -gt 80 ] && echo \"🚀\" || [ $FUEL -gt 40 ] && echo \"🛸\" || echo \"🆘\"); STARS=$(python3 -c \"import random; print(''.join(random.choice('⭐🌟✨') for _ in range(3)))\" 2>/dev/null || echo \"⭐🌟✨\"); echo \"[$MODEL] $SHIP Warp $WARP | ⛽$FUEL% | 🌌 ${DISTANCE}ly | $STARS | 📁 ${DIR##*/}\"'"
+  }
+}

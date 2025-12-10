@@ -177,33 +177,6 @@ GITSTATUS_LOG_LEVEL=ERROR
 zinit light romkatv/powerlevel10k
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
-# --- Aliases ---
-alias la="exa --long --sort modified --tree --level 3 | most"
-alias ll='ls -lh'
-alias gs='git status'
-alias ga='git add'
-alias gc='git commit'
-alias gp='git push'
-alias ce='chezmoi edit'
-alias ca='chezmoi apply'
-alias gmp='git magic -apm'
-alias clr='clear'
-alias hwsim='/home/draogo/Work/misc-projects/Nand2Tetris/Simulator/InstallDir/HardwareSimulator.sh'
-
-export ghosttyconfig='~/.config/ghostty/config'
-export PATH=/home/draogo/.local/bin:/home/draogo/.zinit/polaris/bin:/home/draogo/.cargo/bin:/home/draogo/.local/share/../bin:/home/draogo/.local/share/mise/installs/node/25.1.0/bin:/home/draogo/.local/share/omarchy/bin/:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/draogo/.local/share/JetBrains/Toolbox/scripts:/home/draogo/.local/share/JetBrains/Toolbox/scripts:/opt/nvim-linux-x86_64/bin
-export MISE_SHELL=zsh
-export __MISE_ORIG_PATH="$PATH"
-export __MISE_ZSH_PRECMD_RUN=0
-
-
-export SSH_AUTH_SOCK='/home/draogo/.config/Keeper Password Manager/keeper-ssh-agent.sock'
-
-
-export PATH="/home/draogo/.local/share/mise/shims:$PATH"
-
-. "$HOME/.local/share/../bin/env"
-
 # === Tmux Auto Background Window for Async Processes ===
 # Automatically create a tmux window in the background when running async processes
 if command -v tmux &>/dev/null; then
@@ -214,7 +187,7 @@ if command -v tmux &>/dev/null; then
     local cmd_name="${cmd%% *}"
     # Generate a unique window name
     local window_name="bg-${cmd_name}-$(date +%s)"
-    
+
     # Check if we're inside tmux or outside
     if [[ -n "$TMUX" ]]; then
       # Inside tmux: create a new window in the current session
@@ -223,7 +196,7 @@ if command -v tmux &>/dev/null; then
     else
       # Outside tmux: create or attach to a background session
       local session_name="bg-tasks"
-      
+
       # Check if the background session exists
       if ! tmux has-session -t "$session_name" 2>/dev/null; then
         # Create the background session
@@ -237,15 +210,15 @@ if command -v tmux &>/dev/null; then
       echo "[tmux] Attach to view: tmux attach-session -t $session_name"
     fi
   }
-  
+
   # Provide a helper function/alias
   alias tmuxbg='__tmux_bg_wrapper'
-  
+
   # Neovide wrapper - always launch in background tmux window
   function neovide() {
     __tmux_bg_wrapper "command neovide $@"
   }
-  
+
   # Hook into zsh's preexec to intercept commands ending with &
   function __tmux_preexec_hook() {
     local cmd="$1"
@@ -259,7 +232,7 @@ if command -v tmux &>/dev/null; then
       kill -INT $$
     fi
   }
-  
+
   # Add to preexec hooks
   autoload -Uz add-zsh-hook
   add-zsh-hook preexec __tmux_preexec_hook

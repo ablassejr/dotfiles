@@ -1,12 +1,50 @@
 # Added by Toolbox App
-export PATH="$PATH:/home/draogo/.local/share/JetBrains/Toolbox/scripts"
+# --- Aliases ---
+alias mkexec="sudo -S chmod +x"
+alias la="exa --long --sort modified --tree --level 3 | most"
 alias SUDO_PASS="lpass show --password 1279211307193658237OD"
-alias bashconfig="micro ~/.bashrc"
-alias zshconfig="micro ~/.zshrc"
+alias ll='ls -lh'
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+alias ce='chezmoi edit'
+alias ca='chezmoi apply'
+alias gmp='git magic -apm'
+alias clr='clear'
+alias hwsim='/home/draogo/Work/misc-projects/Nand2Tetris/Simulator/InstallDir/HardwareSimulator.sh'
+alias la="exa --long --tree --level 3"
+alias bashconfig="nvim ~/.bashrc"
+alias zshconfig="nvim ~/.zshrc"
 alias lmost="ls -la | most"
 alias mkexec="sudo -S chmod +x"
 alias jupyter-tui="source ~/.local/share/jupyter-tui/.venv/bin/activate && python ~/.local/share/jupyter-tui/main.py"
 alias savesession="hyprsession --mode save-and-exit && shutdown now"
+alias nvimc="NVIM_APPNAME=craftzdog/dotfiles-public/.config/nvim nvim"
+alias nvidec="NVIM_APPNAME=craftzdog/dotfiles-public/.config/nvim neovide"
+alias fzfrm="fzf | xargs -I {} rm {}"
+alias nvimm="NVIM_APPNAME=mimikun/dot_config/nvim nvim"
+alias nvidem="NVIM_APPNAME=mimikun/dotfiles/dot_config/nvim neovide"
+alias nvimp="NVIM_APPNAME=nvim-personal nvim"
+alias nvidep="NVIM_APPNAME=nvim-personal neovide"
+alias releasesudo="faillock --user \$(whoami) --reset"
+alias nvide=neovide
+
+# --- Environment Variables ---
+export ghosttyconfig=~/.config/ghostty/config
+export PATH=/home/draogo/.local/bin:/home/draogo/.zinit/polaris/bin:/home/draogo/.cargo/bin:/home/draogo/.local/share/../bin:/home/draogo/.local/share/mise/installs/node/25.1.0/bin:/home/draogo/.local/share/omarchy/bin/:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/draogo/.local/share/JetBrains/Toolbox/scripts:/home/draogo/.local/share/JetBrains/Toolbox/scripts:/opt/nvim-linux-x86_64/bin
+export PATH="$PATH:/home/draogo/.local/share/JetBrains/Toolbox/scripts"
+export MISE_SHELL=zsh
+export __MISE_ORIG_PATH="$PATH"
+export __MISE_ZSH_PRECMD_RUN=0
+
+
+export SSH_AUTH_SOCK='/home/draogo/.config/Keeper Password Manager/keeper-ssh-agent.sock'
+
+
+export PATH="/home/draogo/.local/share/mise/shims:$PATH"
+
+. "$HOME/.local/share/../bin/env"
 
 . "$HOME/.local/share/../bin/env"
 # shellcheck shell=bash

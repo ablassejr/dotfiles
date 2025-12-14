@@ -6,11 +6,12 @@
 fork = false
 frame = "full"
 idle = true
-maximized = false
+maximized = true
 tabs = true
 theme = "dark"  # Ethereal dark theme
 title-hidden = false
 vsync = true
+animation = false
 
 # Font Configuration
 [font]

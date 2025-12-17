@@ -156,6 +156,21 @@ zinit light zsh-users/zsh-syntax-highlighting
 # Autosuggestions
 zinit light zsh-users/zsh-autosuggestions
 
+# --- Keybindings ---
+# Ctrl+F accepts the full autosuggestion (falls back to forward-char)
+if [[ -o interactive ]] && (( $+widgets[autosuggest-accept] )); then
+  __ctrl_f_accept_autosuggest() {
+    if [[ -n ${POSTDISPLAY:-} ]]; then
+      zle autosuggest-accept
+    else
+      zle forward-char
+    fi
+  }
+  zle -N __ctrl_f_accept_autosuggest
+  bindkey -M emacs '^F' __ctrl_f_accept_autosuggest
+  bindkey -M viins '^F' __ctrl_f_accept_autosuggest
+fi
+
 # Extra completions
 zinit light zsh-users/zsh-completions
 

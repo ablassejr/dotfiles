@@ -2,7 +2,10 @@
 -- Installed via store.nvim
 
 return {
-    "scottmckendry/cyberdream.nvim",
-    lazy = false,
-    priority = 1000
+  "scottmckendry/cyberdream.nvim",
+  lazy = false,
+  priority = 1000,
+  opts = {
+    style = "dark", -- "dark" or "light"
+  },
 }

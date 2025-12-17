@@ -1,3 +1,8 @@
+### Added by Codeium. These lines cannot be automatically removed if modified
+if command -v termium > /dev/null 2>&1; then
+  eval "$(termium shell-hook show pre)"
+fi
+### End of Codeium integration
 # Added by Toolbox App
 # --- Aliases ---
 alias mkexec="sudo -S chmod +x"
@@ -116,3 +121,9 @@ function __zoxide_doctor() {
 
 alias releasesudo='faillock --user draogo; faillock --user draogo --reset'
 alias claude-dev-mode='npx claude-code-templates@latest --setting=permissions/development-mode --yes'
+
+### Added by Codeium. These lines cannot be automatically removed if modified
+if command -v termium > /dev/null 2>&1; then
+  eval "$(termium shell-hook show post)"
+fi
+### End of Codeium integration

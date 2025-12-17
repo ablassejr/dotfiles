@@ -4,7 +4,7 @@ config-file = ?"~/.config/omarchy/current/theme/ghostty.conf"
 # Font
 font-family = "JetBrainsMono Nerd Font"
 font-style = Regular
-font-size = 12
+font-size = 16
 
 # Window
 window-theme = ghostty
@@ -22,6 +22,7 @@ shell-integration-features = no-cursor
 # Keyboard bindings
 keybind = shift+insert=paste_from_clipboard
 keybind = control+insert=copy_to_clipboard
+keybind = global:super+shift+enter=toggle_quick_terminal
 keybind = super+control+shift+alt+arrow_down=resize_split:down,100
 keybind = super+control+shift+alt+arrow_up=resize_split:up,100
 keybind = super+control+shift+alt+arrow_left=resize_split:left,100

@@ -259,7 +259,7 @@ case "$(uname -s)" in
   fi
   # === End Tmux Auto Background Window ===
   source ~/.profile
-    ;;
+  ;;
   *)
     echo "Unsupported OS: $(uname -s)"
     ;;

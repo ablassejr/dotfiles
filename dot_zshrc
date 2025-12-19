@@ -297,7 +297,6 @@ case "$(uname -s)" in
     add-zsh-hook preexec __tmux_preexec_hook
   fi
   # === End Tmux Auto Background Window ===
-  source ~/.profile
   ;;
   *)
     echo "Unsupported OS: $(uname -s)"

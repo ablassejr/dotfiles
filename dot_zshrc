@@ -1,256 +1,266 @@
-
-# --- Oh My Zsh Setup ---
-# Check if Oh My Zsh is installed, if not, download and install it
-if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
-    print -P "%F{33}Oh My Zsh not found. Installing...%f"
-    git clone https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
-    if [[ $? -eq 0 ]]; then
-        print -P "%F{green}Oh My Zsh installed successfully!%f"
-    else
-        print -P "%F{red}Error: Oh My Zsh installation failed%f"
-    fi
-fi
-
-# Initialize Oh My Zsh if it exists
-if [[ -d "$HOME/.oh-my-zsh" ]]; then
-    export ZSH="$HOME/.oh-my-zsh"
-    # Source Oh My Zsh
-    if [[ -f "$ZSH/oh-my-zsh.sh" ]]; then
-        source "$ZSH/oh-my-zsh.sh"
-    else
-        print -P "%F{red}Error: Oh My Zsh installation appears incomplete%f"
-    fi
-fi
-
-# --- Zinit Setup ---
-if [[ ! -f ~/.zinit/bin/zinit.zsh ]]; then
-    print -P "%F{33}Installing zinit…%f"
-    mkdir -p ~/.zinit
-    git clone https://github.com/zdharma-continuum/zinit.git ~/.zinit/bin
-fi
-
-# Only source if zinit exists
-if [[ -f ~/.zinit/bin/zinit.zsh ]]; then
-    source ~/.zinit/bin/zinit.zsh
-else
-    print -P "%F{red}Error: zinit failed to install%f"
-    return 1
-fi
-
-#source /usr/share/doc/git-extras/git-extras-completion.zsh
-#source /home/draogo/.secrets
-# --- TMUX Auto Attach ---
-# if command -v tmux>/dev/null; then
-#  if [[ -z "$TMUX" ]]; then
-#    tmux attach-session -t default || exec tmux new-session -s default
-#  fi
-# fi
-
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
-# Mise Setup
-mise() {
-  local command
-  command="${1:-}"
-  if [ "$#" = 0 ]; then
-    command mise
-    return
-  fi
-  shift
-
-  case "$command" in
-  deactivate|shell|sh)
-    # if argv doesn't contains -h,--help
-    if [[ ! " $@ " =~ " --help " ]] && [[ ! " $@ " =~ " -h " ]]; then
-      eval "$(command mise "$command" "$@")"
-      return $?
-    fi
+case "$(uname -s)" in
+  Darwin)
+    # macOS configuration placeholder. Build mac-specific setup here.
     ;;
-  esac
-  command mise "$command" "$@"
-}
+  Linux)
 
-_mise_hook() {
-  eval "$(mise hook-env -s zsh)";
-}
-_mise_hook_precmd() {
-  eval "$(mise hook-env -s zsh --reason precmd)";
-}
-_mise_hook_chpwd() {
-  eval "$(mise hook-env -s zsh --reason chpwd)";
-}
-typeset -ag precmd_functions;
-if [[ -z "${precmd_functions[(r)_mise_hook_precmd]+1}" ]]; then
-  precmd_functions=( _mise_hook_precmd ${precmd_functions[@]} )
-fi
-typeset -ag chpwd_functions;
-if [[ -z "${chpwd_functions[(r)_mise_hook_chpwd]+1}" ]]; then
-  chpwd_functions=( _mise_hook_chpwd ${chpwd_functions[@]} )
-fi
-
-_mise_hook
-if [ -z "${_mise_cmd_not_found:-}" ]; then
-    _mise_cmd_not_found=1
-    [ -n "$(declare -f command_not_found_handler)" ] && eval "${$(declare -f command_not_found_handler)/command_not_found_handler/_command_not_found_handler}"
-
-    function command_not_found_handler() {
-        if [[ "$1" != "mise" && "$1" != "mise-"* ]] && mise hook-not-found -s zsh -- "$1"; then
-          _mise_hook
-          "$@"
-        elif [ -n "$(declare -f _command_not_found_handler)" ]; then
-            _command_not_found_handler "$@"
-        else
-            echo "zsh: command not found: $1" >&2
-            return 127
-        fi
-    }
-fi
-
-# --- Basic settings ---
-export EDITOR="nvim"
-
-# Add common local bin paths (Linux-friendly) - only if not already in PATH
-[[ ":$PATH:" != *":$HOME/.local/bin:"* ]] && export PATH="$HOME/.local/bin:$PATH"
-[[ ":$PATH:" != *":/usr/local/bin:"* ]] && export PATH="/usr/local/bin:$PATH"
-
-setopt autocd            # type folder name to cd
-setopt correct           # correct small typos in ALL commands (not just cd)
-
-# History configuration
-HISTFILE=~/.zsh_history
-HISTSIZE=50000
-SAVEHIST=50000
-setopt append_history        # append to history file, don't overwrite
-setopt share_history         # share history between all sessions
-setopt hist_ignore_dups      # don't record duplicate entries
-setopt hist_ignore_space     # don't record commands starting with space
-setopt hist_reduce_blanks    # remove superfluous blanks from history
-
-# --- fzf integration (load before fzf-tab plugin) ---
-# If fzf installed via package manager, these may exist (load silently):
-[[ -r /usr/share/doc/fzf/examples/key-bindings.zsh ]] && source /usr/share/doc/fzf/examples/key-bindings.zsh 2>/dev/null
-[[ -r /usr/share/doc/fzf/examples/completion.zsh     ]] && source /usr/share/doc/fzf/examples/completion.zsh 2>/dev/null
-
-# If you installed fzf with its install script, use:
-# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-if [[ -e ~/.profile ]]; then
-  source ~/.profile
-fi
-if [[ -e ~/.env ]]; then
-  source ~/.env
-fi
-
-# --- Plugins ---
-# Load plugins asynchronously for faster startup
-autoload -Uz compinit && compinit
-
-# Syntax highlighting
-zinit light zsh-users/zsh-syntax-highlighting
-
-# Autosuggestions
-zinit light zsh-users/zsh-autosuggestions
-
-# --- Keybindings ---
-# Ctrl+F accepts the full autosuggestion (falls back to forward-char)
-if [[ -o interactive ]] && (( $+widgets[autosuggest-accept] )); then
-  __ctrl_f_accept_autosuggest() {
-    if [[ -n ${POSTDISPLAY:-} ]]; then
-      zle autosuggest-accept
-    else
-      zle forward-char
-    fi
-  }
-  zle -N __ctrl_f_accept_autosuggest
-  bindkey -M emacs '^F' __ctrl_f_accept_autosuggest
-  bindkey -M viins '^F' __ctrl_f_accept_autosuggest
-fi
-
-# Extra completions
-zinit light zsh-users/zsh-completions
-
-# Fuzzy finder tab completion (load AFTER fzf)
-zinit light Aloxaf/fzf-tab
-
-# Directory jumper (like autojump)
-zinit light rupa/z
-
-# Colorized man pages
-zinit light ael-code/zsh-colored-man-pages
-
-# Auto-close brackets/quotes
-zinit light hlissner/zsh-autopair
-
-# --- Theme / Prompt ---
-# Suppress gitstatus errors during initialization
-GITSTATUS_LOG_LEVEL=ERROR
-zinit light romkatv/powerlevel10k
-[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
-
-# === Tmux Auto Background Window for Async Processes ===
-# Automatically create a tmux window in the background when running async processes
-if command -v tmux &>/dev/null; then
-  # Function to wrap background commands in tmux windows
-  function __tmux_bg_wrapper() {
-    local cmd="$@"
-    # Get the command being run (first word)
-    local cmd_name="${cmd%% *}"
-    # Generate a unique window name
-    local window_name="bg-${cmd_name}-$(date +%s)"
-
-    # Check if we're inside tmux or outside
-    if [[ -n "$TMUX" ]]; then
-      # Inside tmux: create a new window in the current session
-      tmux new-window -d -n "$window_name" "$cmd; echo '\n--- Process completed. Press any key to close this window ---'; read -k 1"
-      echo "[tmux] Background process started in window: $window_name"
-    else
-      # Outside tmux: create or attach to a background session
-      local session_name="bg-tasks"
-
-      # Check if the background session exists
-      if ! tmux has-session -t "$session_name" 2>/dev/null; then
-        # Create the background session
-        tmux new-session -d -s "$session_name" -n "$window_name" "$cmd; echo '\n--- Process completed. Press any key to close this window ---'; read -k 1"
-        echo "[tmux] Created session '$session_name' with background process in window: $window_name"
+  # --- Oh My Zsh Setup ---
+  # Check if Oh My Zsh is installed, if not, download and install it
+  if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
+      print -P "%F{33}Oh My Zsh not found. Installing...%f"
+      git clone https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
+      if [[ $? -eq 0 ]]; then
+          print -P "%F{green}Oh My Zsh installed successfully!%f"
       else
-        # Session exists, add a new window
-        tmux new-window -d -t "$session_name" -n "$window_name" "$cmd; echo '\n--- Process completed. Press any key to close this window ---'; read -k 1"
-        echo "[tmux] Background process started in session '$session_name', window: $window_name"
+          print -P "%F{red}Error: Oh My Zsh installation failed%f"
       fi
-      echo "[tmux] Attach to view: tmux attach-session -t $session_name"
+  fi
+
+  # Initialize Oh My Zsh if it exists
+  if [[ -d "$HOME/.oh-my-zsh" ]]; then
+      export ZSH="$HOME/.oh-my-zsh"
+      # Source Oh My Zsh
+      if [[ -f "$ZSH/oh-my-zsh.sh" ]]; then
+          source "$ZSH/oh-my-zsh.sh"
+      else
+          print -P "%F{red}Error: Oh My Zsh installation appears incomplete%f"
+      fi
+  fi
+
+  # --- Zinit Setup ---
+  if [[ ! -f ~/.zinit/bin/zinit.zsh ]]; then
+      print -P "%F{33}Installing zinit…%f"
+      mkdir -p ~/.zinit
+      git clone https://github.com/zdharma-continuum/zinit.git ~/.zinit/bin
+  fi
+
+  # Only source if zinit exists
+  if [[ -f ~/.zinit/bin/zinit.zsh ]]; then
+      source ~/.zinit/bin/zinit.zsh
+  else
+      print -P "%F{red}Error: zinit failed to install%f"
+      return 1
+  fi
+
+  #source /usr/share/doc/git-extras/git-extras-completion.zsh
+  #source /home/draogo/.secrets
+  # --- TMUX Auto Attach ---
+  # if command -v tmux>/dev/null; then
+  #  if [[ -z "$TMUX" ]]; then
+  #    tmux attach-session -t default || exec tmux new-session -s default
+  #  fi
+  # fi
+
+  # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+  # Initialization code that may require console input (password prompts, [y/n]
+  # confirmations, etc.) must go above this block; everything else may go below.
+  if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+  fi
+
+  # Mise Setup
+  mise() {
+    local command
+    command="${1:-}"
+    if [ "$#" = 0 ]; then
+      command mise
+      return
     fi
+    shift
+
+    case "$command" in
+    deactivate|shell|sh)
+      # if argv doesn't contains -h,--help
+      if [[ ! " $@ " =~ " --help " ]] && [[ ! " $@ " =~ " -h " ]]; then
+        eval "$(command mise "$command" "$@")"
+        return $?
+      fi
+      ;;
+    esac
+    command mise "$command" "$@"
   }
 
-  # Provide a helper function/alias
-  alias tmuxbg='__tmux_bg_wrapper'
-
-  # Neovide wrapper - always launch in background tmux window
-  function neovide() {
-    __tmux_bg_wrapper "command neovide $@"
+  _mise_hook() {
+    eval "$(mise hook-env -s zsh)";
   }
-
-  # Hook into zsh's preexec to intercept commands ending with &
-  function __tmux_preexec_hook() {
-    local cmd="$1"
-    # Check if command ends with &
-    if [[ "$cmd" =~ [[:space:]]*\&[[:space:]]*$ ]]; then
-      # Remove the trailing &
-      local clean_cmd="${cmd%&}"
-      clean_cmd="${clean_cmd%% }"
-      __tmux_bg_wrapper "$clean_cmd"
-      # Prevent the original command from running
-      kill -INT $$
-    fi
+  _mise_hook_precmd() {
+    eval "$(mise hook-env -s zsh --reason precmd)";
   }
+  _mise_hook_chpwd() {
+    eval "$(mise hook-env -s zsh --reason chpwd)";
+  }
+  typeset -ag precmd_functions;
+  if [[ -z "${precmd_functions[(r)_mise_hook_precmd]+1}" ]]; then
+    precmd_functions=( _mise_hook_precmd ${precmd_functions[@]} )
+  fi
+  typeset -ag chpwd_functions;
+  if [[ -z "${chpwd_functions[(r)_mise_hook_chpwd]+1}" ]]; then
+    chpwd_functions=( _mise_hook_chpwd ${chpwd_functions[@]} )
+  fi
 
-  # Add to preexec hooks
-  autoload -Uz add-zsh-hook
-  add-zsh-hook preexec __tmux_preexec_hook
-fi
-# === End Tmux Auto Background Window ===
-source ~/.profile
+  _mise_hook
+  if [ -z "${_mise_cmd_not_found:-}" ]; then
+      _mise_cmd_not_found=1
+      [ -n "$(declare -f command_not_found_handler)" ] && eval "${$(declare -f command_not_found_handler)/command_not_found_handler/_command_not_found_handler}"
+
+      function command_not_found_handler() {
+          if [[ "$1" != "mise" && "$1" != "mise-"* ]] && mise hook-not-found -s zsh -- "$1"; then
+            _mise_hook
+            "$@"
+          elif [ -n "$(declare -f _command_not_found_handler)" ]; then
+              _command_not_found_handler "$@"
+          else
+              echo "zsh: command not found: $1" >&2
+              return 127
+          fi
+      }
+  fi
+
+  # --- Basic settings ---
+  export EDITOR="nvim"
+
+  # Add common local bin paths (Linux-friendly) - only if not already in PATH
+  [[ ":$PATH:" != *":$HOME/.local/bin:"* ]] && export PATH="$HOME/.local/bin:$PATH"
+  [[ ":$PATH:" != *":/usr/local/bin:"* ]] && export PATH="/usr/local/bin:$PATH"
+
+  setopt autocd            # type folder name to cd
+  setopt correct           # correct small typos in ALL commands (not just cd)
+
+  # History configuration
+  HISTFILE=~/.zsh_history
+  HISTSIZE=50000
+  SAVEHIST=50000
+  setopt append_history        # append to history file, don't overwrite
+  setopt share_history         # share history between all sessions
+  setopt hist_ignore_dups      # don't record duplicate entries
+  setopt hist_ignore_space     # don't record commands starting with space
+  setopt hist_reduce_blanks    # remove superfluous blanks from history
+
+  # --- fzf integration (load before fzf-tab plugin) ---
+  # If fzf installed via package manager, these may exist (load silently):
+  [[ -r /usr/share/doc/fzf/examples/key-bindings.zsh ]] && source /usr/share/doc/fzf/examples/key-bindings.zsh 2>/dev/null
+  [[ -r /usr/share/doc/fzf/examples/completion.zsh     ]] && source /usr/share/doc/fzf/examples/completion.zsh 2>/dev/null
+
+  # If you installed fzf with its install script, use:
+  # [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+  if [[ -e ~/.profile ]]; then
+    source ~/.profile
+  fi
+  if [[ -e ~/.env ]]; then
+    source ~/.env
+  fi
+
+  # --- Plugins ---
+  # Load plugins asynchronously for faster startup
+  autoload -Uz compinit && compinit
+
+  # Syntax highlighting
+  zinit light zsh-users/zsh-syntax-highlighting
+
+  # Autosuggestions
+  zinit light zsh-users/zsh-autosuggestions
+
+  # --- Keybindings ---
+  # Ctrl+F accepts the full autosuggestion (falls back to forward-char)
+  if [[ -o interactive ]] && (( $+widgets[autosuggest-accept] )); then
+    __ctrl_f_accept_autosuggest() {
+      if [[ -n ${POSTDISPLAY:-} ]]; then
+        zle autosuggest-accept
+      else
+        zle forward-char
+      fi
+    }
+    zle -N __ctrl_f_accept_autosuggest
+    bindkey -M emacs '^F' __ctrl_f_accept_autosuggest
+    bindkey -M viins '^F' __ctrl_f_accept_autosuggest
+  fi
+
+  # Extra completions
+  zinit light zsh-users/zsh-completions
+
+  # Fuzzy finder tab completion (load AFTER fzf)
+  zinit light Aloxaf/fzf-tab
+
+  # Directory jumper (like autojump)
+  zinit light rupa/z
+
+  # Colorized man pages
+  zinit light ael-code/zsh-colored-man-pages
+
+  # Auto-close brackets/quotes
+  zinit light hlissner/zsh-autopair
+
+  # --- Theme / Prompt ---
+  # Suppress gitstatus errors during initialization
+  GITSTATUS_LOG_LEVEL=ERROR
+  zinit light romkatv/powerlevel10k
+  [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+
+  # === Tmux Auto Background Window for Async Processes ===
+  # Automatically create a tmux window in the background when running async processes
+  if command -v tmux &>/dev/null; then
+    # Function to wrap background commands in tmux windows
+    function __tmux_bg_wrapper() {
+      local cmd="$@"
+      # Get the command being run (first word)
+      local cmd_name="${cmd%% *}"
+      # Generate a unique window name
+      local window_name="bg-${cmd_name}-$(date +%s)"
+
+      # Check if we're inside tmux or outside
+      if [[ -n "$TMUX" ]]; then
+        # Inside tmux: create a new window in the current session
+        tmux new-window -d -n "$window_name" "$cmd; echo '\n--- Process completed. Press any key to close this window ---'; read -k 1"
+        echo "[tmux] Background process started in window: $window_name"
+      else
+        # Outside tmux: create or attach to a background session
+        local session_name="bg-tasks"
+
+        # Check if the background session exists
+        if ! tmux has-session -t "$session_name" 2>/dev/null; then
+          # Create the background session
+          tmux new-session -d -s "$session_name" -n "$window_name" "$cmd; echo '\n--- Process completed. Press any key to close this window ---'; read -k 1"
+          echo "[tmux] Created session '$session_name' with background process in window: $window_name"
+        else
+          # Session exists, add a new window
+          tmux new-window -d -t "$session_name" -n "$window_name" "$cmd; echo '\n--- Process completed. Press any key to close this window ---'; read -k 1"
+          echo "[tmux] Background process started in session '$session_name', window: $window_name"
+        fi
+        echo "[tmux] Attach to view: tmux attach-session -t $session_name"
+      fi
+    }
+
+    # Provide a helper function/alias
+    alias tmuxbg='__tmux_bg_wrapper'
+
+    # Neovide wrapper - always launch in background tmux window
+    function neovide() {
+      __tmux_bg_wrapper "command neovide $@"
+    }
+
+    # Hook into zsh's preexec to intercept commands ending with &
+    function __tmux_preexec_hook() {
+      local cmd="$1"
+      # Check if command ends with &
+      if [[ "$cmd" =~ [[:space:]]*\&[[:space:]]*$ ]]; then
+        # Remove the trailing &
+        local clean_cmd="${cmd%&}"
+        clean_cmd="${clean_cmd%% }"
+        __tmux_bg_wrapper "$clean_cmd"
+        # Prevent the original command from running
+        kill -INT $$
+      fi
+    }
+
+    # Add to preexec hooks
+    autoload -Uz add-zsh-hook
+    add-zsh-hook preexec __tmux_preexec_hook
+  fi
+  # === End Tmux Auto Background Window ===
+  source ~/.profile
+    ;;
+  *)
+    echo "Unsupported OS: $(uname -s)"
+    ;;
+esac

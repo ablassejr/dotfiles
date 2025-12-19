@@ -65,8 +65,5 @@ return {
     words = {
       enabled = true,
     },
-    animate = {
-      enabled = false,
-    },
   },
 }

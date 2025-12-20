@@ -243,5 +243,5 @@ if [[ -o interactive ]]; then
 fi
 export PATH="/opt/homebrew/opt/postgresql@15/bin:$PATH"
 export LDFLAGS="-L/opt/homebrew/opt/postgresql@15/lib"
-
-  export CPPFLAGS="-I/opt/homebrew/opt/postgresql@15/include"
+export CPPFLAGS="-I/opt/homebrew/opt/postgresql@15/include"
+export CLAUDE_CODE_OAUTH_TOKEN=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

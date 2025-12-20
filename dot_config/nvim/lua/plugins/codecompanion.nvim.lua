@@ -1,11 +1,63 @@
 -- Plugin: olimorris/codecompanion.nvim
--- Installed via store.nvim
+-- AI-powered coding assistant with multiple LLM provider support
 
 return {
   "olimorris/codecompanion.nvim",
-  -- VectorCode tools are added in opts below.
   dependencies = { "ravitemer/mcphub.nvim", "Davidyz/VectorCode" },
   opts = function(_, opts)
+    local auth = require("config.auth")
+
+    -- Configure adapters with environment-based authentication
+    -- ACP adapters (Agent Control Protocol) - for Claude Code
+    opts.adapters = opts.adapters or {}
+    opts.adapters.acp = opts.adapters.acp or {}
+
+    -- Claude Code adapter (uses subscription via OAuth token - RECOMMENDED)
+    if auth.has_credential("CLAUDE_CODE_OAUTH_TOKEN") then
+      opts.adapters.acp.claude_code = function()
+        return require("codecompanion.adapters").extend("claude_code", {
+          env = { CLAUDE_CODE_OAUTH_TOKEN = "CLAUDE_CODE_OAUTH_TOKEN" },
+        })
+      end
+      -- Set as default strategy adapter
+      opts.strategies = opts.strategies or {}
+      opts.strategies.chat = opts.strategies.chat or {}
+      opts.strategies.chat.adapter = "claude_code"
+      opts.strategies.inline = opts.strategies.inline or {}
+      opts.strategies.inline.adapter = "claude_code"
+    end
+
+    -- HTTP adapters - for direct API calls
+    opts.adapters.http = opts.adapters.http or {}
+
+    -- Anthropic API (fallback if no OAuth token)
+    if auth.has_credential("ANTHROPIC_API_KEY") then
+      opts.adapters.http.anthropic = function()
+        return require("codecompanion.adapters").extend("anthropic", {
+          env = { api_key = "ANTHROPIC_API_KEY" },
+        })
+      end
+    end
+
+    -- OpenAI adapter
+    if auth.has_credential("OPENAI_API_KEY") then
+      opts.adapters.http.openai = function()
+        return require("codecompanion.adapters").extend("openai", {
+          env = { api_key = "OPENAI_API_KEY" },
+        })
+      end
+    end
+
+    -- OpenRouter adapter (provides access to multiple models)
+    if auth.has_credential("OPENROUTER_API_KEY") then
+      opts.adapters.http.openrouter = function()
+        return require("codecompanion.adapters").extend("openrouter", {
+          env = { api_key = "OPENROUTER_API_KEY" },
+        })
+      end
+    end
+
+    -- VectorCode tools integration
     local has_vc, vc = pcall(require, "vectorcode.integrations.codecompanion")
     if not has_vc then
       return opts

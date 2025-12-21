@@ -19,3 +19,28 @@ vim.api.nvim_create_autocmd("FileType", {
     lopt.expandtab = true
   end,
 })
+-- Automatic registration via autocmd
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function()
+    -- Only proceed if VectorCode is loaded
+    local ok, vc_config = pcall(require, "vectorcode.config")
+    if not ok then
+      return
+    end
+
+    local cacher_backend = vc_config.get_cacher_backend()
+    if not cacher_backend then
+      return
+    end
+
+    local bufnr = vim.api.nvim_get_current_buf()
+
+    cacher_backend.async_check("config", function()
+      cacher_backend.register_buffer(bufnr, {
+        n_query = 10,
+        events = { "BufWritePost", "InsertEnter" },
+      })
+    end, nil)
+  end,
+  desc = "Register buffer for VectorCode on LSP attach",
+})

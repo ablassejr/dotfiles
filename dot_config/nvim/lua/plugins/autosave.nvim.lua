@@ -2,13 +2,14 @@
 -- Installed via store.nvim
 
 return {
-    "0x00-ketsu/autosave.nvim",
-    -- lazy-loading on events
-    event = {
-        "InsertLeave",
-        "TextChanged"
-    },
-    config = function()
-        require("autosave").setup {}
-    end
+  "0x00-ketsu/autosave.nvim",
+  config = function()
+    require("autosave").setup({
+      event = {
+        "BufLeave",
+        "BufEnter",
+      },
+      debounce_delay = 10000, -- milliseconds
+    })
+  end,
 }

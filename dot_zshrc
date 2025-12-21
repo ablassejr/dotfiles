@@ -1,3 +1,4 @@
+source ~/.zshenv
 case "$(uname -s)" in
   Darwin)
       source ~/.zprofile

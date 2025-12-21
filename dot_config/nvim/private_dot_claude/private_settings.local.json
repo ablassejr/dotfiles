@@ -26,7 +26,9 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(if [ -n \"$CLAUDE_CODE_OAUTH_TOKEN\" ])",
       "Bash(then echo \"CLAUDE_CODE_OAUTH_TOKEN is set \\(length: $#CLAUDE_CODE_OAUTH_TOKEN\\)\")",
-      "Bash(else echo \"CLAUDE_CODE_OAUTH_TOKEN is NOT set\")"
+      "Bash(else echo \"CLAUDE_CODE_OAUTH_TOKEN is NOT set\")",
+      "Bash(then echo \"✓ CLAUDE_CODE_OAUTH_TOKEN is set \\(length: $#CLAUDE_CODE_OAUTH_TOKEN characters\\)\")",
+      "Bash(else echo \"✗ CLAUDE_CODE_OAUTH_TOKEN is NOT set\")"
     ]
   },
   "outputStyle": "Explanatory"

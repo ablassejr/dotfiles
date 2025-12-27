@@ -1,1 +1,28 @@
 npx claude-code-templates@latest --agent development-team/backend-architect,programming-languages/python-pro,ai-specialists/search-specialist --command "utilities/ultra-think" --setting "statusline/context-monitor,environment/performance-optimization,environment/development-utils,permissions/development-mode,permissions/allow-npm-commands,statusline/colorful-statusline,permissions/allow-git-operations,statusline/time-statusline,statusline/code-spaceship-statusline" --hook "post-tool/run-tests-after-changes,development-tools/smart-formatting" --mcp "devtools/context7,integration/memory-integration,web/web-fetch,filesystem/filesystem-access,browser_automation/playwright-mcp-server,browser_automation/browser-use-mcp-server,devtools/markitdown,devtools/serena"
+
+
+
+
+npx claude-code-templates@latest --agent development-team/ui-ux-designer,programming-languages/python-pro,development-tools/code-reviewer,expert-advisors/architect-review,development-tools/test-engineer,data-ai/ai-engineer,ai-specialists/task-decomposition-expert
+
+Agents:
+Ui Ux Designer
+development-team/ui-ux-designer
+🤖
+Python Pro
+programming-languages/python-pro
+🤖
+Code Reviewer
+development-tools/code-reviewer
+🤖
+Architect Review
+expert-advisors/architect-review
+🤖
+Test Engineer
+development-tools/test-engineer
+🤖
+Ai Engineer
+data-ai/ai-engineer
+🤖
+Task Decomposition Expert
+ai-specialists/task-decomposition-expert

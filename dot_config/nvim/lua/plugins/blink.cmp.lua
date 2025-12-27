@@ -49,6 +49,14 @@ return {
     sources = {
       default = { "lsp", "path", "snippets", "copilot", "ripgrep", "dadbod", "codecompanion" },
       providers = {
+        lsp = {
+          name = "LSP",
+          module = "blink.cmp.sources.lsp",
+          enabled = true,
+          kind = "LSP",
+          score_offset = 1000,
+        },
+
         -- Copilot source configuration
         copilot = {
           name = "copilot",
@@ -60,22 +68,32 @@ return {
         ripgrep = {
           module = "blink-ripgrep",
           name = "Ripgrep",
+          enabled = true,
           -- Options documented at: https://github.com/mikavilpas/blink-ripgrep.nvim
         },
         -- Database completion source
         dadbod = {
           name = "Dadbod",
           module = "vim_dadbod_completion.blink",
+          enabled = true,
+          score_offset = 500,
+        },
+        snippets = {
+          name = "Snippets",
+          module = "blink.cmp.sources.snippets",
+          kind = "Snippet",
+          enabled = true,
+          score_offset = 750,
         },
       },
-    },
 
-    -- (Default) Rust fuzzy matcher for typo resistance and significantly better performance
-    -- You may use a lua implementation instead by using `implementation = "lua"` or fallback to the lua implementation,
-    -- when the Rust fuzzy matcher is not available, by using `implementation = "prefer_rust"`
-    --
-    -- See the fuzzy documentation for more information
-    fuzzy = { implementation = "prefer_rust_with_warning" },
+      -- (Default) Rust fuzzy matcher for typo resistance and significantly better performance
+      -- You may use a lua implementation instead by using `implementation = "lua"` or fallback to the lua implementation,
+      -- when the Rust fuzzy matcher is not available, by using `implementation = "prefer_rust"`
+      --
+      -- See the fuzzy documentation for more information
+      fuzzy = { implementation = "prefer_rust_with_warning" },
+    },
+    opts_extend = { "sources.default" },
   },
-  opts_extend = { "sources.default" },
 }

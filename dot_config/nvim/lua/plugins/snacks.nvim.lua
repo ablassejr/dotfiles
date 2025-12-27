@@ -22,7 +22,6 @@ return {
 
           ---@diagnostic disable-next-line: missing-fields
           Snacks.scratch.open({
-            ft = "markdown",
             file = file,
           })
         end,

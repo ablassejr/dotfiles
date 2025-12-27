@@ -10,7 +10,7 @@ local lopt = vim.opt_local
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "*",
   callback = function()
-    if vim.bo.filetype == "markdown" then
+    if vim.bo.filetype == "markdown" or vim.bo.filetype == "python" then
       return
     end
     lopt.tabstop = 2

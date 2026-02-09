@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "paper-reviewer",
+  "owner": "astoreyai",
+  "repo": "claude-skills",
+  "path": "paper-reviewer",
+  "branch": "master",
+  "sha": "e7861c605fab7ead28b8aee7bade8c89f5bd3635",
+  "source": "manual"
+}

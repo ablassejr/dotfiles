@@ -273,8 +273,19 @@ esac
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
+# CLI completions
+if command -v pieces >/dev/null; then
+  eval "$(pieces completion zsh)"
+fi
+
 # Task Master aliases added on 12/25/2025
 alias tm='task-master'
 alias taskmaster='task-master'
 alias hamster='task-master'
 alias ham='task-master'
+alias oc='opencode'
+
+# opencode
+export PATH=/Users/Apple/.opencode/bin:$PATH
+
+alias claude-mem='bun "/Users/Apple/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs"'

@@ -113,6 +113,14 @@ fi
 [[ ":$PATH:" != *":$HOME/.local/bin:"* ]] && export PATH="$HOME/.local/bin:$PATH"
 [[ ":$PATH:" != *":/usr/local/bin:"* ]] && export PATH="/usr/local/bin:$PATH"
 
+# MacTeX / TeX Live (latexmk, pdflatex, dvipng, etc.)
+[[ ":$PATH:" != *":/Library/TeX/texbin:"* ]] && export PATH="/Library/TeX/texbin:$PATH"
+
+# Visual Studio Code CLI
+[[ ":$PATH:" != *":$HOME/Applications/Visual Studio Code.app/Contents/Resources/app/bin:"* ]] && \
+  [[ ":$PATH:" != *":/Applications/Visual Studio Code.app/Contents/Resources/app/bin:"* ]] && \
+  export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
+
 # Everything below is interactive-only.
 if [[ -o interactive ]]; then
   # Enable Powerlevel10k instant prompt. Keep this near the top of zsh init.
@@ -248,4 +256,3 @@ export CPPFLAGS="-I/opt/homebrew/opt/postgresql@15/include"
 
 # Added by Toolbox App
 export PATH="$PATH:/Users/Apple/Library/Application Support/JetBrains/Toolbox/scripts"
-

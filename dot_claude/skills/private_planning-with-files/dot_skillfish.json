@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "planning-with-files",
+  "owner": "pyinx",
+  "repo": "ceo-skills-plugin",
+  "path": "skills/planning-with-files",
+  "branch": "main",
+  "sha": "a881c9e7aef88e53e362259e400097570f32209b",
+  "source": "manual"
+}

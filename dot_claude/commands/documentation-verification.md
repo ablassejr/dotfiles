@@ -1,0 +1,1 @@
+Create a documentation review team. Use the available semantic search tools and mcps to comprehensively search the documentation, cross reference it with the codebase, and verify and/or update the documentation as needed.

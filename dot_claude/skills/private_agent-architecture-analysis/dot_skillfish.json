@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "agent-architecture-analysis",
+  "owner": "existential-birds",
+  "repo": "beagle",
+  "path": "plugins/beagle-analysis/skills/agent-architecture-analysis",
+  "branch": "main",
+  "sha": "c9dd1f6bfa88723f269dfc8946b0eeec39f3de67",
+  "source": "manual"
+}

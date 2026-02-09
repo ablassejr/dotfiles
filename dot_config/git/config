@@ -4,15 +4,19 @@
 	ci = commit
 	st = status
 [pull]
-	rebase = true
+	rebase = false
 [init]
 	defaultbranch = main
 [user]
 	name = Ablasse Kingcaid-Ouedraogo
 	email = ablassecode@outlook.com
+[diff]
+	tool = meld
 [credential "https://github.com"]
 	helper = 
-	helper = !/usr/bin/gh auth git-credential
+	helper = !/opt/local/bin/gh auth git-credential
 [credential "https://gist.github.com"]
 	helper = 
-	helper = !/usr/bin/gh auth git-credential
+	helper = !/opt/local/bin/gh auth git-credential
+[push]
+	autoSetupRemote = true

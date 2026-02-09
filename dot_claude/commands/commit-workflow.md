@@ -1,0 +1,1 @@
+Use parallel agent execution, vectorcode, and the github mcp server to analyze the uncommited changes in this repository and create multiple commits. They should be grouped by theme/task/purpose. You may split edits within the same file into multiple commits if certain edits fit certain themes more.

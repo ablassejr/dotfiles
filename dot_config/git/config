@@ -20,3 +20,6 @@
 	helper = !/opt/local/bin/gh auth git-credential
 [push]
 	autoSetupRemote = true
+	default = simple
+[credential]
+	helper = !/opt/local/bin/gh auth git-credential

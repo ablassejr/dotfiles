@@ -1,129 +1,46 @@
-### Added by Codeium. These lines cannot be automatically removed if modified
-if command -v termium > /dev/null 2>&1; then
-  eval "$(termium shell-hook show pre)"
-fi
-### End of Codeium integration
-# Added by Toolbox App
-# --- Aliases ---
-alias mkexec="sudo -S chmod +x"
-alias la="exa --long --sort modified --tree --level 3 | most"
-alias SUDO_PASS="lpass show --password 1279211307193658237OD"
-alias ll='ls -lh'
-alias gs='git status'
-alias ga='git add'
-alias gc='git commit'
-alias gp='git push'
-alias ce='chezmoi edit'
-alias ca='chezmoi apply'
-alias gmp='git magic -apm'
-alias clr='clear'
-alias hwsim='/home/draogo/Work/misc-projects/Nand2Tetris/Simulator/InstallDir/HardwareSimulator.sh'
-alias la="exa --long --tree --level 3"
-alias bashconfig="nvim ~/.bashrc"
-alias zshconfig="nvim ~/.zshrc"
-alias lmost="ls -la | most"
-alias mkexec="sudo -S chmod +x"
-alias jupyter-tui="source ~/.local/share/jupyter-tui/.venv/bin/activate && python ~/.local/share/jupyter-tui/main.py"
-alias savesession="hyprsession --mode save-and-exit && shutdown now"
-alias nvimc="NVIM_APPNAME=craftzdog/dotfiles-public/.config/nvim nvim"
-alias nvidec="NVIM_APPNAME=craftzdog/dotfiles-public/.config/nvim neovide"
-alias fzfrm="fzf | xargs -I {} rm {}"
-alias nvimm="NVIM_APPNAME=mimikun/dot_config/nvim nvim"
-alias nvidem="NVIM_APPNAME=mimikun/dotfiles/dot_config/nvim neovide"
-alias nvimp="NVIM_APPNAME=nvim-personal nvim"
-alias nvidep="NVIM_APPNAME=nvim-personal neovide"
-alias releasesudo="faillock --user \$(whoami) --reset"
-alias nvide=neovide
-alias nvimdir="nvim \$(find . -type d | fzf)"
-alias nvimfile="nvim \$(fzf)"
-alias nvidedir="nvide \$(find . -type d | fzf)"
-alias nvidefile="nvide \$(fzf)"
-alias codexfull="codex --search --sandbox danger-full-access --dangerously-bypass-approvals-and-sandbox"
-alias utar="tar -xf"
-# --- Environment Variables ---
-export ghosttyconfig=~/.config/ghostty/config
-export PATH=/home/draogo/.local/bin:/home/draogo/.zinit/polaris/bin:/home/draogo/.cargo/bin:/home/draogo/.local/share/../bin:/home/draogo/.local/share/mise/installs/node/25.1.0/bin:/home/draogo/.local/share/omarchy/bin/:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/draogo/.local/share/JetBrains/Toolbox/scripts:/home/draogo/.local/share/JetBrains/Toolbox/scripts:/opt/nvim-linux-x86_64/bin
-export PATH="$PATH:/home/draogo/.local/share/JetBrains/Toolbox/scripts"
-export MISE_SHELL=zsh
-export __MISE_ORIG_PATH="$PATH"
-export __MISE_ZSH_PRECMD_RUN=0
+# Shared POSIX-ish environment for shells that read ~/.profile.
 
-
-export SSH_AUTH_SOCK='/home/draogo/.config/Keeper Password Manager/keeper-ssh-agent.sock'
-
-
-export PATH="/home/draogo/.local/share/mise/shims:$PATH"
-
-. "$HOME/.local/share/../bin/env"
-
-. "$HOME/.local/share/../bin/env"
-# shellcheck shell=bash
-
-# =============================================================================
-#
-# Utility functions for zoxide.
-#
-
-# pwd based on the value of _ZO_RESOLVE_SYMLINKS.
-function __zoxide_pwd() {
-    \builtin pwd -L
+path_prepend() {
+  [ -d "$1" ] || return 0
+  case ":$PATH:" in
+    *":$1:"*) ;;
+    *) PATH="$1:$PATH" ;;
+  esac
 }
 
-# cd + custom logic based on the value of _ZO_ECHO.
-function __zoxide_cd() {
-    # shellcheck disable=SC2164
-    \builtin cd -- "$@"
+path_append() {
+  [ -d "$1" ] || return 0
+  case ":$PATH:" in
+    *":$1:"*) ;;
+    *) PATH="$PATH:$1" ;;
+  esac
 }
 
-# =============================================================================
-#
-# Hook configuration for zoxide.
-#
+path_prepend "$HOME/.local/bin"
+path_prepend "$HOME/bin"
+path_prepend "$HOME/.cargo/bin"
+path_prepend "$HOME/.bun/bin"
+path_prepend "$HOME/.opencode/bin"
+path_prepend "$HOME/.local/share/mise/shims"
+path_prepend "/opt/homebrew/bin"
+path_prepend "/opt/homebrew/sbin"
+path_prepend "/opt/local/bin"
+path_prepend "/opt/local/sbin"
+path_prepend "/opt/homebrew/opt/postgresql@15/bin"
+path_append "/Library/TeX/texbin"
+path_append "$HOME/.lmstudio/bin"
+path_append "$HOME/.maestro/bin"
+path_append "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
+path_append "$HOME/Library/Application Support/Coursier/bin"
+path_append "/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+path_append "/Applications/Obsidian.app/Contents/MacOS"
 
-# Hook to add new entries to the database.
-__zoxide_oldpwd="$(__zoxide_pwd)"
+export PATH
+export EDITOR="${EDITOR:-nvim}"
+export VISUAL="${VISUAL:-$EDITOR}"
 
-function __zoxide_hook() {
-    \builtin local -r retval="$?"
-    \builtin local pwd_tmp
-    pwd_tmp="$(__zoxide_pwd)"
-    if [[ ${__zoxide_oldpwd} != "${pwd_tmp}" ]]; then
-        __zoxide_oldpwd="${pwd_tmp}"
-        \command zoxide add -- "${__zoxide_oldpwd}"
-    fi
-    return "${retval}"
-}
-
-# Initialize hook.
-if [[ ${PROMPT_COMMAND:=} != *'__zoxide_hook'* ]]; then
-    PROMPT_COMMAND="__zoxide_hook;${PROMPT_COMMAND#;}"
+if [ -d "/Volumes/Ventoy/docs-mcp-server" ]; then
+  export DOCS_MCP_STORE_PATH="/Volumes/Ventoy/docs-mcp-server"
 fi
 
-# Report common issues.
-function __zoxide_doctor() {
-    [[ ${_ZO_DOCTOR:-1} -eq 0 ]] && return 0
-    # shellcheck disable=SC2199
-    [[ ${PROMPT_COMMAND[@]:-} == *'__zoxide_hook'* ]] && return 0
-    # shellcheck disable=SC2199
-    [[ ${__vsc_original_prompt_command[@]:-} == *'__zoxide_hook'* ]] && return 0
-
-    _ZO_DOCTOR=0
-    \builtin printf '%s\n' \
-        'zoxide: detected a possible configuration issue.' \
-        'Please ensure that zoxide is initialized right at the end of your shell configuration file (usually ~/.bashrc).' \
-        '' \
-        'If the issue persists, consider filing an issue at:' \
-        'https://github.com/ajeetdsouza/zoxide/issues' \
-        '' \
-        'Disable this message by setting _ZO_DOCTOR=0.' \
-        '' >&2
-}
-
-alias releasesudo='faillock --user draogo; faillock --user draogo --reset'
-alias claude-dev-mode='npx claude-code-templates@latest --setting=permissions/development-mode --yes'
-
-### Added by Codeium. These lines cannot be automatically removed if modified
-if command -v termium > /dev/null 2>&1; then
-  eval "$(termium shell-hook show post)"
-fi
-### End of Codeium integration
+unset -f path_prepend path_append

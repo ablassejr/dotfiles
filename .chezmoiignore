@@ -13,6 +13,13 @@
 .config/micro/backups/
 .config/micro/plug/**/repo.json
 
+# Fish runtime/plugin material generated from fish_plugins
+.config/fish/completions/
+.config/fish/conf.d/
+.config/fish/functions/
+.config/fish/private_fish_variables
+.config/fish/themes/
+
 # Hyprland configs (system-specific: monitors, NVIDIA, etc.)
 .config/hypr/hyprland.conf
 .config/hypr/monitors.conf
@@ -29,8 +36,13 @@
 .env.local
 
 # Cache and temporary files
+.DS_Store
 .cache/
 *.log
 *.swp
 *.swo
 *~
+
+# Reference clones should not be managed as live config.
+.config/craftzdog/
+.config/mimikun/

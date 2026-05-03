@@ -1,0 +1,11 @@
+.DS_Store
+
+# Never vendor cloned repository internals into dotfiles.
+**/.git/
+**/dot_git/
+
+# Local editor/runtime noise.
+*.log
+*.swp
+*.swo
+*~

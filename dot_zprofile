@@ -100,11 +100,27 @@ source_first_readable \
   /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
   /opt/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
+if [[ -r "$HOME/.zinit/bin/zinit.zsh" ]]; then
+  source "$HOME/.zinit/bin/zinit.zsh"
+
+  zinit_light_if_present() {
+    local repo="$1"
+    local plugins_dir="${ZINIT[PLUGINS_DIR]:-$HOME/.zinit/plugins}"
+    local plugin_dir="${plugins_dir}/${repo/\//---}"
+    [[ -d "$plugin_dir" ]] || return 1
+    zinit light "$repo"
+  }
+
+  GITSTATUS_LOG_LEVEL=ERROR
+  zinit_light_if_present romkatv/powerlevel10k
+fi
+
+[[ -f "$HOME/.p10k.zsh" ]] && source "$HOME/.p10k.zsh"
+unset -f zinit_light_if_present 2>/dev/null || true
+
 source_first_readable \
   /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
   /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
   /opt/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 unset -f source_first_readable
-
-[[ -f "$HOME/.p10k.zsh" ]] && source "$HOME/.p10k.zsh"

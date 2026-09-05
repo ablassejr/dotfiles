@@ -1,0 +1,6 @@
+# The whole global git config now lives in ~/.gitconfig, which git reads after
+# ~/.config/git/config and which `git config --global` writes to. Leaving the
+# XDG file in place would keep contributing keys that ~/.gitconfig does not
+# override. ~/.config/git/ignore is untouched: git reads it as the default
+# core.excludesFile.
+.config/git/config

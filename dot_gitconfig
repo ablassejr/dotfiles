@@ -1,0 +1,43 @@
+# Git resolves ~/.config/git/config first and ~/.gitconfig second, so this file
+# wins on every conflicting key. `git config --global`, `gh auth setup-git`, and
+# `git lfs install` all write here too, which is why the whole global config
+# lives in this one file. ~/.config/git/ignore stays separate because git reads
+# it as the default core.excludesFile.
+[user]
+	name = Ablasse Kingcaid-Ouedraogo
+	email = ablassecode@outlook.com
+[alias]
+	co = checkout
+	br = branch
+	ci = commit
+	st = status
+[init]
+	defaultBranch = main
+[pull]
+	rebase = false
+[push]
+	autoSetupRemote = true
+	default = simple
+[core]
+	pager = bat
+[diff]
+	tool = differ
+[merge]
+	tool = differ
+[pager]
+	diff = differ
+[difftool "critique"]
+	cmd = critique difftool \"$LOCAL\" \"$REMOTE\"
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+# Resolved from PATH so the same config works whether gh comes from Homebrew
+# or MacPorts. The empty helper clears any inherited chain first.
+[credential "https://github.com"]
+	helper =
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !gh auth git-credential

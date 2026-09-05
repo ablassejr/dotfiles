@@ -29,24 +29,19 @@ alias gp="git push"
 alias ce="chezmoi edit"
 alias ca="chezmoi apply"
 alias clr="clear"
-alias ghosttyconfig="$HOME/.config/ghostty/config"
+alias ghosttyconfig='${EDITOR:-nvim} "$HOME/.config/ghostty/config"'
 alias nvimp="NVIM_APPNAME=nvim-personal nvim"
-alias nvidep="NVIM_APPNAME=nvim-personal neovide"
-alias nvide="neovide"
 alias nvimdir='nvim "$(find . -type d | fzf)"'
 alias nvimfile='nvim "$(fzf)"'
-alias nvidedir='neovide "$(find . -type d | fzf)"'
-alias nvidefile='neovide "$(fzf)"'
 alias codexfull="codex --search --sandbox danger-full-access --dangerously-bypass-approvals-and-sandbox"
 alias YOLO="claude --permission-mode=bypassPermissions --"
 alias utar="tar -xf"
 alias tm="task-master"
 alias taskmaster="task-master"
 alias oc="opencode"
-alias claude-mem='bun "$HOME/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs"'
 alias docs-mcp-server="npx @arabold/docs-mcp-server@latest --resume"
-alias flink-connect:prod="ssh root@137.184.209.231"
-alias flink-connect:prod:ui="ssh -L 8081:127.0.0.1:8081 root@137.184.209.231"
+alias flink-connect:prod='ssh "${FLINK_PROD_USER}@${FLINK_PROD_IP}"'
+alias flink-connect:prod:ui='ssh -L 8081:127.0.0.1:8081 "${FLINK_PROD_USER}@${FLINK_PROD_IP}"'
 alias github-runner-1="ssh runner@161.35.126.21"
 alias matlab="/Applications/MATLAB_R2025b.app/bin/matlab"
 

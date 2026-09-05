@@ -2,3 +2,7 @@
 if [[ ! -o login && -r "$HOME/.zprofile" ]]; then
   source "$HOME/.zprofile"
 fi
+
+path() {
+  realpath "$1" | pbcopy
+}

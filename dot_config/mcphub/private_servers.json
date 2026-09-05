@@ -1,0 +1,125 @@
+{
+  "mcpServers": {
+    "browser_tools": {
+      "args": [
+        "@agentdeskai/browser-tools-mcp@latest"
+      ],
+      "autoApprove": [
+        "getConsoleLogs",
+        "getConsoleErrors",
+        "getNetworkErrors",
+        "getNetworkLogs",
+        "takeScreenshot",
+        "getSelectedElement",
+        "wipeLogs",
+        "runAccessibilityAudit",
+        "runPerformanceAudit",
+        "runSEOAudit",
+        "runNextJSAudit",
+        "runDebuggerMode",
+        "runAuditMode",
+        "runBestPracticesAudit"
+      ],
+      "command": "npx",
+      "disabled": false
+    },
+    "claude-context": {
+      "args": [
+        "-y",
+        "@zilliz/claude-context-mcp@latest"
+      ],
+      "autoApprove": [
+        "index_codebase",
+        "search_code",
+        "clear_index",
+        "get_indexing_status"
+      ],
+      "command": "/Users/Apple/.local/share/mise/shims/npx",
+      "disabled": true,
+      "env": {
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}"
+      }
+    },
+    "context7": {
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "autoApprove": [
+        "resolve-library-id",
+        "get-library-docs"
+      ],
+      "command": "npx",
+      "disabled": false,
+      "env": {}
+    },
+    "fetch": {
+      "args": [
+        "mcp-server-fetch"
+      ],
+      "autoApprove": [
+        "fetch"
+      ],
+      "command": "uvx"
+    },
+    "paper_search": {
+      "args": [
+        "paper-search-mcp"
+      ],
+      "autoApprove": [
+        "search_papers",
+        "download_paper"
+      ],
+      "command": "uvx",
+      "disabled": true
+    },
+    "playwright": {
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-playwright"
+      ],
+      "autoApprove": [
+        "playwright_navigate",
+        "playwright_screenshot",
+        "playwright_click",
+        "playwright_fill",
+        "playwright_select",
+        "playwright_hover",
+        "playwright_evaluate"
+      ],
+      "command": "npx",
+      "disabled": true
+    },
+    "postgres": {
+      "args": [],
+      "command": "/Users/Apple/.local/bin/postgres-mcp-clean",
+      "type": "stdio"
+    },
+    "puppeteer": {
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-puppeteer"
+      ],
+      "autoApprove": [
+        "puppeteer_navigate",
+        "puppeteer_screenshot",
+        "puppeteer_click",
+        "puppeteer_fill",
+        "puppeteer_select",
+        "puppeteer_hover",
+        "puppeteer_evaluate"
+      ],
+      "command": "npx"
+    },
+    "sequentialthinking": {
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "autoApprove": [
+        "sequentialthinking"
+      ],
+      "command": "npx"
+    }
+  }
+}

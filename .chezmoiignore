@@ -1,31 +1,20 @@
+# Repository documentation and tooling — these describe the dotfiles repo and
+# must not be rendered into the home directory.
+AGENTS.md
+WARP.md
+README.md
+Brewfile
+
 # Machine-specific configurations
 .mcp.json
 
 # Claude Code local configuration
 .claude_utilities/
+.claude/settings.local.json
 
 # Ghostty local settings
 .config/ghostty/.claude/settings.local.json
 .config/ghostty/config.backup
-
-# Micro editor runtime files
-.config/micro/buffers/
-.config/micro/backups/
-.config/micro/plug/**/repo.json
-
-# Fish runtime/plugin material generated from fish_plugins
-.config/fish/completions/
-.config/fish/conf.d/
-.config/fish/functions/
-.config/fish/private_fish_variables
-.config/fish/themes/
-
-# Hyprland configs (system-specific: monitors, NVIDIA, etc.)
-.config/hypr/hyprland.conf
-.config/hypr/monitors.conf
-.config/hypr/nvidia.conf
-.config/hypr/startup.conf
-.config/hypr/windowrules.conf
 
 # SSH keys and machine-specific SSH config
 .ssh/id_*
@@ -42,6 +31,40 @@
 *.swp
 *.swo
 *~
+
+# Deliberately unmanaged: credentials, machine state, and vendored trees.
+# These are per-machine and either hold live auth material or are refetched
+# by their own tooling.
+
+# chezmoi's own state, and the age private key that decrypts this repo.
+# The key must be copied to a new machine out of band, never committed.
+.config/chezmoi/
+
+# Claude Code state: MCP server registry, project history, onboarding flags.
+# Rewritten constantly and specific to one machine.
+.claude.json
+.claude/plugins/
+.claude/projects/
+.claude/todos/
+.claude/shell-snapshots/
+.claude/statsig/
+.claude/ide/
+
+# Tool auth state, refreshed by each tool's own login flow.
+.config/gh/
+.config/github-copilot/
+
+# Vendored or refetched trees, not configuration.
+.config/opencode/node_modules/
+.config/opencode/bun.lock
+.config/superpowers/
+.config/AWSVPNClient/
+.config/configstore/
+.config/simple-update-notifier/
+
+# Editor scratch state.
+.config/zed/conversations/
+.config/zed/settings_backup.json
 
 # Reference clones should not be managed as live config.
 .config/craftzdog/

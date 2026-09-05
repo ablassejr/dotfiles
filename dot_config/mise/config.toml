@@ -1,0 +1,24 @@
+[tools]
+bazelisk = "latest"
+bun = "latest"
+dotnet = "latest"
+go = "latest"
+infisical = "latest"
+java = "17"
+just = "latest"
+lua = "5.1"
+node = "20"
+"npm:oco" = "latest"
+"npm:windmill-cli" = "1.704.2"
+pdm = "2.26.7"
+pipx = "latest"
+postgres = "latest"
+python = "latest"
+rust = "latest"
+uv = "latest"
+[env]
+_.file = "~/.zshenv"
+
+[settings]
+experimental = true
+trusted_config_paths = ["~/.ccswitch/", "~/.codex/"]

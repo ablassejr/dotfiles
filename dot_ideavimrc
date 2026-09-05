@@ -1,0 +1,139 @@
+" .ideavimrc — mirrors ~/.config/nvim keymaps onto JetBrains IDE actions
+" Leader key (LazyVim default)
+let mapleader=" "
+
+" ─── Options ───────────────────────────────────────────────
+set scrolloff=8
+set incsearch
+set hlsearch
+set ignorecase
+set smartcase
+set number
+set relativenumber
+set ideajoin
+set idearefactormode=keep
+set clipboard+=unnamedplus
+
+" ─── IdeaVim Plugins ───────────────────────────────────────
+Plug 'machakann/vim-highlightedyank'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-surround'
+Plug 'justinmk/vim-sneak'
+Plug 'preservim/nerdtree'
+
+set sneak
+set which-key
+set easymotion
+set NERDTree
+set notimeout
+set timeoutlen=5000
+
+" ─── Navigation & Search (<leader>f, <leader>s) ───────────
+map <leader><leader> <Action>(SearchEverywhere)
+map <leader>ff <Action>(GotoFile)
+map <leader>fg <Action>(FindInPath)
+map <leader>fb <Action>(Switcher)
+map <leader>fr <Action>(RecentFiles)
+map <leader>fp <Action>(ManageRecentProjects)
+map <leader>ss <Action>(GotoSymbol)
+map <leader>sS <Action>(GotoSymbol)
+map <leader>sg <Action>(FindInPath)
+map <leader>sw <Action>(FindWordAtCaret)
+map <leader>/ <Action>(FindInPath)
+
+" ─── Buffers (<leader>b) ──────────────────────────────────
+map <leader>bf <Action>(Switcher)
+map <leader>bd <Action>(CloseContent)
+map <leader>bo <Action>(CloseAllEditorsButActive)
+map <leader>bn <Action>(NextTab)
+map <leader>bp <Action>(PreviousTab)
+map [b <Action>(PreviousTab)
+map ]b <Action>(NextTab)
+
+" ─── Windows & Splits (<leader>w) ─────────────────────────
+map <leader>wh <Action>(SplitVertically)
+map <leader>wj <Action>(SplitHorizontally)
+map <leader>wk <Action>(SplitHorizontally)
+map <leader>wl <Action>(SplitVertically)
+map <leader>wd <Action>(CloseContent)
+map <leader>wm <Action>(MaximizeEditorInSplit)
+map <leader>we <Action>(ChangeSplitOrientation)
+map <C-h> <Action>(PrevSplitter)
+map <C-l> <Action>(NextSplitter)
+map <C-j> <C-w>j
+map <C-k> <C-w>k
+
+" ─── Code / LSP (<leader>c) ───────────────────────────────
+map <leader>cr <Action>(RenameElement)
+map <leader>ca <Action>(ShowIntentionActions)
+map <leader>cf <Action>(ReformatCode)
+map <leader>co <Action>(OptimizeImports)
+map gd <Action>(GotoDeclaration)
+map gr <Action>(FindUsages)
+map gI <Action>(GotoImplementation)
+map gy <Action>(GotoTypeDeclaration)
+map K <Action>(QuickJavaDoc)
+map ]d <Action>(GotoNextError)
+map [d <Action>(GotoPreviousError)
+
+" ─── Diagnostics / Trouble (<leader>x) ────────────────────
+map <leader>xx <Action>(ProblemsView.ToolWindow)
+map <leader>xS <Action>(FileStructurePopup)
+map <leader>xl <Action>(ActivateProblemsViewToolWindow)
+
+" ─── Git (<leader>g) ──────────────────────────────────────
+map <leader>gg <Action>(ActivateVersionControlToolWindow)
+map <leader>gb <Action>(Annotate)
+map <leader>gB <Action>(Annotate)
+map <leader>gn <Action>(ActivateCommitToolWindow)
+map <leader>gp <Action>(ManageRecentProjects)
+map <leader>gr <Action>(Vcs.ShowTabbedFileHistory)
+map <leader>gd <Action>(Compare.SameVersion)
+map <leader>gH <Action>(WelcomeScreen.OpenProjects)
+map ]h <Action>(VcsShowNextChangeMarker)
+map [h <Action>(VcsShowPrevChangeMarker)
+
+" ─── Debugging (<leader>d) ────────────────────────────────
+map <leader>db <Action>(ToggleLineBreakpoint)
+map <leader>dB <Action>(ViewBreakpoints)
+map <leader>dc <Action>(Resume)
+map <leader>dq <Action>(Stop)
+map <leader>du <Action>(ActivateDebugToolWindow)
+map <F5> <Action>(Resume)
+map <F10> <Action>(StepOver)
+map <F11> <Action>(StepInto)
+map <S-F11> <Action>(StepOut)
+
+" ─── Testing (<leader>t) ──────────────────────────────────
+map <leader>tt <Action>(RunClass)
+map <leader>tT <Action>(RunAllTests)
+map <leader>tr <Action>(Run)
+map <leader>td <Action>(DebugClass)
+
+" ─── Task Runner / Overseer (<leader>o) ───────────────────
+map <leader>oo <Action>(ActivateRunToolWindow)
+map <leader>or <Action>(ChooseRunConfiguration)
+map <leader>oa <Action>(editRunConfigurations)
+map <leader>os <Action>(ActivateTerminalToolWindow)
+
+" ─── File Explorer (<leader>e) ────────────────────────────
+map <leader>e <Action>(ActivateProjectToolWindow)
+map <leader>E <Action>(SelectInProjectView)
+
+" ─── Refactoring ──────────────────────────────────────────
+map <leader>R <Action>(Refactorings.QuickListPopupAction)
+
+" ─── Misc ─────────────────────────────────────────────────
+map Q gq
+map U <C-r>
+map <leader>l <Action>(RecentProjectListGroup)
+map <leader>nh <Action>(HideAllWindows)
+
+" ─── Terminal ─────────────────────────────────────────────
+map <C-/> <Action>(ActivateTerminalToolWindow)
+map <C-_> <Action>(ActivateTerminalToolWindow)
+
+" ─── Treesitter-like selection ────────────────────────────
+map <CR> <Action>(EditorSelectWord)
+vmap <CR> <Action>(EditorSelectWord)
+vmap <BS> <Action>(EditorUnSelectWord)

@@ -1,0 +1,17 @@
+{{/*
+Bootstraps ~/.config/chezmoi/chezmoi.toml on a new machine via `chezmoi init`.
+The age identity (key.txt) is deliberately not in this repository and must be
+copied to the new machine out of band before `chezmoi apply` can decrypt.
+*/ -}}
+encryption = "age"
+
+[age]
+    identity = {{ joinPath .chezmoi.homeDir ".config/chezmoi/key.txt" | quote }}
+    recipient = "age1s0lm294nz5hj27gpzjjr9c6nh0q73zd97z7zm48vs5sfmn4lc9cs7j2fcp"
+
+[data]
+    # Homebrew installs under /opt/homebrew on Apple Silicon and /usr/local on
+    # Intel. Shell configs guard on directory existence, so this is only for
+    # templates that need the prefix literally.
+    brewPrefix = {{ if eq .chezmoi.arch "arm64" }}"/opt/homebrew"{{ else }}"/usr/local"{{ end }}
+    workDir = {{ joinPath .chezmoi.homeDir "Work" | quote }}

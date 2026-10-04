@@ -69,3 +69,13 @@ Brewfile
 # Reference clones should not be managed as live config.
 .config/craftzdog/
 .config/mimikun/
+
+# Skill runtime caches and embedded repository metadata.
+.codex/skills/**/__pycache__
+.codex/skills/**/__pycache__/**
+.agents/skills/**/__pycache__
+.agents/skills/**/__pycache__/**
+.claude/skills/**/__pycache__
+.claude/skills/**/__pycache__/**
+.agents/skills/**/.git
+.agents/skills/**/.git/**

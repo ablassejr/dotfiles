@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "verification-report",
+  "description": "Public output contract. Additive fields are allowed. INVALID projections may omit unavailable historical detail.",
+  "type": "object",
+  "properties": {
+    "verdict": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "INCOMPLETE",
+        "STALE",
+        "INVALID"
+      ]
+    },
+    "complete": {
+      "type": "boolean"
+    },
+    "code_mass": {
+      "type": "object",
+      "properties": {
+        "validated_removal_credit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        }
+      },
+      "required": [
+        "validated_removal_credit"
+      ],
+      "additionalProperties": true
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "verdict",
+    "complete",
+    "code_mass",
+    "gaps"
+  ],
+  "additionalProperties": true
+}

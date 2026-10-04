@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design Document"
+  short_description: "Explain proposed designs with purposeful visual media"
+  default_prompt: "Use $design-document to explain this proposed design in one concise visual document, autonomously creating and verifying useful media while making its rationale, behavior, tradeoffs, and open decisions clear."

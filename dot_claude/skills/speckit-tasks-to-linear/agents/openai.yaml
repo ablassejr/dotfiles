@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tasks to issues (compatibility)"
+  short_description: "Use the portable tasks to issues workflow"
+  default_prompt: "Use $speckit-tasks-to-linear to prepare or publish this approved task graph in the selected tracker."

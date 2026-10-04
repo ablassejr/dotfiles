@@ -1,0 +1,4 @@
+interface:
+  display_name: "Issue implementation designer (compatibility)"
+  short_description: "Use the portable issue implementation designer workflow"
+  default_prompt: "Use $linear-ticket-implementation-designer to design the implementation of this approved work item."

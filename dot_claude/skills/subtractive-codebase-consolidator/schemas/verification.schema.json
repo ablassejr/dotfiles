@@ -1,0 +1,452 @@
+{
+  "$defs": {
+    "Check": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "e2e",
+            "integration",
+            "behavior",
+            "analyzer"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "argv": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Argv",
+          "type": "array"
+        },
+        "version_argv": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Version Argv",
+          "type": "array"
+        },
+        "obligations": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Obligations",
+          "type": "array"
+        },
+        "seams": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Seams",
+          "type": "array"
+        },
+        "exercised_scope": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Exercised Scope",
+          "type": "array"
+        },
+        "skipped_scope": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Skipped Scope",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "argv",
+        "version_argv",
+        "obligations",
+        "seams",
+        "exercised_scope",
+        "skipped_scope"
+      ],
+      "title": "Check",
+      "type": "object"
+    },
+    "Execution": {
+      "additionalProperties": false,
+      "properties": {
+        "argv": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Argv",
+          "type": "array"
+        },
+        "exit_code": {
+          "title": "Exit Code",
+          "type": "integer"
+        },
+        "log": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Log",
+          "type": "string"
+        },
+        "log_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Log Hash",
+          "type": "string"
+        },
+        "timed_out": {
+          "title": "Timed Out",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "argv",
+        "exit_code",
+        "log",
+        "log_hash",
+        "timed_out"
+      ],
+      "title": "Execution",
+      "type": "object"
+    },
+    "Measurement": {
+      "additionalProperties": false,
+      "properties": {
+        "before": {
+          "minimum": 0,
+          "title": "Before",
+          "type": "integer"
+        },
+        "after": {
+          "minimum": 0,
+          "title": "After",
+          "type": "integer"
+        },
+        "added": {
+          "minimum": 0,
+          "title": "Added",
+          "type": "integer"
+        },
+        "removed": {
+          "minimum": 0,
+          "title": "Removed",
+          "type": "integer"
+        },
+        "net": {
+          "title": "Net",
+          "type": "integer"
+        },
+        "ratio_met": {
+          "title": "Ratio Met",
+          "type": "boolean"
+        },
+        "by_category": {
+          "additionalProperties": {
+            "additionalProperties": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "type": "object"
+          },
+          "title": "By Category",
+          "type": "object"
+        },
+        "file_counts": {
+          "additionalProperties": {
+            "additionalProperties": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "type": "object"
+          },
+          "title": "File Counts",
+          "type": "object"
+        },
+        "excluded_files": {
+          "additionalProperties": {
+            "items": {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Excluded Files",
+          "type": "object"
+        },
+        "moved_files": {
+          "items": {
+            "items": {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Moved Files",
+          "type": "array"
+        },
+        "counter_version": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Counter Version",
+          "type": "string"
+        },
+        "counter_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Counter Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "before",
+        "after",
+        "added",
+        "removed",
+        "net",
+        "ratio_met",
+        "by_category",
+        "file_counts",
+        "excluded_files",
+        "moved_files",
+        "counter_version",
+        "counter_hash"
+      ],
+      "title": "Measurement",
+      "type": "object"
+    },
+    "Receipt": {
+      "additionalProperties": false,
+      "properties": {
+        "subject": {
+          "enum": [
+            "baseline",
+            "candidate"
+          ],
+          "title": "Subject",
+          "type": "string"
+        },
+        "snapshot_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Hash",
+          "type": "string"
+        },
+        "check": {
+          "$ref": "#/$defs/Check"
+        },
+        "image": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Image",
+          "type": "string"
+        },
+        "rules_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Rules Hash",
+          "type": "string"
+        },
+        "version": {
+          "$ref": "#/$defs/Execution"
+        },
+        "execution": {
+          "$ref": "#/$defs/Execution"
+        }
+      },
+      "required": [
+        "subject",
+        "snapshot_hash",
+        "check",
+        "image",
+        "rules_hash",
+        "version",
+        "execution"
+      ],
+      "title": "Receipt",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "format_version": {
+      "const": 1,
+      "title": "Format Version",
+      "type": "integer"
+    },
+    "status": {
+      "enum": [
+        "VERIFIED",
+        "VERIFIED_WITH_EXCEPTIONS",
+        "INCOMPLETE",
+        "FAILED"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "patch_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Patch Hash",
+      "type": "string"
+    },
+    "baseline_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Baseline Hash",
+      "type": "string"
+    },
+    "candidate_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Candidate Hash",
+      "type": "string"
+    },
+    "inventory_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Inventory Hash",
+      "type": "string"
+    },
+    "basis_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Basis Hash",
+      "type": "string"
+    },
+    "checks_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Checks Hash",
+      "type": "string"
+    },
+    "engine_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Engine Hash",
+      "type": "string"
+    },
+    "runtime_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Runtime Hash",
+      "type": "string"
+    },
+    "measurement": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Measurement"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "receipts": {
+      "items": {
+        "$ref": "#/$defs/Receipt"
+      },
+      "title": "Receipts",
+      "type": "array"
+    },
+    "measurement_receipts": {
+      "items": {
+        "$ref": "#/$defs/Execution"
+      },
+      "title": "Measurement Receipts",
+      "type": "array"
+    },
+    "failures": {
+      "items": {
+        "minLength": 1,
+        "pattern": "\\S",
+        "type": "string"
+      },
+      "title": "Failures",
+      "type": "array"
+    },
+    "gaps": {
+      "items": {
+        "minLength": 1,
+        "pattern": "\\S",
+        "type": "string"
+      },
+      "title": "Gaps",
+      "type": "array"
+    },
+    "waivers": {
+      "items": {
+        "minLength": 1,
+        "pattern": "\\S",
+        "type": "string"
+      },
+      "title": "Waivers",
+      "type": "array"
+    },
+    "evidence_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Evidence Hash",
+      "type": "string"
+    },
+    "review_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Review Hash"
+    },
+    "exception_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Exception Hash"
+    }
+  },
+  "required": [
+    "format_version",
+    "status",
+    "patch_hash",
+    "baseline_hash",
+    "candidate_hash",
+    "inventory_hash",
+    "basis_hash",
+    "checks_hash",
+    "engine_hash",
+    "runtime_hash",
+    "measurement",
+    "receipts",
+    "measurement_receipts",
+    "failures",
+    "gaps",
+    "waivers",
+    "evidence_hash",
+    "review_hash",
+    "exception_hash"
+  ],
+  "title": "Verification",
+  "type": "object"
+}

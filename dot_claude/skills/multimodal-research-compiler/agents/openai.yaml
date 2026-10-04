@@ -1,0 +1,6 @@
+interface:
+  display_name: "Multimodal research compiler"
+  short_description: "Compile evidence into verified research projections"
+  default_prompt: "Use $multimodal-research-compiler to turn this question into a verified evidence model and the most useful outputs."
+policy:
+  allow_implicit_invocation: true

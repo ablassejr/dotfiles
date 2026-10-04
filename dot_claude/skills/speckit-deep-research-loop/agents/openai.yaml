@@ -1,0 +1,13 @@
+interface:
+  display_name: "Spec Kit deep research loop"
+  short_description: "Run the evidence-led deep research loop"
+  default_prompt: "Use $speckit-deep-research-loop to resolve the material factual gaps in this epic."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "exa"
+      description: "Search and fetch primary external evidence for unresolved factual gaps"
+      transport: "streamable_http"
+      url: "https://mcp.exa.ai/mcp"
+policy:
+  allow_implicit_invocation: true

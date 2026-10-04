@@ -1,0 +1,6 @@
+interface:
+  display_name: "Spec Kit context gathering"
+  short_description: "Gather grounded context for a Spec Kit epic"
+  default_prompt: "Use $speckit-context-gathering to collect and register the context for this epic."
+policy:
+  allow_implicit_invocation: true

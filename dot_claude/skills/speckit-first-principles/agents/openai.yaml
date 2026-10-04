@@ -1,0 +1,6 @@
+interface:
+  display_name: "Spec Kit first principles"
+  short_description: "Ground Spec Kit semantics in first principles"
+  default_prompt: "Use $speckit-first-principles to establish the first-principles semantic kernel for this epic."
+policy:
+  allow_implicit_invocation: true

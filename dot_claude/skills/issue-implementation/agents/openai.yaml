@@ -1,0 +1,4 @@
+interface:
+  display_name: "Issue implementation"
+  short_description: "Use the current project and chosen destinations"
+  default_prompt: "Use $issue-implementation to implement this approved work item within its PR boundary."

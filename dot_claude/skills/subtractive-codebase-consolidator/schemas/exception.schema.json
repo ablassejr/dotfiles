@@ -1,0 +1,49 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "patch_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Patch Hash",
+      "type": "string"
+    },
+    "waived": {
+      "items": {
+        "enum": [
+          "ratio",
+          "net_growth"
+        ],
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Waived",
+      "type": "array"
+    },
+    "source": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Source",
+      "type": "string"
+    },
+    "rationale": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Rationale",
+      "type": "string"
+    },
+    "expires": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Expires",
+      "type": "string"
+    }
+  },
+  "required": [
+    "patch_hash",
+    "waived",
+    "source",
+    "rationale",
+    "expires"
+  ],
+  "title": "ExceptionApproval",
+  "type": "object"
+}

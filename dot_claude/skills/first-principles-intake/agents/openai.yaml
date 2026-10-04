@@ -1,0 +1,7 @@
+interface:
+  display_name: "First-principles intake"
+  short_description: "Approve intent before implementation context"
+  default_prompt: "Use $first-principles-intake to establish and approve the outcome before loading implementation context."
+policy:
+  allow_implicit_invocation: true
+

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Implementation alignment"
+  short_description: "Check a proposal against approved intent"
+  default_prompt: "Use $first-principles-implementation-alignment to test this proposal against the approved basis."
+policy:
+  allow_implicit_invocation: true
+

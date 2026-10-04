@@ -1,0 +1,7 @@
+interface:
+  display_name: "Adversarial implementation review"
+  short_description: "Try to disprove an aligned proposal"
+  default_prompt: "Use $adversarial-implementation-review to attack this aligned implementation proposal before execution."
+policy:
+  allow_implicit_invocation: true
+

@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://specflow.local/schemas/code-mass-opportunity-map.schema.json",
+  "title": "Code Mass Opportunity Map",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "kind",
+    "opportunity_map_id",
+    "basis_ref",
+    "repository_baseline",
+    "responsibility_domain",
+    "candidates"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "kind": {"const": "epic-spec.code-mass-opportunity-map"},
+    "opportunity_map_id": {"type": "string", "pattern": "^CMO-.+-[0-9]{3}$"},
+    "basis_ref": {"type": "string", "minLength": 1, "pattern": "\\S"},
+    "repository_baseline": {"type": "string", "minLength": 1, "pattern": "\\S"},
+    "responsibility_domain": {"type": "string", "minLength": 1, "pattern": "\\S"},
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "candidate_id",
+          "responsibility",
+          "current_symbols",
+          "estimated_sloc",
+          "proposed_action",
+          "reason",
+          "evidence",
+          "provenance",
+          "behavior_affected",
+          "tests_affected",
+          "deletion_safety",
+          "grounding_record"
+        ],
+        "properties": {
+          "candidate_id": {"type": "string", "pattern": "^DEL-[0-9]{3}$"},
+          "responsibility": {"type": "string", "minLength": 1, "pattern": "\\S"},
+          "current_symbols": {"$ref": "#/$defs/nonemptyStringList"},
+          "estimated_sloc": {"type": "integer", "minimum": 0},
+          "proposed_action": {"enum": ["remove", "replace", "consolidate", "simplify"]},
+          "reason": {"type": "string", "minLength": 1, "pattern": "\\S"},
+          "evidence": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": {"$ref": "#/$defs/nonemptyStringList"}
+          },
+          "provenance": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["classification", "confidence"],
+            "properties": {
+              "classification": {"type": "string", "minLength": 1, "pattern": "\\S"},
+              "confidence": {"enum": ["EXPLICIT", "CORROBORATED", "INFERRED", "CONFLICTED", "UNKNOWN"]}
+            }
+          },
+          "behavior_affected": {"$ref": "#/$defs/stringList"},
+          "tests_affected": {"$ref": "#/$defs/stringList"},
+          "deletion_safety": {
+            "enum": [
+              "SAFE",
+              "SAFE_WITH_REPLACEMENT",
+              "REQUIRES_GROUNDING",
+              "BLOCKED_BY_CURRENT_CONSTRAINT",
+              "BEHAVIOR_STILL_REQUIRED",
+              "UNKNOWN"
+            ]
+          },
+          "grounding_record": {"type": ["string", "null"], "minLength": 1, "pattern": "\\S"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "stringList": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1, "pattern": "\\S"}
+    },
+    "nonemptyStringList": {
+      "allOf": [{"$ref": "#/$defs/stringList"}, {"minItems": 1}]
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "docker": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Docker",
+      "type": "string"
+    },
+    "socket": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Socket",
+      "type": "string"
+    },
+    "image": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "title": "Image",
+      "type": "string"
+    },
+    "platform": {
+      "enum": [
+        "linux/amd64",
+        "linux/arm64"
+      ],
+      "title": "Platform",
+      "type": "string"
+    },
+    "cloc": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Cloc",
+      "type": "string"
+    },
+    "cloc_library": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "pattern": "\\S",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cloc Library"
+    },
+    "timeout_seconds": {
+      "default": 120,
+      "maximum": 3600,
+      "minimum": 1,
+      "title": "Timeout Seconds",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "docker",
+    "socket",
+    "image",
+    "platform",
+    "cloc"
+  ],
+  "title": "Runtime",
+  "type": "object"
+}

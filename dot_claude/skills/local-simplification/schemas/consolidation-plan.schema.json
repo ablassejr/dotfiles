@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "consolidation-plan",
+  "description": "Public output contract. Additive fields are allowed. INVALID projections may omit unavailable historical detail.",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "plan_id": {
+      "type": "string"
+    },
+    "baseline_digest": {
+      "type": "string"
+    },
+    "assessment": {
+      "$ref": "assessment.schema.json"
+    },
+    "scope_paths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "prs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "pr_id": {
+            "type": "string"
+          },
+          "candidate_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "responsibility": {
+            "type": "string"
+          },
+          "target_owner": {
+            "type": "string"
+          },
+          "paths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "depends_on": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rollback": {
+            "type": "string"
+          },
+          "expected_added": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "expected_removed": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "status": {
+            "const": "PROPOSED"
+          }
+        },
+        "required": [
+          "pr_id",
+          "candidate_ids",
+          "responsibility",
+          "target_owner",
+          "paths",
+          "depends_on",
+          "rollback",
+          "expected_added",
+          "expected_removed",
+          "status"
+        ],
+        "additionalProperties": true
+      }
+    },
+    "expected_total": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "status": {
+      "const": "PROPOSED"
+    },
+    "policy": {
+      "type": "object"
+    },
+    "evidence_artifacts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "run_id",
+    "plan_id",
+    "baseline_digest",
+    "assessment",
+    "scope_paths",
+    "prs",
+    "expected_total",
+    "status",
+    "policy",
+    "evidence_artifacts"
+  ],
+  "additionalProperties": true
+}

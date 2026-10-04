@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "target-review",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "enum": [
+        1
+      ]
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "plan_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target_snapshot_digest": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reviewer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "candidate_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "conclusion": {
+            "type": "string",
+            "enum": [
+              "SUPPORTED",
+              "CONFLICTED",
+              "UNKNOWN"
+            ]
+          },
+          "covered_obligations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "consumers",
+                "dynamic_use",
+                "contracts",
+                "behavior",
+                "replacement",
+                "failure_paths",
+                "state_ownership",
+                "history",
+                "test_preservation"
+              ]
+            },
+            "minItems": 0,
+            "uniqueItems": true
+          },
+          "statement": {
+            "type": "string",
+            "minLength": 1
+          },
+          "unresolved": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0,
+            "uniqueItems": true
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "side": {
+                  "type": "string",
+                  "enum": [
+                    "base",
+                    "head"
+                  ]
+                },
+                "path": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "start": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "end": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "source_sha256": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "side",
+                "path",
+                "start",
+                "end",
+                "source_sha256",
+                "reason"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "candidate_id",
+          "conclusion",
+          "covered_obligations",
+          "statement",
+          "unresolved",
+          "evidence"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "schema_version",
+    "run_id",
+    "plan_id",
+    "target_snapshot_digest",
+    "reviewer",
+    "candidates"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,13 @@
+interface:
+  display_name: "Visual language compiler"
+  short_description: "Compile approved records into governed visuals"
+  default_prompt: "Use $visual-language-compiler to produce the approved formal and communicative architecture views."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "figma"
+      description: "Read, write, and visually verify governed Figma and FigJam projections"
+      transport: "streamable_http"
+      url: "https://mcp.figma.com/mcp"
+policy:
+  allow_implicit_invocation: true

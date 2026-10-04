@@ -1,0 +1,4 @@
+interface:
+  display_name: "Specification publisher"
+  short_description: "Use the current project and chosen destinations"
+  default_prompt: "Use $specification-publisher to prepare or publish this specification in its chosen documentation home."

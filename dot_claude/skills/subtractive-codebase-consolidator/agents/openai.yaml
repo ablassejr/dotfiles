@@ -1,0 +1,4 @@
+interface:
+  display_name: "Subtractive Codebase Consolidator"
+  short_description: "Reduce mechanisms and verify preserved behavior"
+  default_prompt: "Use $subtractive-codebase-consolidator to audit a local responsibility and identify justified reductions."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "End-of-Day Briefing"
+  short_description: "EOD updates showing before-and-after impact"
+  default_prompt: "Use $end-of-day-briefing to prepare a concise visual EOD update, autonomously showing today's before-and-after changes and their practical impact, with readiness, needed help, and the next known step."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Issue writing"
+  short_description: "Use the current project and chosen destinations"
+  default_prompt: "Use $issue-writing to write a self-contained issue for the selected destination."

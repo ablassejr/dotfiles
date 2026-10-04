@@ -1,0 +1,6 @@
+interface:
+  display_name: "Specification reconciliation"
+  short_description: "Verify as-built state and deep-clean artifacts"
+  default_prompt: "Use $specification-reconciliation to reconcile this completed epic and remove its temporary artifacts safely."
+policy:
+  allow_implicit_invocation: true

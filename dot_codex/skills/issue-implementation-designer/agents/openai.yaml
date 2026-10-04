@@ -1,0 +1,4 @@
+interface:
+  display_name: "Issue implementation designer"
+  short_description: "Use the current project and chosen destinations"
+  default_prompt: "Use $issue-implementation-designer to design the implementation of this approved work item."

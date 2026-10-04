@@ -1,0 +1,4 @@
+interface:
+  display_name: "Multimodal Design Overview"
+  short_description: "Visual design overviews with verified demonstrations"
+  default_prompt: "Use $multimodal-design-overview to autonomously explain this implemented system with concise visuals, capturing and verifying useful rrweb and asciinema demonstrations from current implementation evidence."

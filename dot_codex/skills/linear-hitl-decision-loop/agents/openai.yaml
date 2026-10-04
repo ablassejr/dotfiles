@@ -1,0 +1,4 @@
+interface:
+  display_name: "Human decision loop (compatibility)"
+  short_description: "Use the portable human decision loop workflow"
+  default_prompt: "Use $linear-hitl-decision-loop to resolve the next consequential decision in this project."

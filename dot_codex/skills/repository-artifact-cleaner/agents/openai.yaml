@@ -1,0 +1,6 @@
+interface:
+  display_name: "Repository artifact cleaner"
+  short_description: "Remove provenance-owned temporary artifacts"
+  default_prompt: "Use $repository-artifact-cleaner to remove this epic's reviewed temporary artifacts safely."
+policy:
+  allow_implicit_invocation: true

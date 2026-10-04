@@ -1,0 +1,40 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "baseline_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Baseline Hash",
+      "type": "string"
+    },
+    "source": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Source",
+      "type": "string"
+    },
+    "allowed_paths": {
+      "items": {
+        "minLength": 1,
+        "pattern": "\\S",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Allowed Paths",
+      "type": "array"
+    },
+    "expires": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Expires",
+      "type": "string"
+    }
+  },
+  "required": [
+    "baseline_hash",
+    "source",
+    "allowed_paths",
+    "expires"
+  ],
+  "title": "Authorization",
+  "type": "object"
+}

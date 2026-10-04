@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tasks to issues"
+  short_description: "Prepare work for the selected issue tracker"
+  default_prompt: "Use $tasks-to-issues to prepare or publish this approved task graph in the selected tracker."

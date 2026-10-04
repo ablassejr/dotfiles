@@ -1,0 +1,32 @@
+specification {
+  element researchElement
+}
+
+model {
+  subject = researchElement '<subject title>' {
+    metadata {
+      entity_id '<entity_id>'
+      requirements '<requirement_refs>'
+      decision '<decision_ref>'
+      research_release '<packet_id>'
+      model_digest '<model_digest>'
+      source_claims '<claim_refs>'
+    }
+  }
+
+  dependency = researchElement '<dependency title>' {
+    metadata {
+      entity_id '<dependency_entity_id>'
+      source_claims '<relationship_claim_refs>'
+    }
+  }
+
+  subject -> dependency '<verified relationship>'
+}
+
+views {
+  view researchView {
+    title '<view title>'
+    include *
+  }
+}

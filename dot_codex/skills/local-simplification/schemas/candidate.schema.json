@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "candidate",
+  "description": "Public output contract. Additive fields are allowed. INVALID projections may omit unavailable historical detail.",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "candidate_id": {
+            "type": "string"
+          },
+          "classification": {
+            "type": "string"
+          },
+          "owners": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "paths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "statement": {
+            "type": "string"
+          },
+          "safety": {
+            "enum": [
+              "UNKNOWN"
+            ]
+          },
+          "confidence": {
+            "type": "string"
+          },
+          "estimated_added": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "estimated_removed": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "unresolved": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "candidate_id",
+          "classification",
+          "owners",
+          "paths",
+          "statement",
+          "safety",
+          "confidence",
+          "estimated_added",
+          "estimated_removed",
+          "unresolved"
+        ],
+        "additionalProperties": true
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "run_id",
+    "candidates"
+  ],
+  "additionalProperties": true
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Issue context loader (compatibility)"
+  short_description: "Use the portable issue context loader workflow"
+  default_prompt: "Use $linear-ticket-context-loader to load the approved context for this work item."

@@ -1,0 +1,568 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Personal PR Review Assessment",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": [
+        "1"
+      ]
+    },
+    "analysis_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "host": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string",
+          "enum": [
+            "local",
+            "unverified"
+          ]
+        },
+        "isolation_evidence_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "model",
+        "isolation_evidence_id"
+      ],
+      "additionalProperties": false
+    },
+    "intent": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "assessed",
+            "unavailable"
+          ]
+        },
+        "explanation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "status",
+        "explanation",
+        "evidence_ids"
+      ],
+      "additionalProperties": false
+    },
+    "behavior_summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "coverage": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "reviewed",
+              "pending"
+            ]
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "explanation": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "path",
+          "status",
+          "evidence_ids",
+          "explanation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "lenses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "enum": [
+              "correctness",
+              "contracts",
+              "tests",
+              "architecture",
+              "security-reliability",
+              "infrastructure",
+              "debt"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "reviewed",
+              "not_applicable",
+              "pending"
+            ]
+          },
+          "explanation": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "name",
+          "status",
+          "explanation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "passed",
+              "failed",
+              "unavailable",
+              "not_applicable"
+            ]
+          },
+          "analysis_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "command": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "evidence_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "isolation_evidence_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "exit_code": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "explanation": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "name",
+          "status",
+          "analysis_id",
+          "command",
+          "provenance",
+          "evidence_id",
+          "isolation_evidence_id",
+          "exit_code",
+          "explanation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "checks_explanation": {
+      "type": "string",
+      "minLength": 1
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "defect",
+              "debt"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "root_cause": {
+            "type": "string",
+            "minLength": 1
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "BLOCKER",
+              "HIGH",
+              "MEDIUM",
+              "LOW",
+              "INFO"
+            ]
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "CERTAIN",
+              "HIGH",
+              "MEDIUM",
+              "LOW",
+              "CONFLICTED"
+            ]
+          },
+          "derivation": {
+            "type": "string",
+            "enum": [
+              "DETERMINISTIC",
+              "EXPLICIT_SOURCE",
+              "CORROBORATED_HISTORY",
+              "STRUCTURAL",
+              "BEHAVIORAL",
+              "SEMANTIC_ANALOGY",
+              "HISTORICAL_INFERENCE"
+            ]
+          },
+          "relationship": {
+            "type": "string",
+            "enum": [
+              "INTRODUCED",
+              "WORSENED",
+              "EXPOSED",
+              "UNLOCKED",
+              "TOUCHED_PREEXISTING",
+              "UNRELATED"
+            ]
+          },
+          "blocking": {
+            "type": "boolean"
+          },
+          "disposition": {
+            "type": "string",
+            "enum": [
+              "kept",
+              "discarded"
+            ]
+          },
+          "location": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "side": {
+                "type": "string",
+                "enum": [
+                  "base",
+                  "head"
+                ]
+              },
+              "start_line": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 1
+              },
+              "end_line": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 1
+              }
+            },
+            "required": [
+              "path",
+              "side",
+              "start_line",
+              "end_line"
+            ],
+            "additionalProperties": false
+          },
+          "claim": {
+            "type": "string",
+            "minLength": 1
+          },
+          "impact": {
+            "type": "string",
+            "minLength": 1
+          },
+          "recommendation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true,
+            "minItems": 1
+          },
+          "counterevidence_search": {
+            "type": "string",
+            "minLength": 1
+          },
+          "counterevidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "deletion": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "safe": {
+                "type": "boolean"
+              },
+              "replacement_evidence_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              },
+              "consumer_evidence_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              },
+              "compatibility_evidence_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              },
+              "unresolved_risks": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "required": [
+              "safe",
+              "replacement_evidence_ids",
+              "consumer_evidence_ids",
+              "compatibility_evidence_ids",
+              "unresolved_risks"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "root_cause",
+          "severity",
+          "confidence",
+          "derivation",
+          "relationship",
+          "blocking",
+          "disposition",
+          "location",
+          "claim",
+          "impact",
+          "recommendation",
+          "evidence_ids",
+          "counterevidence_search",
+          "counterevidence_ids",
+          "deletion"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "challenge": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "unavailable"
+          ]
+        },
+        "evidence_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reviewer": {
+          "type": "string"
+        },
+        "covered_finding_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "status",
+        "evidence_id",
+        "reviewer",
+        "covered_finding_ids"
+      ],
+      "additionalProperties": false
+    },
+    "code_mass": {
+      "type": "object",
+      "properties": {
+        "added": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "removed": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "evidence_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "method": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ratio_removed": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "ratio_added": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "ratio_basis": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "added",
+        "removed",
+        "evidence_id",
+        "method",
+        "ratio_removed",
+        "ratio_added",
+        "ratio_basis"
+      ],
+      "additionalProperties": false
+    },
+    "unresolved_questions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "analysis_id",
+    "host",
+    "intent",
+    "behavior_summary",
+    "coverage",
+    "lenses",
+    "checks",
+    "checks_explanation",
+    "findings",
+    "challenge",
+    "code_mass",
+    "unresolved_questions",
+    "limitations"
+  ],
+  "additionalProperties": false
+}

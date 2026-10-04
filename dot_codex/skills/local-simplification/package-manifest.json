@@ -1,0 +1,26 @@
+{
+  "name": "local-simplification",
+  "version": "1.0.1",
+  "files": {
+    "SKILL.md": "fa667f06f2081e8563c4e5ccdeee4abed2f9b40df7d9603ebe69dba06cf3fa16",
+    "references/accounting-and-evidence.md": "8d9712cfbb7d4cd679016cdcfb1463c594da9a73741dce6a9f78399ede49350a",
+    "references/command-contract.md": "a614eeafb4fd1cf18f62ba688ac5e7328899c40613a061dcda425343c9021674",
+    "references/validation.md": "adb9e0651a43d8b96db09b3cbb8043ef272d8ad92c4ebf462758373f4b150b54",
+    "schemas/assessment.schema.json": "0933b25b1f1cc2225e029085b57134b9b2baabb11090c37e51d598dcd1f642f0",
+    "schemas/candidate.schema.json": "5491b49228ca0127f120ac1a163ca24e98e573a1a6c1a218e367c182e1a9f324",
+    "schemas/consolidation-plan.schema.json": "07b03a33d5c7e42668674ab2ee3ad7a761af746a0b7651ba77e0a4af7d50599b",
+    "schemas/graph.schema.json": "fcac0efb20b33ef4d185e5c4a93db25aaeb59165a38dda9cda800a435a6d4727",
+    "schemas/target-review.schema.json": "c0236e2fc85ad47a7c4bfc6a7d372e4d5d0c28e2ab6916551f1aae7dcaa642ca",
+    "schemas/verification-report.schema.json": "465668878dbe777f7eb3c9644a974a42e04bc380565485c8849d2137814a8e35",
+    "scripts/local_simplification/__init__.py": "6ecb411b0f9355500709abd9506766c9adb7497e5381536682ce405ff910f76f",
+    "scripts/local_simplification/analysis.py": "0379c6399105f6934a72f942888db2ccfec450f9ae086a35c938e580bafdd71d",
+    "scripts/local_simplification/reports.py": "4a4c78e71cdf69f94e3117550819d88e0f7520adaa89d5ab078cdae22d50b4a8",
+    "scripts/local_simplification/runner.py": "22f404fa4f23c4b8085d07339f5183188d180b7457f4c6fdbc3c50b2283338a4",
+    "scripts/local_simplification/storage.py": "473afd9ab9cca51f1ef58aacdbb6edc216632efa2566208fe8ba31eb239d0b39",
+    "scripts/local_simplification/workflow.py": "8fed7f6839476ba05a6b8142ff82bc57a3ffcf8f348acea230d2c753786cc083",
+    "scripts/simplify.py": "5eb711e1a3f36a7d88ed020ad6b660880f403cbb1b4089baf8471a2ea1e058e9",
+    "tests/test_cli.py": "8143c9b89ed03f9d5ca23dd5d1cec3de4ba72036f0009e4bcec43bc09fb2cb6f"
+  },
+  "hash_algorithm": "sha256",
+  "manifest_excludes_itself": true
+}

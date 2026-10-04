@@ -1,0 +1,4 @@
+interface:
+  display_name: "Docs-Driven Execution"
+  short_description: "Index every relevant technology before planning"
+  default_prompt: "Use $docs-driven-execution to inventory and index all relevant technology documentation, then produce an autonomous execution plan."

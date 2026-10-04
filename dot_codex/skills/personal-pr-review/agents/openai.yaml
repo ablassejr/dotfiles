@@ -1,0 +1,4 @@
+interface:
+  display_name: "Personal PR Review"
+  short_description: "Local PR review and bounded technical-debt analysis"
+  default_prompt: "Use $personal-pr-review to review my local Git changes and write a local evidence-backed report."

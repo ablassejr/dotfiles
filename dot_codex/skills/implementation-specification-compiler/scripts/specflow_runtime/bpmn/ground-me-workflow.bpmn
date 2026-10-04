@@ -1,0 +1,225 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_ground-me-workflow" targetNamespace="https://specflow.local/workflows">
+  <bpmn:process id="ground-me-workflow" name="Ground Me evidence and understanding" isExecutable="true">
+    <bpmn:extensionElements>
+      <zeebe:versionTag value="v1" />
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="start" name="Start">
+      <bpmn:outgoing>flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="grounding_entry" name="Grounding Entry">
+      <bpmn:incoming>flow_1</bpmn:incoming>
+      <bpmn:incoming>flow_11</bpmn:incoming>
+      <bpmn:outgoing>flow_2</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:parallelGateway id="grounding_parallel" name="Grounding Parallel">
+      <bpmn:incoming>flow_2</bpmn:incoming>
+      <bpmn:outgoing>flow_3</bpmn:outgoing>
+      <bpmn:outgoing>flow_5</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:serviceTask id="ground_code" name="Ground Code">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.ground-code" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="ground-me" />
+          <zeebe:header key="phase" value="ground_code" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_3</bpmn:incoming>
+      <bpmn:outgoing>flow_4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="ground_lineage" name="Ground Lineage">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.ground-lineage" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="ground-me" />
+          <zeebe:header key="phase" value="ground_lineage" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_5</bpmn:incoming>
+      <bpmn:outgoing>flow_6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:parallelGateway id="grounding_join" name="Grounding Join">
+      <bpmn:incoming>flow_4</bpmn:incoming>
+      <bpmn:incoming>flow_6</bpmn:incoming>
+      <bpmn:outgoing>flow_7</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:serviceTask id="review_provenance" name="Review Provenance">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.review-provenance" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="ground-me" />
+          <zeebe:header key="phase" value="review_provenance" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_7</bpmn:incoming>
+      <bpmn:outgoing>flow_8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="ground_visuals" name="Ground Visuals">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.ground-visuals" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="ground-me" />
+          <zeebe:header key="phase" value="ground_visuals" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="visualBindingVariable" value="groundingBinding" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_8</bpmn:incoming>
+      <bpmn:outgoing>flow_9</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="confirm_understanding" name="Confirm Understanding">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:taskHeaders>
+          <zeebe:header key="bindingVariable" value="groundingBinding" />
+          <zeebe:header key="responseVariable" value="groundingResponse" />
+          <zeebe:header key="actions" value="aligned,aligned_and_answer,correction,deeper" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="visualBindingVariable" value="groundingBinding" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+          <zeebe:header key="combinedDecision" value="true" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_9</bpmn:incoming>
+      <bpmn:outgoing>flow_10</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="understanding_outcome" name="Understanding Outcome">
+      <bpmn:incoming>flow_10</bpmn:incoming>
+      <bpmn:outgoing>flow_11</bpmn:outgoing>
+      <bpmn:outgoing>flow_12</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="finalize_grounding" name="Finalize Grounding">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.finalize-grounding" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="ground-me" />
+          <zeebe:header key="phase" value="finalize_grounding" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_12</bpmn:incoming>
+      <bpmn:outgoing>flow_13</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="grounding_complete" name="Grounding Complete">
+      <bpmn:incoming>flow_13</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="flow_1" sourceRef="start" targetRef="grounding_entry" />
+    <bpmn:sequenceFlow id="flow_2" sourceRef="grounding_entry" targetRef="grounding_parallel" />
+    <bpmn:sequenceFlow id="flow_3" sourceRef="grounding_parallel" targetRef="ground_code" />
+    <bpmn:sequenceFlow id="flow_4" sourceRef="ground_code" targetRef="grounding_join" />
+    <bpmn:sequenceFlow id="flow_5" sourceRef="grounding_parallel" targetRef="ground_lineage" />
+    <bpmn:sequenceFlow id="flow_6" sourceRef="ground_lineage" targetRef="grounding_join" />
+    <bpmn:sequenceFlow id="flow_7" sourceRef="grounding_join" targetRef="review_provenance" />
+    <bpmn:sequenceFlow id="flow_8" sourceRef="review_provenance" targetRef="ground_visuals" />
+    <bpmn:sequenceFlow id="flow_9" sourceRef="ground_visuals" targetRef="confirm_understanding" />
+    <bpmn:sequenceFlow id="flow_10" sourceRef="confirm_understanding" targetRef="understanding_outcome" />
+    <bpmn:sequenceFlow id="flow_11" sourceRef="understanding_outcome" targetRef="grounding_entry">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= groundingResponse.action = "correction" or groundingResponse.action = "deeper"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_12" sourceRef="understanding_outcome" targetRef="finalize_grounding">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= groundingResponse.action = "aligned" or groundingResponse.action = "aligned_and_answer"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_13" sourceRef="finalize_grounding" targetRef="grounding_complete" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_ground-me-workflow">
+    <bpmndi:BPMNPlane id="BPMNPlane_ground-me-workflow" bpmnElement="ground-me-workflow">
+      <bpmndi:BPMNShape id="start_di" bpmnElement="start">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="grounding_entry_di" bpmnElement="grounding_entry" isMarkerVisible="true">
+        <dc:Bounds x="200" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="grounding_parallel_di" bpmnElement="grounding_parallel">
+        <dc:Bounds x="350" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ground_code_di" bpmnElement="ground_code">
+        <dc:Bounds x="475" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="grounding_join_di" bpmnElement="grounding_join">
+        <dc:Bounds x="650" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="review_provenance_di" bpmnElement="review_provenance">
+        <dc:Bounds x="775" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ground_visuals_di" bpmnElement="ground_visuals">
+        <dc:Bounds x="925" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="confirm_understanding_di" bpmnElement="confirm_understanding">
+        <dc:Bounds x="1075" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="understanding_outcome_di" bpmnElement="understanding_outcome" isMarkerVisible="true">
+        <dc:Bounds x="1250" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="finalize_grounding_di" bpmnElement="finalize_grounding">
+        <dc:Bounds x="1375" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="grounding_complete_di" bpmnElement="grounding_complete">
+        <dc:Bounds x="1557" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ground_lineage_di" bpmnElement="ground_lineage">
+        <dc:Bounds x="475" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_1_di" bpmnElement="flow_1">
+        <di:waypoint x="75.0" y="70.0" />
+        <di:waypoint x="225.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_2_di" bpmnElement="flow_2">
+        <di:waypoint x="225.0" y="70.0" />
+        <di:waypoint x="375.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_3_di" bpmnElement="flow_3">
+        <di:waypoint x="375.0" y="70.0" />
+        <di:waypoint x="525.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_4_di" bpmnElement="flow_4">
+        <di:waypoint x="525.0" y="70.0" />
+        <di:waypoint x="675.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_5_di" bpmnElement="flow_5">
+        <di:waypoint x="375.0" y="70.0" />
+        <di:waypoint x="525.0" y="210.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_6_di" bpmnElement="flow_6">
+        <di:waypoint x="525.0" y="210.0" />
+        <di:waypoint x="675.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_7_di" bpmnElement="flow_7">
+        <di:waypoint x="675.0" y="70.0" />
+        <di:waypoint x="825.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_8_di" bpmnElement="flow_8">
+        <di:waypoint x="825.0" y="70.0" />
+        <di:waypoint x="975.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_9_di" bpmnElement="flow_9">
+        <di:waypoint x="975.0" y="70.0" />
+        <di:waypoint x="1125.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_10_di" bpmnElement="flow_10">
+        <di:waypoint x="1125.0" y="70.0" />
+        <di:waypoint x="1275.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_11_di" bpmnElement="flow_11">
+        <di:waypoint x="1275.0" y="70.0" />
+        <di:waypoint x="225.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_12_di" bpmnElement="flow_12">
+        <di:waypoint x="1275.0" y="70.0" />
+        <di:waypoint x="1425.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_13_di" bpmnElement="flow_13">
+        <di:waypoint x="1425.0" y="70.0" />
+        <di:waypoint x="1575.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

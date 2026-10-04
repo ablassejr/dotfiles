@@ -1,0 +1,7 @@
+interface:
+  display_name: "Decision frontier manager"
+  short_description: "Select one unblocked material decision"
+  default_prompt: "Use $decision-frontier-manager to identify whether a consequential human choice remains and present only the next needed decision."
+policy:
+  allow_implicit_invocation: true
+

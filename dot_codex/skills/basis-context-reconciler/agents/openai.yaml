@@ -1,0 +1,7 @@
+interface:
+  display_name: "Basis-context reconciler"
+  short_description: "Classify current constraints against intent"
+  default_prompt: "Use $basis-context-reconciler to classify the discovered current state against this approved basis."
+policy:
+  allow_implicit_invocation: true
+

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Session Resume"
+  short_description: "Build a visual briefing of the active task"
+  default_prompt: "Use $session-resume to show what we were doing, why, where things stand, and what comes next."

@@ -1,0 +1,170 @@
+---
+name: general-workflow
+description: Use when starting non-trivial agent work that needs codebase context, external documentation, first-principles alignment, visual artifacts, ambiguous requirements, or a durable workflow before implementation.
+---
+
+# General Workflow
+
+Use this as the outer workflow for substantial Codex or Claude Code tasks. It
+coordinates superpowers, local context servers, codebase retrieval, external
+documentation, visual review, and first-principles alignment before
+implementation.
+
+## Start Here
+
+1. Invoke `using-superpowers` before any substantive response or action.
+   - In Claude Code, prefer the Skill tool: `Skill("using-superpowers")`.
+   - If slash commands are the active interface, use `/using-superpowers`.
+   - In Codex, load the `using-superpowers` skill through the available skill
+     mechanism and follow it directly.
+2. Interpret the user's request in operational terms: desired outcome, target
+   repo or files, constraints, success criteria, side effects, and whether edits
+   are expected.
+3. Clarify only blocking ambiguities. If the ambiguity is non-blocking, state the
+   assumption and proceed.
+
+## Visual Work
+
+If the request involves UI, layout, images, diagrams, charts, slides, design
+systems, visual polish, or any artifact whose quality depends on appearance:
+
+- Keep a browser view open for the work.
+- Show the user the visual state at every meaningful step: initial context,
+  alternatives, implementation progress, corrections, and final verification.
+- Prefer a local URL with screenshots or live browser interaction over text-only
+  descriptions.
+- Do not claim a visual result is correct until it has been viewed in the
+  browser.
+
+## Start Local Context Services
+
+Start or reuse both local services early. Do not spawn duplicates; inspect first.
+Record ports and logs so later corrections can reuse the same context.
+
+```bash
+WORKFLOW_RUN_DIR="${TMPDIR:-/tmp}/claude-general-workflow"
+mkdir -p "$WORKFLOW_RUN_DIR"
+
+pick_port() {
+  local port="$1"
+  while lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; do
+    port=$((port + 1))
+  done
+  printf '%s\n' "$port"
+}
+
+if ! pgrep -f '[d]ocs-mcp-server.*(server|--protocol|--port|--resume)' >/dev/null 2>&1; then
+  DOCS_MCP_PORT="$(pick_port "${DOCS_MCP_PORT:-6280}")"
+  nohup docs-mcp-server server --protocol http --host 127.0.0.1 --port "$DOCS_MCP_PORT" --resume \
+    >"$WORKFLOW_RUN_DIR/docs-mcp-server.log" 2>&1 &
+  printf '%s\n' "$DOCS_MCP_PORT" >"$WORKFLOW_RUN_DIR/docs-mcp-server.port"
+fi
+
+if ! pgrep -f '[r]epowise serve.*--no-ui' >/dev/null 2>&1; then
+  REPOWISE_PORT="$(pick_port "${REPOWISE_PORT:-6197}")"
+  nohup repowise serve --no-ui --host 127.0.0.1 --port "$REPOWISE_PORT" \
+    >"$WORKFLOW_RUN_DIR/repowise.log" 2>&1 &
+  printf '%s\n' "$REPOWISE_PORT" >"$WORKFLOW_RUN_DIR/repowise.port"
+fi
+```
+
+After startup, inspect the logs or process table. If either service fails, show
+the exact failure and use the best available fallback; do not silently continue
+as if local context is live.
+
+For `docs-mcp-server`, also check `docs-mcp-server config get app.storePath`
+when corpus contents matter. The active database path can vary by process and
+configuration.
+
+## Gather Codebase Context
+
+Use Repowise first for repository structure, wiki pages, symbols, graph, git,
+health, and dead-code context. Then use `claude-context` for complementary
+semantic code search or indexing.
+
+Suggested Repowise sequence:
+
+```bash
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+repowise status "$ROOT"
+repowise search --mode fulltext --limit 8 "<task keywords>" "$ROOT"
+repowise search --mode symbol --limit 8 "<symbol or feature name>" "$ROOT"
+repowise search --mode semantic --limit 8 "<intent or behavior>" "$ROOT"
+```
+
+If Repowise is not initialized and the task benefits from repo intelligence,
+initialize a low-side-effect index first:
+
+```bash
+repowise init "$ROOT" --index-only --mode fast -y
+```
+
+If files changed or stale context is suspected, consider:
+
+```bash
+repowise update "$ROOT" --index-only --dry-run
+repowise update "$ROOT" --index-only
+```
+
+Treat indexing and update commands as side effects. If they could surprise the
+user in the current repo, explain the effect before running them.
+
+Use the Repowise MCP server when available for equivalent repo lookups, and use
+`claude-context` after the Repowise pass to search implementation details that
+Repowise did not answer.
+
+## Gather External Context
+
+Use `docs-mcp-server` for library, framework, API, CLI, cloud, and standards
+documentation whenever current external facts could affect the answer. Prefer
+already indexed docs, then index or fetch primary docs when needed.
+
+Use Exa MCP when:
+
+- The needed source is not in `docs-mcp-server`.
+- The task needs broader web discovery.
+- The information is recent, niche, or not cleanly tied to one documentation
+  corpus.
+
+Prefer primary sources. Capture enough source detail to defend the decision, but
+do not turn context gathering into a literature review unless the task requires
+it.
+
+## Enter Brainstorming
+
+After the initial context-gathering pass, invoke `brainstorming`.
+
+- In Claude Code, prefer the Skill tool: `Skill("brainstorming")`.
+- If slash commands are the active interface, use `/brainstorming`.
+- In Codex, load the `brainstorming` skill through the available skill mechanism
+  and follow it directly.
+- Ground the task in first principles before design or implementation:
+  invariants, domain rules, user goals, system boundaries, failure modes,
+  tradeoffs, and what "done" actually means.
+- Align those first principles with the user. Ask one question at a time when
+  alignment is unclear.
+
+## Recheck Loop
+
+At every step, clarification, correction, and new learning, ask:
+
+- Would `docs-mcp-server` improve the external facts, API semantics, or
+  compatibility assumptions?
+- Would Repowise CLI, Repowise MCP, or `claude-context` reveal codebase
+  structure, side effects, ownership boundaries, hidden callers, or better
+  implementation options?
+- For visual work, should the browser view be updated before the next decision?
+
+Use the relevant context tool when the answer could change the decision. If the
+answer is clearly no, proceed and keep momentum.
+
+## Failure Handling
+
+- If a local service is missing, blocked, or unhealthy, report the exact command
+  and log path, then use the best available fallback.
+- If docs are missing from the local corpus, start the server, index or fetch the
+  necessary documentation when feasible, and tell the user when indexing may
+  take time.
+- If Repowise or `claude-context` disagree with direct file inspection, inspect
+  the files directly and treat tools as context, not authority.
+- Never skip visual browser verification for visual claims.

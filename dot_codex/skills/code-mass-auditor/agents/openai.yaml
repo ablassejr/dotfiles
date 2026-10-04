@@ -1,0 +1,6 @@
+interface:
+  display_name: "Code mass auditor"
+  short_description: "Verify code-mass evidence and exceptions"
+  default_prompt: "Use $code-mass-auditor to audit this pull request's planned budget or independently verify its committed measurements, removal credit, escrow, and Net Addition Gate evidence."
+policy:
+  allow_implicit_invocation: true

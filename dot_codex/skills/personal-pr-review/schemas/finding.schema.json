@@ -1,0 +1,220 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Adjudicated finding",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "defect",
+        "debt"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "root_cause": {
+      "type": "string",
+      "minLength": 1
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "BLOCKER",
+        "HIGH",
+        "MEDIUM",
+        "LOW",
+        "INFO"
+      ]
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "CERTAIN",
+        "HIGH",
+        "MEDIUM",
+        "LOW",
+        "CONFLICTED"
+      ]
+    },
+    "derivation": {
+      "type": "string",
+      "enum": [
+        "DETERMINISTIC",
+        "EXPLICIT_SOURCE",
+        "CORROBORATED_HISTORY",
+        "STRUCTURAL",
+        "BEHAVIORAL",
+        "SEMANTIC_ANALOGY",
+        "HISTORICAL_INFERENCE"
+      ]
+    },
+    "relationship": {
+      "type": "string",
+      "enum": [
+        "INTRODUCED",
+        "WORSENED",
+        "EXPOSED",
+        "UNLOCKED",
+        "TOUCHED_PREEXISTING",
+        "UNRELATED"
+      ]
+    },
+    "blocking": {
+      "type": "boolean"
+    },
+    "disposition": {
+      "type": "string",
+      "enum": [
+        "kept",
+        "discarded"
+      ]
+    },
+    "location": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "side": {
+          "type": "string",
+          "enum": [
+            "base",
+            "head"
+          ]
+        },
+        "start_line": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "end_line": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        }
+      },
+      "required": [
+        "path",
+        "side",
+        "start_line",
+        "end_line"
+      ],
+      "additionalProperties": false
+    },
+    "claim": {
+      "type": "string",
+      "minLength": 1
+    },
+    "impact": {
+      "type": "string",
+      "minLength": 1
+    },
+    "recommendation": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "counterevidence_search": {
+      "type": "string",
+      "minLength": 1
+    },
+    "counterevidence_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "deletion": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "safe": {
+          "type": "boolean"
+        },
+        "replacement_evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "consumer_evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "compatibility_evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "unresolved_risks": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "safe",
+        "replacement_evidence_ids",
+        "consumer_evidence_ids",
+        "compatibility_evidence_ids",
+        "unresolved_risks"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "id",
+    "kind",
+    "title",
+    "root_cause",
+    "severity",
+    "confidence",
+    "derivation",
+    "relationship",
+    "blocking",
+    "disposition",
+    "location",
+    "claim",
+    "impact",
+    "recommendation",
+    "evidence_ids",
+    "counterevidence_search",
+    "counterevidence_ids",
+    "deletion"
+  ],
+  "additionalProperties": false
+}

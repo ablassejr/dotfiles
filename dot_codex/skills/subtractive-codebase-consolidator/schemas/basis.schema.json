@@ -1,0 +1,102 @@
+{
+  "$defs": {
+    "Obligation": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "behavior": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Behavior",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "behavior"
+      ],
+      "title": "Obligation",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "authorization": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Authorization",
+      "type": "string"
+    },
+    "preserve": {
+      "items": {
+        "$ref": "#/$defs/Obligation"
+      },
+      "minItems": 1,
+      "title": "Preserve",
+      "type": "array"
+    },
+    "roots": {
+      "items": {
+        "minLength": 1,
+        "pattern": "\\S",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Roots",
+      "type": "array"
+    },
+    "variants": {
+      "items": {
+        "minLength": 1,
+        "pattern": "\\S",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Variants",
+      "type": "array"
+    },
+    "seams": {
+      "items": {
+        "minLength": 1,
+        "pattern": "\\S",
+        "type": "string"
+      },
+      "title": "Seams",
+      "type": "array"
+    },
+    "unknown_consumers": {
+      "items": {
+        "minLength": 1,
+        "pattern": "\\S",
+        "type": "string"
+      },
+      "title": "Unknown Consumers",
+      "type": "array"
+    },
+    "approved_retirements": {
+      "items": {
+        "minLength": 1,
+        "pattern": "\\S",
+        "type": "string"
+      },
+      "title": "Approved Retirements",
+      "type": "array"
+    }
+  },
+  "required": [
+    "authorization",
+    "preserve",
+    "roots",
+    "variants",
+    "seams",
+    "unknown_consumers",
+    "approved_retirements"
+  ],
+  "title": "Basis",
+  "type": "object"
+}

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Subtractive design analyzer"
+  short_description: "Find safe replacement and removal opportunities"
+  default_prompt: "Use $subtractive-design-analyzer to produce an evidence-grounded Code Mass Opportunity Map before implementation design."
+policy:
+  allow_implicit_invocation: true

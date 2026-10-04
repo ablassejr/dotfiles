@@ -1,0 +1,58 @@
+{
+  "$defs": {
+    "Rule": {
+      "additionalProperties": false,
+      "properties": {
+        "pattern": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Pattern",
+          "type": "string"
+        },
+        "category": {
+          "enum": [
+            "production",
+            "tests",
+            "tooling",
+            "configuration",
+            "support",
+            "generated",
+            "vendor",
+            "excluded",
+            "unclassified"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pattern",
+        "category",
+        "reason"
+      ],
+      "title": "Rule",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "rules": {
+      "items": {
+        "$ref": "#/$defs/Rule"
+      },
+      "title": "Rules",
+      "type": "array"
+    }
+  },
+  "required": [
+    "rules"
+  ],
+  "title": "Inventory",
+  "type": "object"
+}

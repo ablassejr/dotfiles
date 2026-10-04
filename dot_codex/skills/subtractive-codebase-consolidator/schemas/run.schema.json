@@ -1,0 +1,289 @@
+{
+  "$defs": {
+    "Basis": {
+      "additionalProperties": false,
+      "properties": {
+        "authorization": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Authorization",
+          "type": "string"
+        },
+        "preserve": {
+          "items": {
+            "$ref": "#/$defs/Obligation"
+          },
+          "minItems": 1,
+          "title": "Preserve",
+          "type": "array"
+        },
+        "roots": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Roots",
+          "type": "array"
+        },
+        "variants": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Variants",
+          "type": "array"
+        },
+        "seams": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Seams",
+          "type": "array"
+        },
+        "unknown_consumers": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Unknown Consumers",
+          "type": "array"
+        },
+        "approved_retirements": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Approved Retirements",
+          "type": "array"
+        }
+      },
+      "required": [
+        "authorization",
+        "preserve",
+        "roots",
+        "variants",
+        "seams",
+        "unknown_consumers",
+        "approved_retirements"
+      ],
+      "title": "Basis",
+      "type": "object"
+    },
+    "FileRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "file",
+            "symlink",
+            "special"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "mode": {
+          "minimum": 0,
+          "title": "Mode",
+          "type": "integer"
+        },
+        "size": {
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        },
+        "category": {
+          "enum": [
+            "production",
+            "tests",
+            "tooling",
+            "configuration",
+            "support",
+            "generated",
+            "vendor",
+            "excluded",
+            "unclassified"
+          ],
+          "title": "Category",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "sha256",
+        "mode",
+        "size",
+        "category"
+      ],
+      "title": "FileRecord",
+      "type": "object"
+    },
+    "Inventory": {
+      "additionalProperties": false,
+      "properties": {
+        "rules": {
+          "items": {
+            "$ref": "#/$defs/Rule"
+          },
+          "title": "Rules",
+          "type": "array"
+        }
+      },
+      "required": [
+        "rules"
+      ],
+      "title": "Inventory",
+      "type": "object"
+    },
+    "Obligation": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "behavior": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Behavior",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "behavior"
+      ],
+      "title": "Obligation",
+      "type": "object"
+    },
+    "Rule": {
+      "additionalProperties": false,
+      "properties": {
+        "pattern": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Pattern",
+          "type": "string"
+        },
+        "category": {
+          "enum": [
+            "production",
+            "tests",
+            "tooling",
+            "configuration",
+            "support",
+            "generated",
+            "vendor",
+            "excluded",
+            "unclassified"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pattern",
+        "category",
+        "reason"
+      ],
+      "title": "Rule",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "format_version": {
+      "const": 1,
+      "title": "Format Version",
+      "type": "integer"
+    },
+    "original": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Original",
+      "type": "string"
+    },
+    "original_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Original Hash",
+      "type": "string"
+    },
+    "metadata_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Metadata Hash",
+      "type": "string"
+    },
+    "baseline_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Baseline Hash",
+      "type": "string"
+    },
+    "inventory_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Inventory Hash",
+      "type": "string"
+    },
+    "basis_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Basis Hash",
+      "type": "string"
+    },
+    "inventory": {
+      "$ref": "#/$defs/Inventory"
+    },
+    "basis": {
+      "$ref": "#/$defs/Basis"
+    },
+    "files": {
+      "additionalProperties": {
+        "$ref": "#/$defs/FileRecord"
+      },
+      "title": "Files",
+      "type": "object"
+    },
+    "gaps": {
+      "items": {
+        "minLength": 1,
+        "pattern": "\\S",
+        "type": "string"
+      },
+      "title": "Gaps",
+      "type": "array"
+    }
+  },
+  "required": [
+    "format_version",
+    "original",
+    "original_hash",
+    "metadata_hash",
+    "baseline_hash",
+    "inventory_hash",
+    "basis_hash",
+    "inventory",
+    "basis",
+    "files",
+    "gaps"
+  ],
+  "title": "Run",
+  "type": "object"
+}

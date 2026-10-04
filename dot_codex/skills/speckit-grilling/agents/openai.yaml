@@ -1,0 +1,6 @@
+interface:
+  display_name: "Spec Kit grilling"
+  short_description: "Resolve the current human decision frontier"
+  default_prompt: "Use $speckit-grilling to resolve the next consequential human choice for this epic, if one remains."
+policy:
+  allow_implicit_invocation: true

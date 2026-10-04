@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Pinned local context packet",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "identity",
+    "depth",
+    "output",
+    "trees",
+    "changes",
+    "rename_method",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1"
+    },
+    "identity": {
+      "type": "object",
+      "required": [
+        "analysis_id",
+        "repository",
+        "mode",
+        "base_commit",
+        "head_commit",
+        "comparison_base",
+        "merge_bases",
+        "snapshot_digest",
+        "source_fingerprint",
+        "working_tree_clean"
+      ],
+      "properties": {
+        "analysis_id": {
+          "type": "string"
+        },
+        "repository": {
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "range",
+            "commit",
+            "staged",
+            "working-tree"
+          ]
+        },
+        "snapshot_digest": {
+          "type": "string"
+        },
+        "source_fingerprint": {
+          "type": "string"
+        },
+        "working_tree_clean": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "depth": {
+      "enum": [
+        "quick",
+        "standard",
+        "deep"
+      ]
+    },
+    "output": {
+      "type": "string"
+    },
+    "trees": {
+      "type": "object",
+      "required": [
+        "base",
+        "head"
+      ],
+      "properties": {
+        "base": {
+          "type": "object"
+        },
+        "head": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "status",
+          "old_path",
+          "new_path",
+          "binary",
+          "added_lines",
+          "removed_lines",
+          "hunks"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "binary": {
+            "type": "boolean"
+          },
+          "added_lines": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "removed_lines": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "rename_method": {
+      "enum": [
+        "exact-content",
+        "git-similarity"
+      ]
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

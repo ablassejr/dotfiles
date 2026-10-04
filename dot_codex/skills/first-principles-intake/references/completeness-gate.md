@@ -1,0 +1,7 @@
+# Completeness and approval gate
+
+A basis is ready for human approval when it identifies the desired state, underlying problem, irreducible new behavior, conceptual expected simplification, minimum sufficient change, at least one invariant, every known hard constraint with its source, forbidden tradeoffs, non-goals, success evidence, assumptions, and unresolved points. Empty arrays are valid where the schema permits and the user has established that no item exists; they must not conceal an unasked material question.
+
+Present the exact version as a concise explanation of the intended outcome, necessary behavior, boundaries, and success evidence, with material unknowns visible. Explain that this approval establishes originating intent and permits contextual design, then ask the named human to approve or correct it. Keep schema bookkeeping in internal evidence. This is the existing basis checkpoint, not approval of each field separately. Approval applies only to that content and version. Populate `approved_by` and `approved_at` only from an explicit approval; a successful write, validator result, or lack of objection is not approval.
+
+Before context loading, run `validate_basis.py` with `--require-approved`. A failure keeps the gate closed. If a later fact changes the basis, create and approve a successor rather than editing the earlier record. With `--previous`, the validator requires the same task reference, a distinct basis identifier, a one-step version increment, and a `supersedes_basis_id` link to the prior version.

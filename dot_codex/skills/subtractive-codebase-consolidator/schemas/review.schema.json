@@ -1,0 +1,62 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "patch_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Patch Hash",
+      "type": "string"
+    },
+    "reviewer": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Reviewer",
+      "type": "string"
+    },
+    "evidence_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Evidence Hash",
+      "type": "string"
+    },
+    "structural_improvement": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Structural Improvement",
+      "type": "string"
+    },
+    "counterexamples": {
+      "items": {
+        "minLength": 1,
+        "pattern": "\\S",
+        "type": "string"
+      },
+      "title": "Counterexamples",
+      "type": "array"
+    },
+    "unresolved": {
+      "items": {
+        "minLength": 1,
+        "pattern": "\\S",
+        "type": "string"
+      },
+      "title": "Unresolved",
+      "type": "array"
+    },
+    "anti_gaming": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Anti Gaming",
+      "type": "string"
+    }
+  },
+  "required": [
+    "patch_hash",
+    "reviewer",
+    "evidence_hash",
+    "structural_improvement",
+    "counterexamples",
+    "unresolved",
+    "anti_gaming"
+  ],
+  "title": "Review",
+  "type": "object"
+}

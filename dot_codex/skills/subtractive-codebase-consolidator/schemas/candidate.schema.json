@@ -1,0 +1,171 @@
+{
+  "$defs": {
+    "Candidate": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "responsibility": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Responsibility",
+          "type": "string"
+        },
+        "change": {
+          "enum": [
+            "retirement",
+            "consolidation",
+            "re-expression"
+          ],
+          "title": "Change",
+          "type": "string"
+        },
+        "canonical_owner": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Canonical Owner",
+          "type": "string"
+        },
+        "preserve": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Preserve",
+          "type": "array"
+        },
+        "consumers": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Consumers",
+          "type": "array"
+        },
+        "unknown_consumers": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Unknown Consumers",
+          "type": "array"
+        },
+        "retired_behavior": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Retired Behavior",
+          "type": "array"
+        },
+        "eliminate": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Eliminate",
+          "type": "array"
+        },
+        "removal_paths": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Removal Paths",
+          "type": "array"
+        },
+        "evidence": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "rationale": {
+          "enum": [
+            "still-required",
+            "replaceable",
+            "obsolete",
+            "temporary",
+            "accidental",
+            "unknown"
+          ],
+          "title": "Rationale",
+          "type": "string"
+        },
+        "depends_on": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Depends On",
+          "type": "array"
+        },
+        "target": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "responsibility",
+        "change",
+        "canonical_owner",
+        "preserve",
+        "consumers",
+        "unknown_consumers",
+        "retired_behavior",
+        "eliminate",
+        "removal_paths",
+        "evidence",
+        "rationale",
+        "depends_on",
+        "target"
+      ],
+      "title": "Candidate",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "baseline_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Baseline Hash",
+      "type": "string"
+    },
+    "candidates": {
+      "items": {
+        "$ref": "#/$defs/Candidate"
+      },
+      "minItems": 1,
+      "title": "Candidates",
+      "type": "array"
+    }
+  },
+  "required": [
+    "baseline_hash",
+    "candidates"
+  ],
+  "title": "CandidateSet",
+  "type": "object"
+}

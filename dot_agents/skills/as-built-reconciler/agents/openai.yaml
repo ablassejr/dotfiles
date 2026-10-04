@@ -1,0 +1,13 @@
+interface:
+  display_name: "As-built reconciler"
+  short_description: "Reconcile merged behavior into canonical records"
+  default_prompt: "Use $as-built-reconciler to verify and publish the as-built state of this epic."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "figma"
+      description: "Update and visually verify affected governed projections"
+      transport: "streamable_http"
+      url: "https://mcp.figma.com/mcp"
+policy:
+  allow_implicit_invocation: true

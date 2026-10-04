@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.skills/multimodal-research-compiler/claim.schema.json",
+  "title": "Research Claim",
+  "type": "object",
+  "required": ["claim_id", "statement", "claim_type", "status", "confidence"],
+  "properties": {
+    "claim_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"},
+    "statement": {"type": "string", "minLength": 1},
+    "claim_type": {"type": "string", "minLength": 1},
+    "materiality": {"enum": ["blocking", "material", "nonblocking"]},
+    "status": {"enum": ["supported", "inferred", "conflicted", "unresolved", "rejected"]},
+    "support": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_ref", "evidence_type"],
+        "properties": {
+          "source_ref": {"type": "string", "minLength": 1},
+          "evidence_type": {
+            "enum": ["EXPLICIT", "CORROBORATED", "STRUCTURALLY_DERIVED", "CHRONOLOGICALLY_INFERRED", "BEHAVIORALLY_INFERRED", "CONFLICTED", "UNKNOWN"]
+          },
+          "excerpt_ref": {"type": "string"},
+          "note": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "scope": {"type": "object"},
+    "confidence": {"enum": ["single_source", "corroborated", "conflicted", "unknown"]},
+    "claim_key": {"type": "string"},
+    "normalized_value": {},
+    "contradictions": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "contradicts": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "implications": {"type": "array", "items": {"type": "string"}},
+    "supports": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+  },
+  "additionalProperties": true
+}

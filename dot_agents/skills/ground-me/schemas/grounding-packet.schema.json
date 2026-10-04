@@ -1,0 +1,727 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://specflow.local/schemas/grounding-packet.schema.json",
+  "title": "Grounding Packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "kind",
+    "grounding_id",
+    "mode",
+    "triggering_decision",
+    "basis_ref",
+    "target",
+    "current_state",
+    "source_coverage",
+    "decision_lineage",
+    "explicit_rationale",
+    "inferred_rationale",
+    "constraints",
+    "contradictions",
+    "classification",
+    "confidence",
+    "timeline",
+    "visuals",
+    "source_excerpts",
+    "decision_implications",
+    "revised_options",
+    "deletion_safety",
+    "understanding",
+    "decision_outcome",
+    "persistence"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 2
+    },
+    "kind": {
+      "const": "epic-spec.grounding-packet"
+    },
+    "grounding_id": {
+      "type": "string",
+      "pattern": "^GRD-.+-[0-9]{3}$"
+    },
+    "mode": {
+      "enum": [
+        "integrated",
+        "standalone"
+      ]
+    },
+    "triggering_decision": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "basis_ref": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "identifier",
+        "visual_requirement"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "identifier": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "visual_requirement": {
+          "enum": [
+            "none",
+            "architecture",
+            "interaction"
+          ]
+        }
+      }
+    },
+    "current_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "summary",
+        "symbols",
+        "tests",
+        "contracts",
+        "consumers",
+        "dependencies",
+        "affected_surfaces"
+      ],
+      "properties": {
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "symbols": {
+          "$ref": "#/$defs/stringList"
+        },
+        "tests": {
+          "$ref": "#/$defs/stringList"
+        },
+        "contracts": {
+          "$ref": "#/$defs/stringList"
+        },
+        "consumers": {
+          "$ref": "#/$defs/stringList"
+        },
+        "dependencies": {
+          "$ref": "#/$defs/stringList"
+        },
+        "affected_surfaces": {
+          "$ref": "#/$defs/stringList"
+        }
+      }
+    },
+    "source_coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_state",
+        "git",
+        "pull_request",
+        "semantic",
+        "external"
+      ],
+      "properties": {
+        "current_state": {
+          "$ref": "#/$defs/sourceCoverage"
+        },
+        "git": {
+          "$ref": "#/$defs/sourceCoverage"
+        },
+        "pull_request": {
+          "$ref": "#/$defs/sourceCoverage"
+        },
+        "linear": {
+          "$ref": "#/$defs/sourceCoverage",
+          "description": "Legacy source-coverage field accepted for compatibility."
+        },
+        "semantic": {
+          "$ref": "#/$defs/sourceCoverage"
+        },
+        "external": {
+          "$ref": "#/$defs/sourceCoverage"
+        },
+        "issues": {
+          "$ref": "#/$defs/sourceCoverage",
+          "description": "Evidence from the selected issue tracker or portable work records."
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "issues"
+          ]
+        },
+        {
+          "required": [
+            "linear"
+          ]
+        }
+      ]
+    },
+    "decision_lineage": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_type",
+          "source_ref",
+          "relationship"
+        ],
+        "properties": {
+          "source_type": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "source_ref": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "relationship": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          }
+        }
+      }
+    },
+    "explicit_rationale": {
+      "$ref": "#/$defs/stringList"
+    },
+    "inferred_rationale": {
+      "$ref": "#/$defs/stringList"
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current",
+        "expired",
+        "uncertain"
+      ],
+      "properties": {
+        "current": {
+          "$ref": "#/$defs/stringList"
+        },
+        "expired": {
+          "$ref": "#/$defs/stringList"
+        },
+        "uncertain": {
+          "$ref": "#/$defs/stringList"
+        }
+      }
+    },
+    "contradictions": {
+      "$ref": "#/$defs/stringList"
+    },
+    "classification": {
+      "enum": [
+        "INTENTIONAL_AND_CURRENT",
+        "INTENTIONAL_BUT_POSSIBLY_OBSOLETE",
+        "INTENTIONAL_BUT_OBSOLETE",
+        "TEMPORARY_WORKAROUND",
+        "CONSTRAINT_DERIVED",
+        "EMERGENT_OR_INCREMENTAL",
+        "ACCIDENTAL",
+        "POST_HOC_DOCUMENTED",
+        "CONFLICTED",
+        "UNKNOWN"
+      ]
+    },
+    "confidence": {
+      "enum": [
+        "EXPLICIT",
+        "CORROBORATED",
+        "INFERRED",
+        "CONFLICTED",
+        "UNKNOWN"
+      ]
+    },
+    "timeline": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "observed_at",
+          "event",
+          "source_refs"
+        ],
+        "properties": {
+          "observed_at": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "event": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "source_refs": {
+            "$ref": "#/$defs/nonemptyStringList"
+          }
+        }
+      }
+    },
+    "visuals": {
+      "type": "array",
+      "items": {
+        "allOf": [
+          {
+            "$ref": "visual.schema.json"
+          },
+          {
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "source_excerpts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_ref",
+          "excerpt",
+          "evidence_level"
+        ],
+        "properties": {
+          "source_ref": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "excerpt": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "evidence_level": {
+            "enum": [
+              "EXPLICIT",
+              "CORROBORATED",
+              "INFERRED",
+              "CONFLICTED",
+              "UNKNOWN"
+            ]
+          }
+        }
+      }
+    },
+    "decision_implications": {
+      "$ref": "#/$defs/stringList"
+    },
+    "revised_options": {
+      "$ref": "#/$defs/stringList"
+    },
+    "deletion_safety": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/deletionSafety"
+        }
+      ]
+    },
+    "understanding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "confirmed_by"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "pending",
+            "confirmed",
+            "corrected",
+            "ground_deeper"
+          ]
+        },
+        "confirmed_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "decision_outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "resume_decision",
+        "invalidation_reason"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "unresolved",
+            "question_invalidated"
+          ]
+        },
+        "resume_decision": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "invalidation_reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "persistence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "normalized_destination",
+        "raw_workspace_disposition",
+        "repository_artifacts"
+      ],
+      "properties": {
+        "normalized_destination": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Chosen authoritative home for normalized evidence, which may be repository documentation."
+        },
+        "raw_workspace_disposition": {
+          "const": "ephemeral"
+        },
+        "repository_artifacts": {
+          "type": "array",
+          "maxItems": 0,
+          "description": "Raw temporary Ground Me artifacts only; canonical normalized repository documentation is not raw scratch output."
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "target": {
+            "properties": {
+              "type": {
+                "const": "deletion_candidate"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        },
+        "required": [
+          "target"
+        ]
+      },
+      "then": {
+        "properties": {
+          "deletion_safety": {
+            "$ref": "#/$defs/deletionSafety"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "deletion_safety": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "stringList": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "\\S"
+      }
+    },
+    "nonemptyStringList": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/stringList"
+        },
+        {
+          "minItems": 1
+        }
+      ]
+    },
+    "sourceCoverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "refs"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "found",
+            "searched_not_found",
+            "unavailable",
+            "not_applicable"
+          ]
+        },
+        "refs": {
+          "$ref": "#/$defs/stringList"
+        }
+      }
+    },
+    "deletionSafety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "introduced_by",
+        "original_reason",
+        "original_constraint",
+        "current_replacement",
+        "deletion_recommendation",
+        "required_verification",
+        "removal_credit"
+      ],
+      "properties": {
+        "introduced_by": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "commit",
+            "pull_request"
+          ],
+          "properties": {
+            "commit": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "pull_request": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "linear_issue": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1,
+              "pattern": "\\S",
+              "description": "Legacy issue-provenance field accepted for compatibility."
+            },
+            "issue": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          },
+          "anyOf": [
+            {
+              "required": [
+                "commit"
+              ],
+              "properties": {
+                "commit": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "required": [
+                "pull_request"
+              ],
+              "properties": {
+                "pull_request": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "required": [
+                "linear_issue"
+              ],
+              "properties": {
+                "linear_issue": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "required": [
+                "issue"
+              ],
+              "properties": {
+                "issue": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "original_reason": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "statement"
+          ],
+          "properties": {
+            "statement": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          }
+        },
+        "original_constraint": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "statement"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "CURRENT",
+                "EXPIRED",
+                "UNCERTAIN",
+                "UNKNOWN"
+              ]
+            },
+            "statement": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          }
+        },
+        "current_replacement": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "symbol",
+            "verified_by"
+          ],
+          "properties": {
+            "symbol": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "verified_by": {
+              "$ref": "#/$defs/stringList"
+            }
+          }
+        },
+        "deletion_recommendation": {
+          "enum": [
+            "SAFE",
+            "SAFE_WITH_REPLACEMENT",
+            "REQUIRES_GROUNDING",
+            "BLOCKED_BY_CURRENT_CONSTRAINT",
+            "BEHAVIOR_STILL_REQUIRED",
+            "UNKNOWN"
+          ]
+        },
+        "required_verification": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/stringList"
+            },
+            {
+              "minItems": 1
+            }
+          ]
+        },
+        "removal_credit": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "confirmed_by"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "PROVISIONAL",
+                "VALIDATED",
+                "REJECTED"
+              ]
+            },
+            "confirmed_by": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          }
+        }
+      }
+    }
+  }
+}

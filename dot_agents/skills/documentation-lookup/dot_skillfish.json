@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "documentation-lookup",
+  "owner": "upstash",
+  "repo": "context7",
+  "path": "plugins/claude/context7/skills/documentation-lookup",
+  "branch": "master",
+  "sha": "4aedd1bbd79f085458a06b097fbc8bba9194a310",
+  "source": "manual"
+}

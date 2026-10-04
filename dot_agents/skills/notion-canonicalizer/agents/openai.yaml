@@ -1,0 +1,4 @@
+interface:
+  display_name: "Specification publisher (compatibility)"
+  short_description: "Use the portable specification publisher workflow"
+  default_prompt: "Use $notion-canonicalizer to prepare or publish this specification in its chosen documentation home."

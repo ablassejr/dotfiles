@@ -1,0 +1,6 @@
+interface:
+  display_name: "Specification research loop"
+  short_description: "Resolve evidence gaps without deciding values"
+  default_prompt: "Use $specification-research-loop to resolve the material factual gaps in this epic."
+policy:
+  allow_implicit_invocation: true

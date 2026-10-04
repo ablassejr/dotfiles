@@ -1,0 +1,6 @@
+interface:
+  display_name: "Spec Kit autonomous research gate"
+  short_description: "Route unresolved evidence at the research gate"
+  default_prompt: "Use $speckit-autonomous-research-gate to route the current research state."
+policy:
+  allow_implicit_invocation: true

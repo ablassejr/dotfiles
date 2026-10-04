@@ -1,0 +1,27 @@
+frame:
+  view_id: <view_id>
+  research_release: <packet_id>
+  model_digest: <model_digest>
+  basis_ref: <basis_ref>
+  decision_ref: <decision_ref>
+  source_claims:
+    - <claim_id>
+  header:
+    question: <decision question>
+    recommendation: <recommendation>
+    confidence: <confidence>
+  panels:
+    current_state:
+      claim_refs:
+        - <current-state claim id>
+    governing_forces:
+      basis_refs:
+        - <goal or invariant id>
+    recommended_state:
+      claim_refs:
+        - <target-state claim id>
+      deletion_refs:
+        - <deletion candidate id>
+  outstanding_human_decision: <decision id or none>
+  verification:
+    status: PENDING

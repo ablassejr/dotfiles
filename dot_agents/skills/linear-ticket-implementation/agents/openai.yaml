@@ -1,0 +1,4 @@
+interface:
+  display_name: "Issue implementation (compatibility)"
+  short_description: "Use the portable issue implementation workflow"
+  default_prompt: "Use $linear-ticket-implementation to implement this approved work item within its PR boundary."

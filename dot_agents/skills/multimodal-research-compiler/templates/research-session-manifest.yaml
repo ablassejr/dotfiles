@@ -1,0 +1,19 @@
+research_session:
+  request_id: <request_id>
+  current_release: <packet_id>
+  phase: <phase>
+  root_question: <question_id>
+  completed_questions: []
+  unresolved_questions: []
+  source_snapshot:
+    repository_commit: <commit or not-applicable>
+    specification_release: <release or not-applicable>
+    issue_revision: <revision or not-applicable>
+    architecture_model_revision: <revision or not-applicable>
+    documentation_versions: {}
+  evidence_graph_version: 1
+  model_digest: <model_digest>
+  outputs: {}
+  next_action:
+    type: <action type>
+    target_ref: <question, decision, or stage reference>

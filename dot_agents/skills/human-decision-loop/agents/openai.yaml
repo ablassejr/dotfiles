@@ -1,0 +1,4 @@
+interface:
+  display_name: "Human decision loop"
+  short_description: "Use the current project and chosen destinations"
+  default_prompt: "Use $human-decision-loop to resolve the next consequential decision in this project."

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.skills/multimodal-research-compiler/research-session.schema.json",
+  "title": "Research Session Manifest",
+  "type": "object",
+  "required": ["research_session"],
+  "properties": {
+    "research_session": {
+      "type": "object",
+      "required": ["request_id", "phase", "root_question", "source_snapshot", "evidence_graph_version", "next_action", "model_digest"],
+      "properties": {
+        "request_id": {"type": "string", "minLength": 1},
+        "current_release": {"type": "string"},
+        "phase": {"type": "string", "minLength": 1},
+        "root_question": {"type": "string", "minLength": 1},
+        "completed_questions": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "unresolved_questions": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "source_snapshot": {"type": "object"},
+        "evidence_graph_version": {"type": "integer", "minimum": 1},
+        "outputs": {"type": "object"},
+        "next_action": {
+          "type": "object",
+          "required": ["type"],
+          "properties": {"type": {"type": "string", "minLength": 1}},
+          "additionalProperties": true
+        },
+        "model_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

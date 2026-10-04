@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.skills/multimodal-research-compiler/context-capsule.schema.json",
+  "title": "Research Context Capsule",
+  "type": "object",
+  "required": ["context_capsule"],
+  "properties": {
+    "context_capsule": {
+      "type": "object",
+      "required": ["request_id", "created_at", "mode", "question", "authority", "state"],
+      "properties": {
+        "request_id": {"type": "string", "minLength": 1},
+        "created_at": {"type": "string", "format": "date-time"},
+        "mode": {
+          "enum": ["DISCOVERY", "GROUNDING", "DECISION_SUPPORT", "IMPLEMENTATION", "VERIFICATION", "IMPACT_ANALYSIS"]
+        },
+        "question": {
+          "type": "object",
+          "required": ["root"],
+          "properties": {
+            "root": {"type": "string", "minLength": 1},
+            "dependent_questions": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+          },
+          "additionalProperties": true
+        },
+        "authority": {"type": "object"},
+        "selected_entities": {"type": "array", "items": {"type": "object"}},
+        "starting_sources": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "required_claim_families": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "source_snapshot": {"type": "object"},
+        "unavailable_sources": {"type": "array", "items": {"type": "object"}},
+        "state": {
+          "type": "object",
+          "required": ["phase"],
+          "properties": {
+            "phase": {"const": "INPUT_COMPILED"},
+            "unresolved_material_questions": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

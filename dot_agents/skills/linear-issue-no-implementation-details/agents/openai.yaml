@@ -1,0 +1,4 @@
+interface:
+  display_name: "Issue writing (compatibility)"
+  short_description: "Use the portable issue writing workflow"
+  default_prompt: "Use $linear-issue-no-implementation-details to write a self-contained issue for the selected destination."

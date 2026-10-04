@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "latex-check",
+  "owner": "astoreyai",
+  "repo": "claude-skills",
+  "path": "skills/review/latex-check",
+  "branch": "master",
+  "sha": "12eb39b647ac64dbe933405f1c991cb42dd1d18d",
+  "source": "manual"
+}

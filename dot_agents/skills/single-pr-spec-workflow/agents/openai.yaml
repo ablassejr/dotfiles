@@ -1,0 +1,6 @@
+interface:
+  display_name: "Single-PR Specification"
+  short_description: "Deep specification and handoff for one pull request"
+  default_prompt: "Use $single-pr-spec-workflow to specify this issue, fix, or feature for one PR and prepare an approved implementation handoff."
+policy:
+  allow_implicit_invocation: true

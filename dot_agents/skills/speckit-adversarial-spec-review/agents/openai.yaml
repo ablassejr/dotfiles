@@ -1,0 +1,6 @@
+interface:
+  display_name: "Spec Kit adversarial review"
+  short_description: "Attack a semantic specification from fresh context"
+  default_prompt: "Use $speckit-adversarial-spec-review to independently attack this semantic specification."
+policy:
+  allow_implicit_invocation: true

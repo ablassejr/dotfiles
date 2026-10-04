@@ -1,0 +1,4 @@
+interface:
+  display_name: "Engineering Impact Briefing"
+  short_description: "Weekly engineering reviews showing before-and-after impact"
+  default_prompt: "Use $engineering-impact-briefing to autonomously prepare a concise visual team review showing before-and-after changes and their practical impact, with availability and needed action grounded in the evidence."

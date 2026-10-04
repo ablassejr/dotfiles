@@ -1,0 +1,27 @@
+{
+  "view": {
+    "model_digest": "<model_digest>",
+    "packet_id": "<packet_id>",
+    "type": "decision_lineage",
+    "view_id": "<view_id>"
+  },
+  "nodes": [
+    {
+      "id": "<stable semantic id>",
+      "label": "<short label>",
+      "record_type": "goal|requirement|decision|issue|pull_request|commit|symbol|test",
+      "source_refs": ["<source_id>"]
+    }
+  ],
+  "edges": [
+    {
+      "from": "<upstream id>",
+      "relationship": "supports|implements|changes|verifies",
+      "source_claims": ["<claim_id>"],
+      "to": "<downstream id>"
+    }
+  ],
+  "verification": {
+    "status": "PENDING"
+  }
+}

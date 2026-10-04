@@ -1,0 +1,7 @@
+interface:
+  display_name: "Post-basis context loader"
+  short_description: "Load implementation evidence after approval"
+  default_prompt: "Use $post-basis-context-loader to load current-state evidence after this basis is approved."
+policy:
+  allow_implicit_invocation: true
+

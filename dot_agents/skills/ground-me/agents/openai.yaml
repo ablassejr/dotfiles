@@ -1,0 +1,7 @@
+interface:
+  display_name: "Ground Me"
+  short_description: "Reconstruct why the current system exists"
+  default_prompt: "Use $ground-me to trace why this behavior exists and whether its original forces still apply."
+policy:
+  allow_implicit_invocation: true
+

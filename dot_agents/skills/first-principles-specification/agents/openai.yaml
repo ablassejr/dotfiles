@@ -1,0 +1,6 @@
+interface:
+  display_name: "First-principles specification"
+  short_description: "Build an evidence-linked semantic kernel"
+  default_prompt: "Use $first-principles-specification to derive this epic from its goals, causal model, and constraints."
+policy:
+  allow_implicit_invocation: true

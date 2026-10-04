@@ -1,0 +1,4 @@
+interface:
+  display_name: "Issue context loader"
+  short_description: "Use the current project and chosen destinations"
+  default_prompt: "Use $issue-context-loader to load the approved context for this work item."

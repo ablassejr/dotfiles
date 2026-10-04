@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "tdd",
+  "owner": "pyinx",
+  "repo": "ceo-skills-plugin",
+  "path": "skills/tdd",
+  "branch": "main",
+  "sha": "98904a7d8e0e04b9bd46220b9b17298f45fe0b72",
+  "source": "manual"
+}

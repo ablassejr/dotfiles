@@ -1,0 +1,6 @@
+interface:
+  display_name: "Framed engineering sequence"
+  short_description: "Frame, challenge, subtract, simplify, accelerate, automate"
+  default_prompt: "Use $framed-engineering-sequence to challenge this scope before adding, optimizing, accelerating, or automating work."
+policy:
+  allow_implicit_invocation: true

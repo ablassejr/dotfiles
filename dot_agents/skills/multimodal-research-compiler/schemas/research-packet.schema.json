@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.skills/multimodal-research-compiler/research-packet.schema.json",
+  "title": "Research Packet",
+  "type": "object",
+  "required": ["research_packet"],
+  "properties": {
+    "research_packet": {
+      "type": "object",
+      "required": ["packet_id", "status", "mode", "question", "direct_answer", "sources", "reviews", "model_digest"],
+      "properties": {
+        "packet_id": {"type": "string", "minLength": 1},
+        "status": {"enum": ["PARTIAL", "HITL_REQUIRED", "BASIS_REVISION_REQUIRED", "REVIEWED", "PUBLISHED", "BLOCKED"]},
+        "mode": {
+          "enum": ["DISCOVERY", "GROUNDING", "DECISION_SUPPORT", "IMPLEMENTATION", "VERIFICATION", "IMPACT_ANALYSIS"]
+        },
+        "question": {
+          "type": "object",
+          "required": ["id", "statement"],
+          "properties": {
+            "id": {"type": "string"},
+            "statement": {"type": "string", "minLength": 1}
+          },
+          "additionalProperties": true
+        },
+        "basis": {"type": "object"},
+        "authority": {"type": "object"},
+        "direct_answer": {
+          "type": "object",
+          "required": ["statement", "confidence"],
+          "properties": {
+            "statement": {"type": "string"},
+            "confidence": {"enum": ["single_source", "corroborated", "conflicted", "unknown"]}
+          },
+          "additionalProperties": true
+        },
+        "claims": {"type": "array", "items": {"type": "object"}},
+        "findings": {"type": "array", "items": {"type": "object"}},
+        "alternatives": {"type": "array", "items": {"type": "object"}},
+        "recommendation": {"type": "object"},
+        "implementation_effects": {"type": "object"},
+        "contradictions": {"type": "array", "items": {"type": "object"}},
+        "unresolved": {"type": "array", "items": {"type": "object"}},
+        "sources": {"type": "array", "items": {"type": "object"}},
+        "views": {"type": "object"},
+        "reviews": {
+          "type": "object",
+          "required": ["first_principles", "adversarial"],
+          "properties": {
+            "first_principles": {"type": "object"},
+            "adversarial": {"type": "object"},
+            "human_understanding": {"type": "string"},
+            "human_decision": {"type": "string"}
+          },
+          "additionalProperties": true
+        },
+        "model_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

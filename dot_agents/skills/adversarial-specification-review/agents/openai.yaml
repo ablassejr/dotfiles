@@ -1,0 +1,6 @@
+interface:
+  display_name: "Adversarial specification review"
+  short_description: "Try to disprove an epic specification"
+  default_prompt: "Use $adversarial-specification-review on this bounded specification package and route every material defect."
+policy:
+  allow_implicit_invocation: true

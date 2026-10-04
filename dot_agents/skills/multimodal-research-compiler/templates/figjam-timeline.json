@@ -1,0 +1,30 @@
+{
+  "view": {
+    "model_digest": "<model_digest>",
+    "packet_id": "<packet_id>",
+    "type": "evidence_timeline",
+    "view_id": "<view_id>"
+  },
+  "events": [
+    {
+      "at": "<ISO-8601 date or date-time>",
+      "claim_refs": ["<claim_id>"],
+      "confidence": "<confidence>",
+      "event_id": "<event_id>",
+      "label": "<event label>",
+      "source_refs": ["<source_id>"]
+    }
+  ],
+  "legend": [
+    "EXPLICIT",
+    "INFERRED",
+    "EXPIRED_CONSTRAINT",
+    "CURRENT_INVARIANT",
+    "CONTRADICTION",
+    "UNKNOWN",
+    "HUMAN_DECISION"
+  ],
+  "verification": {
+    "status": "PENDING"
+  }
+}

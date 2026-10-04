@@ -1,0 +1,6 @@
+interface:
+  display_name: "Epic specification workflow"
+  short_description: "Design a legible epic specification for team review"
+  default_prompt: "Use $epic-spec-workflow to design or resume this epic, verify its immutable specification revision, and stop at HANDOFF_READY."
+policy:
+  allow_implicit_invocation: true

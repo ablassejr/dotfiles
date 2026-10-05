@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+
+cat > {{ .chezmoi.destDir | quote }}/AGENTS.md <<'CHEZMOI_HOME_AGENT_GUIDANCE_EOF'
+{{ include ".chezmoitemplates/home-AGENTS.md" }}CHEZMOI_HOME_AGENT_GUIDANCE_EOF
+chmod 644 {{ .chezmoi.destDir | quote }}/AGENTS.md

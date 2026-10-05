@@ -84,3 +84,25 @@ chezmoi apply                # write to the home directory
 Because `dot_config/nvim` is a submodule, changes there are committed to
 [`ablassejr/nvim`](https://github.com/ablassejr/nvim) and the submodule pointer is
 updated here.
+
+## Agent behavior files
+
+Chezmoi manages Codex, Claude Code, and shared-agent skills, global instructions,
+agent definitions, rules, commands, hook definitions, statusline configuration, and
+client settings. Client files restore beneath their respective home directories:
+`~/.codex/`, `~/.claude/`, and `~/.agents/`. Additional installed skills restore to
+`~/.config/agents/skills/plannotator-compound/` and `~/skills/tldraw-offline/`.
+
+Codex configuration and both Claude settings files are encrypted with age. Templates
+render home-directory references for the current machine. The age identity remains
+outside the repository and is required to restore encrypted files.
+
+Home-level `~/AGENTS.md` is stored in `.chezmoitemplates/home-AGENTS.md` and written by
+`.chezmoiscripts/run_after_install-home-agent-instructions.sh.tmpl` on each apply.
+The repository-level `AGENTS.md` describes dotfiles maintenance and remains excluded
+from the destination.
+
+Skills and custom hook sources are tracked here. Plugin installations and external
+executables referenced by hooks are installed by their own tooling. This includes
+plannotator, codegraph, repowise, and the claude-mem plugin; chezmoi restores their
+behavior configuration but does not install or execute those tools during capture.

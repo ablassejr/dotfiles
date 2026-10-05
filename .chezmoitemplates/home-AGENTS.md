@@ -1,30 +1,20 @@
-Avoid confirmation bias at all costs. Challenge ideas when they are not supported by first principles.
-
-## Communication Style
-
-- ALWAYS bias towards non-textual media or first-party examples to communicate ideas. Keep verbosity to a minimum.
+# Repository Guidelines
 
 ## User-Approved Requirements
 
 - Do not introduce acceptance criteria or restrictions that haven't been explicitly approved or stated by the user.
 
-## Dedicated Tool Preference
-
-- When a dedicated tool can perform an action, prefer it over invoking Bash or Python for the same work. For example, use the Read tool to inspect files and the Edit tool to make targeted changes. This is guidance, not a prohibition; use Bash or Python when they are the clearer, safer, or more capable choice.
-
 ## Repository Analysis and Search
 
 - For any repository or codebase task, invoke `claude-context` first to load relevant project context before taking investigative or implementation actions. Treat its output as context to verify, not as authoritative evidence.
+- Consider the `graphify` skill when repository or codebase analysis, architecture questions, file-relationship investigations, or code searches would benefit from a persistent relationship graph.
+- When `graphify-out/graph.json` exists and is relevant to the task, consider querying it before other search tools. Build or update the graph only when graph-based analysis is likely to add useful context; otherwise use the most appropriate search tools directly.
 
 ## CLI Documentation Lookup
 
 - Before invoking any CLI, first use `docs-mcp-server` to retrieve the current documentation for that CLI and the intended command, arguments, flags, and side effects.
 - Build the invocation from the retrieved documentation; do not guess syntax or rely on memory.
 - If the relevant documentation is missing or stale, index or refresh the CLI's official documentation in `docs-mcp-server` and wait for indexing to complete before invoking the CLI. If `docs-mcp-server` is unavailable, report the blocker rather than bypassing this requirement.
-
-## Constants Only for Repeated Values
-
-- Do not introduce a constant to abstract away a value that is used in only one place, unless more uses are expected in the near future. Inline the literal at its single call site instead.
 
 ## Comments Inform; They Do Not Decide
 
@@ -34,9 +24,81 @@ Avoid confirmation bias at all costs. Challenge ideas when they are not supporte
 
 - Treat every documentation update as current-state documentation. State what the system is and does directly. Do not frame the content as an evolution of, comparison with, or modification to earlier documentation, and do not narrate what was replaced or removed. Prefer `<application> uses <new service>...` to `<application> now uses <new service> and no longer needs <old dependency>...`.
 
-## Pull Request Descriptions
+## Documentation Lookups
 
-- Do not include Claude session links in pull request descriptions.
+- Always use the `@arabold/docs-mcp-server` MCP server when checking for documentation. For any library, framework, platform, tool, or API claim — and during any validation, verification, review, or checking — consult the relevant indexed documentation through docs-mcp-server before proceeding.
+- If the needed documentation is not indexed, or the docs-mcp-server is not running, inform the user, start the server, index the full relevant documentation corpus, wait until indexing completes, then use the indexed documentation before proceeding.
+- Do not rely on training-data recollection for documentation that docs-mcp-server can provide.
+
+This repository contains personal dotfiles managed with `chezmoi`. Source files live here and are rendered into your home directory (e.g., `dot_zshrc` → `~/.zshrc`, `dot_config/nvim/` → `~/.config/nvim/`).
+
+## Project Structure & Module Organization
+
+- Shell: `dot_zshrc`, `dot_bashrc`, `dot_profile` (login/interactive configuration).
+- Terminal tools: `dot_tmux.conf`.
+- App configs: `dot_config/**` (e.g., `dot_config/ghostty/`, `dot_config/kitty/`, `dot_config/nvim/`).
+- Repo-specific guidance: deeper trees may include their own `AGENTS.md` (for Neovim see `dot_config/nvim/AGENTS.md`).
+
+## Build, Test, and Development Commands
+
+Run these from the repo root (`~/.local/share/chezmoi`):
+
+- Preview changes: `chezmoi -S . diff`
+- Apply changes: `chezmoi -S . apply`
+- One-file edit flow: `chezmoi edit ~/.zshrc` (then `chezmoi apply`)
+- Check what’s managed: `chezmoi managed`
+
+## Coding Style & Naming Conventions
+
+- Keep configs OS-appropriate (avoid hardcoded Linux paths in macOS-targeted files).
+- Prefer guarded/conditional logic in shell configs (e.g., `command -v brew >/dev/null && …`).
+- Indentation: 2 spaces for shell/Lua configs unless the file’s existing style differs.
+- Naming: use chezmoi conventions (`dot_*`, `dot_config/<app>/…`) and keep new app configs grouped under `dot_config/<app>/`.
+
+## Testing Guidelines
+
+No automated suite; do quick smoke checks after applying:
+
+- Zsh parse: `zsh -n ~/.zshrc`
+- Tmux config: `tmux -f ~/.tmux.conf -L test new -d \; kill-server`
+- Neovim config: follow `dot_config/nvim/AGENTS.md`
+
+## Commit & Pull Request Guidelines
+
+- Commit messages in history are short and imperative (commonly `Add …` / `Update …`, occasionally `fix:`). Follow that style and keep messages focused on the primary change.
+- Don’t commit machine-local artifacts (e.g., `.DS_Store`, caches, history files).
+- PRs: describe intent, list the smoke checks run, and call out any user-visible behavior changes (prompt, keybindings, themes).
+
+## Security & Configuration Tips
+
+- Never commit secrets; prefer `~/.env` (ignored/unmanaged) or environment variables.
+- Avoid network actions during shell startup (no `git clone`/auto-install in `dot_zshrc`).
+
+
+<!-- nx configuration start-->
+<!-- Leave the start & end comments to automatically receive updates. -->
+
+## General Guidelines for working with Nx
+
+- For navigating/exploring the workspace, invoke the `nx-workspace` skill first - it has patterns for querying projects, targets, and dependencies
+- When running tasks (for example build, lint, test, e2e, etc.), always prefer running the task through `nx` (i.e. `nx run`, `nx run-many`, `nx affected`) instead of using the underlying tooling directly
+- Prefix nx commands with the workspace's package manager (e.g., `pnpm nx build`, `npm exec nx test`) - avoids using globally installed CLI
+- You have access to the Nx MCP server and its tools, use them to help the user
+- For Nx plugin best practices, check `node_modules/@nx/<plugin>/PLUGIN.md`. Not all plugins have this file - proceed without it if unavailable.
+- NEVER guess CLI flags - always check nx_docs or `--help` first when unsure
+
+## Scaffolding & Generators
+
+- For scaffolding tasks (creating apps, libs, project structure, setup), ALWAYS invoke the `nx-generate` skill FIRST before exploring or calling MCP tools
+
+## When to use nx_docs
+
+- USE for: advanced config options, unfamiliar flags, migration guides, plugin configuration, edge cases
+- DON'T USE for: basic generator syntax (`nx g @nx/react:app`), standard commands, things you already know
+- The `nx-generate` skill handles generator discovery internally - don't call nx_docs just to look up generator syntax
+
+
+<!-- nx configuration end-->
 
 ## Post-Edit Memory and Public Interface Reporting
 
@@ -73,25 +135,3 @@ Test observable behavior and declared contracts only. Never test implementation 
 - Aim for the smallest non-redundant test set that provides 100% behavioral coverage of the affected, enumerated observable contracts and meaningful success and failure paths. Treat 100% as complete coverage of the behavior matrix, not line, branch, function, or implementation coverage. If any relevant behavior cannot be tested, state the uncovered behavior and why.
 - Assert the intended positive contract. Use negative assertions only when absence is itself an externally observable requirement.
 - If behavior cannot be observed at a stable boundary, improve the production seam or test harness rather than coupling the test to implementation.
-
-<!-- CODEGRAPH_START -->
-## CodeGraph
-
-In repositories indexed by CodeGraph (a `.codegraph/` directory exists at the repo root), reach for it BEFORE grep/find or reading files when you need to understand or locate code:
-
-- **MCP tool** (when available): `codegraph_explore` answers most code questions in one call — the relevant symbols' verbatim source plus the call paths between them, including dynamic-dispatch hops grep can't follow. Name a file or symbol in the query to read its current line-numbered source. If it's listed but deferred, load it by name via tool search.
-- **Shell** (always works): `codegraph explore "<symbol names or question>"` prints the same output.
-
-If there is no `.codegraph/` directory, skip CodeGraph entirely — indexing is the user's decision.
-<!-- CODEGRAPH_END -->
-
-## Issue routing
-
-- Use Triage only for bug reports. When creating a bug report, route it to the appropriate team's Triage queue when one is available.
-- Route feature requests, improvements, planned implementation work, and other non-bug issues according to the current request or verified project workflow. Do not place non-bug issues in Triage.
-
-## Self-contained issues and pull requests
-
-- Any Linear issue or PR created by any workflow must be understandable without prior conversation or opening another document. Its only optional document reference is its actual design proposal; supporting document links belong inside the proposal. Apply this to authored descriptions, comments, and document attachments.
-- Use the shared `linear-issue-no-implementation-details` skill for Linear issue prose and `pull-request-writing` for PR prose. PRs include review-relevant implementation and actual verification; do not transfer the issue skill's implementation-detail exclusions to PR descriptions. Native issue, PR, commit, diff, and CI associations retain their operational purpose.
-- Preserve required templates and applicable checklists, explaining their content inline. Required documentation references point to the relevant design-proposal section. Validate prepared content and fetched provider content and repair discrepancies automatically within existing authorization; this adds no human approval.

@@ -10,7 +10,6 @@ Brewfile
 
 # Claude Code local configuration
 .claude_utilities/
-.claude/settings.local.json
 
 # Ghostty local settings
 .config/ghostty/.claude/settings.local.json

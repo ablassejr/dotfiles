@@ -1,16 +1,10 @@
-Avoid confirmation bias at all costs. Challenge ideas when they are not supported by first principles.
+Avoid confirmation bias at all costs. Challenge ideas when they are not supported by first principles. 
 
-## Communication Style
-
-- ALWAYS bias towards non-textual media or first-party examples to communicate ideas. Keep verbosity to a minimum.
+After a query with an unambiguous next step(Did you analyze the whole directory?), instead of stopping at the answer(No, I did not analyze the whole directory.), autonomously carry through the logical continuation of the query(No, I did not analyze the whole directory, I'll do that now.). 
 
 ## User-Approved Requirements
 
 - Do not introduce acceptance criteria or restrictions that haven't been explicitly approved or stated by the user.
-
-## Dedicated Tool Preference
-
-- When a dedicated tool can perform an action, prefer it over invoking Bash or Python for the same work. For example, use the Read tool to inspect files and the Edit tool to make targeted changes. This is guidance, not a prohibition; use Bash or Python when they are the clearer, safer, or more capable choice.
 
 ## Repository Analysis and Search
 
@@ -22,10 +16,6 @@ Avoid confirmation bias at all costs. Challenge ideas when they are not supporte
 - Build the invocation from the retrieved documentation; do not guess syntax or rely on memory.
 - If the relevant documentation is missing or stale, index or refresh the CLI's official documentation in `docs-mcp-server` and wait for indexing to complete before invoking the CLI. If `docs-mcp-server` is unavailable, report the blocker rather than bypassing this requirement.
 
-## Constants Only for Repeated Values
-
-- Do not introduce a constant to abstract away a value that is used in only one place, unless more uses are expected in the near future. Inline the literal at its single call site instead.
-
 ## Comments Inform; They Do Not Decide
 
 - Do not put decision-making in comments. Use comments only for relevant context and light reasoning about the applied pattern, use case, framework, constraint, or other non-obvious behavior. Record decisions, alternatives, and material tradeoffs in the appropriate durable artifact instead.
@@ -33,10 +23,6 @@ Avoid confirmation bias at all costs. Challenge ideas when they are not supporte
 ## Documentation Describes the Current State
 
 - Treat every documentation update as current-state documentation. State what the system is and does directly. Do not frame the content as an evolution of, comparison with, or modification to earlier documentation, and do not narrate what was replaced or removed. Prefer `<application> uses <new service>...` to `<application> now uses <new service> and no longer needs <old dependency>...`.
-
-## Pull Request Descriptions
-
-- Do not include Claude session links in pull request descriptions.
 
 ## Post-Edit Memory and Public Interface Reporting
 
@@ -73,17 +59,6 @@ Test observable behavior and declared contracts only. Never test implementation 
 - Aim for the smallest non-redundant test set that provides 100% behavioral coverage of the affected, enumerated observable contracts and meaningful success and failure paths. Treat 100% as complete coverage of the behavior matrix, not line, branch, function, or implementation coverage. If any relevant behavior cannot be tested, state the uncovered behavior and why.
 - Assert the intended positive contract. Use negative assertions only when absence is itself an externally observable requirement.
 - If behavior cannot be observed at a stable boundary, improve the production seam or test harness rather than coupling the test to implementation.
-
-<!-- CODEGRAPH_START -->
-## CodeGraph
-
-In repositories indexed by CodeGraph (a `.codegraph/` directory exists at the repo root), reach for it BEFORE grep/find or reading files when you need to understand or locate code:
-
-- **MCP tool** (when available): `codegraph_explore` answers most code questions in one call — the relevant symbols' verbatim source plus the call paths between them, including dynamic-dispatch hops grep can't follow. Name a file or symbol in the query to read its current line-numbered source. If it's listed but deferred, load it by name via tool search.
-- **Shell** (always works): `codegraph explore "<symbol names or question>"` prints the same output.
-
-If there is no `.codegraph/` directory, skip CodeGraph entirely — indexing is the user's decision.
-<!-- CODEGRAPH_END -->
 
 ## Issue routing
 

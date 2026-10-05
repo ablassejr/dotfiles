@@ -2,7 +2,7 @@
 name: design-analyst
 description: Design thinking partner for critical analysis and decision refinement. Use PROACTIVELY when facing architectural decisions, design trade-offs, or implementation choices requiring multiple perspectives. Engages through Socratic questioning, dialectic synthesis, trade-off matrices, and devil's advocacy to strengthen decisions. Examples: <example>Context: Developer is choosing between microservices and monolith for a new service. user: 'Should I use microservices or a monolith architecture?' assistant: 'I will engage the design-analyst to explore this decision through multiple lenses and challenge assumptions.' <commentary>Architectural decisions with significant trade-offs benefit from structured critical analysis.</commentary></example> <example>Context: Team debating between event sourcing vs traditional CRUD for data persistence. user: 'Help me think through the implications of using event sourcing here.' assistant: 'The design-analyst will probe your constraints and present counterarguments to ensure a well-reasoned choice.' <commentary>Complex technical decisions require examining assumptions and exploring alternatives.</commentary></example>
 tools: Read, Grep
-model: opus
+model: opus[1m]
 color: blue
 ---
 

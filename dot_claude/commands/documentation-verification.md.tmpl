@@ -115,7 +115,7 @@ Then create these tasks (ALL independent — no `blockedBy` dependencies — wor
 > Search ALL documentation (`pulseframe-documentation/**/*.md`) for references to:
 > - Old directory structures (`01-Product`, `06-Templates`, `engineering/conventions/`, `implementation/`)
 > - Removed infrastructure (Upsun, Azure, non-existent services)
-> - Incorrect absolute paths (e.g., `/Users/Apple/Work/PulseframeOS/` — note case: actual is `/Users/Apple/work/pulseframeos/`)
+> - Incorrect absolute paths (e.g., `{{ .chezmoi.homeDir }}/Work/PulseframeOS/` — note case: actual is `{{ .chezmoi.homeDir }}/work/pulseframeos/`)
 > - Deprecated patterns or APIs that have been superseded
 >
 > Use Grep to find these patterns. Auto-fix path case issues and remove/update stale references.
@@ -172,13 +172,13 @@ You are a documentation verification worker on team "doc-verify". Your name is {
 
 ## Key Paths
 
-Root:           /Users/Apple/work/pulseframeos/
-Docs:           /Users/Apple/work/pulseframeos/pulseframe-documentation/
-Agentic:        /Users/Apple/work/pulseframeos/agentic-subsystem/
-AIDA:           /Users/Apple/work/pulseframeos/aida/
-Pulseframe:     /Users/Apple/work/pulseframeos/pulseframe/
-Dev-Tools:      /Users/Apple/work/pulseframeos/dev-tools/
-Compose:        /Users/Apple/work/pulseframeos/compose.yml
+Root:           {{ .chezmoi.homeDir }}/work/pulseframeos/
+Docs:           {{ .chezmoi.homeDir }}/work/pulseframeos/pulseframe-documentation/
+Agentic:        {{ .chezmoi.homeDir }}/work/pulseframeos/agentic-subsystem/
+AIDA:           {{ .chezmoi.homeDir }}/work/pulseframeos/aida/
+Pulseframe:     {{ .chezmoi.homeDir }}/work/pulseframeos/pulseframe/
+Dev-Tools:      {{ .chezmoi.homeDir }}/work/pulseframeos/dev-tools/
+Compose:        {{ .chezmoi.homeDir }}/work/pulseframeos/compose.yml
 
 ## Available Tools
 

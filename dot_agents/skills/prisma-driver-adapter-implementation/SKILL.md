@@ -9,6 +9,11 @@ metadata:
 
 # Prisma 7 Driver Adapter Implementation Guide
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 This skill provides everything needed to implement a Prisma ORM v7 driver adapter for any database.
 
 ## Architecture Overview

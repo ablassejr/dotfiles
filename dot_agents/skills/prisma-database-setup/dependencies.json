@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "skill": "prisma-database-setup",
+  "tools": [
+    {
+      "id": "prisma",
+      "kind": "npm",
+      "package": "prisma",
+      "command": "prisma",
+      "purpose": "Selected Prisma CLI workflow",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/prisma",
+      "required": false
+    },
+    {
+      "id": "prisma-client",
+      "kind": "npm",
+      "package": "@prisma/client",
+      "command": null,
+      "purpose": "Selected Prisma client workflow",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/@prisma/client",
+      "required": false
+    },
+    {
+      "id": "prisma-pg",
+      "kind": "npm",
+      "package": "@prisma/adapter-pg",
+      "command": null,
+      "purpose": "Selected Postgres driver adapter",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/@prisma/adapter-pg",
+      "required": false
+    },
+    {
+      "id": "pg",
+      "kind": "npm",
+      "package": "pg",
+      "command": null,
+      "purpose": "Selected Postgres driver",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/pg",
+      "required": false
+    },
+    {
+      "id": "dotenv",
+      "kind": "npm",
+      "package": "dotenv",
+      "command": null,
+      "purpose": "Selected project environment loading",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/dotenv",
+      "required": false
+    },
+    {
+      "id": "node",
+      "command": "node",
+      "kind": "brew",
+      "package": "node",
+      "purpose": "Run Node utilities and npm packages",
+      "documentation": "https://formulae.brew.sh/formula/node",
+      "min_version": "18.0.0",
+      "required": false
+    },
+    {
+      "id": "npm-prisma-adapter-mariadb",
+      "kind": "npm",
+      "package": "@prisma/adapter-mariadb",
+      "command": null,
+      "required": false,
+      "depends": [
+        "node"
+      ],
+      "purpose": "Selected package used by the skill’s executable examples; integrate application dependencies through their project manifest",
+      "documentation": "https://www.npmjs.com/package/@prisma/adapter-mariadb"
+    },
+    {
+      "id": "npm-mariadb",
+      "kind": "npm",
+      "package": "mariadb",
+      "command": null,
+      "required": false,
+      "depends": [
+        "node"
+      ],
+      "purpose": "Selected package used by the skill’s executable examples; integrate application dependencies through their project manifest",
+      "documentation": "https://www.npmjs.com/package/mariadb"
+    },
+    {
+      "id": "npm-prisma-adapter-ppg",
+      "kind": "npm",
+      "package": "@prisma/adapter-ppg",
+      "command": null,
+      "required": false,
+      "depends": [
+        "node"
+      ],
+      "purpose": "Selected package used by the skill’s executable examples; integrate application dependencies through their project manifest",
+      "documentation": "https://www.npmjs.com/package/@prisma/adapter-ppg"
+    },
+    {
+      "id": "npm-prisma-ppg",
+      "kind": "npm",
+      "package": "@prisma/ppg",
+      "command": null,
+      "required": false,
+      "depends": [
+        "node"
+      ],
+      "purpose": "Selected package used by the skill’s executable examples; integrate application dependencies through their project manifest",
+      "documentation": "https://www.npmjs.com/package/@prisma/ppg"
+    },
+    {
+      "id": "npm-prisma-adapter-better-sqlite3",
+      "kind": "npm",
+      "package": "@prisma/adapter-better-sqlite3",
+      "command": null,
+      "required": false,
+      "depends": [
+        "node"
+      ],
+      "purpose": "Selected package used by the skill’s executable examples; integrate application dependencies through their project manifest",
+      "documentation": "https://www.npmjs.com/package/@prisma/adapter-better-sqlite3"
+    },
+    {
+      "id": "npm-better-sqlite3",
+      "kind": "npm",
+      "package": "better-sqlite3",
+      "command": null,
+      "required": false,
+      "depends": [
+        "node"
+      ],
+      "purpose": "Selected package used by the skill’s executable examples; integrate application dependencies through their project manifest",
+      "documentation": "https://www.npmjs.com/package/better-sqlite3"
+    },
+    {
+      "id": "npm-prisma-adapter-libsql",
+      "kind": "npm",
+      "package": "@prisma/adapter-libsql",
+      "command": null,
+      "required": false,
+      "depends": [
+        "node"
+      ],
+      "purpose": "Selected package used by the skill’s executable examples; integrate application dependencies through their project manifest",
+      "documentation": "https://www.npmjs.com/package/@prisma/adapter-libsql"
+    },
+    {
+      "id": "npm-libsql-client",
+      "kind": "npm",
+      "package": "@libsql/client",
+      "command": null,
+      "required": false,
+      "depends": [
+        "node"
+      ],
+      "purpose": "Selected package used by the skill’s executable examples; integrate application dependencies through their project manifest",
+      "documentation": "https://www.npmjs.com/package/@libsql/client"
+    },
+    {
+      "id": "npm-prisma-adapter-mssql",
+      "kind": "npm",
+      "package": "@prisma/adapter-mssql",
+      "command": null,
+      "required": false,
+      "depends": [
+        "node"
+      ],
+      "purpose": "Selected package used by the skill’s executable examples; integrate application dependencies through their project manifest",
+      "documentation": "https://www.npmjs.com/package/@prisma/adapter-mssql"
+    },
+    {
+      "id": "npm-mssql",
+      "kind": "npm",
+      "package": "mssql",
+      "command": null,
+      "required": false,
+      "depends": [
+        "node"
+      ],
+      "purpose": "Selected package used by the skill’s executable examples; integrate application dependencies through their project manifest",
+      "documentation": "https://www.npmjs.com/package/mssql"
+    }
+  ],
+  "external_requirements": []
+}

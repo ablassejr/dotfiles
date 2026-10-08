@@ -5,6 +5,11 @@ description: Create stunning, animation-rich HTML presentations from scratch or 
 
 # Frontend Slides Skill
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Create zero-dependency, animation-rich HTML presentations that run entirely in the browser. This skill helps non-designers discover their preferred aesthetic through visual exploration ("show, don't tell"), then generates production-quality slide decks.
 
 ## Core Philosophy

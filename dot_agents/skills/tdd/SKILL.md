@@ -5,6 +5,11 @@ description: Use when implementing any feature or bugfix, before writing impleme
 
 # Test-Driven Development (TDD)
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 ## Overview
 
 Write the test first. Watch it fail. Write minimal code to pass.

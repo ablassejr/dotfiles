@@ -5,7 +5,12 @@ description: Ground an approved specification in the target repository and prepa
 
 # Implementation program compiler
 
-Invoke `$implementation-specification-compiler` and stop after preparing and validating the plan. Use [workspace and destinations](../epic-spec-workflow/references/workspace-and-destinations.md), [review and artifact design](../epic-spec-workflow/references/review-and-artifact-design.md), and [delivery planning](../implementation-specification-compiler/references/delivery-planning.md).
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
+Invoke `$implementation-specification-compiler` and stop after preparing and validating the plan. Use [workspace and destinations](references/bundled/epic-spec-workflow/references/workspace-and-destinations.md), [review and artifact design](references/bundled/epic-spec-workflow/references/review-and-artifact-design.md), and [delivery planning](references/bundled/implementation-specification-compiler/references/delivery-planning.md).
 
 Verify the exact approved source, basis lineage, handoff, and baseline. Reuse settled intent; new program intent follows its actual approval path. The source can be repository documentation, a shared document, a wiki, or a portable package. The plan does not require a particular documentation service or tracker.
 

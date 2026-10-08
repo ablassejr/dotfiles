@@ -5,6 +5,11 @@ description: Use when gathering context about a codebase, feature, library, or u
 
 # Project Exploration
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 ## Overview
 
 Exhaustive context gathering before action. Read everything that could be relevant. Trace every dependency, comment, URL, and document. Optimize for accuracy and completeness, not token efficiency.

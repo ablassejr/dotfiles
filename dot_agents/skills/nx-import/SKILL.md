@@ -5,6 +5,11 @@ description: Import, merge, or combine repositories into an Nx workspace using n
 
 ## Quick Start
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 - `nx import` brings code from a source repository or folder into the current workspace, preserving commit history.
 - After nx `22.6.0`, `nx import` responds with .ndjson outputs and follow-up questions. For earlier versions, always run with `--no-interactive` and specify all flags directly.
 - Run `nx import --help` for available options.

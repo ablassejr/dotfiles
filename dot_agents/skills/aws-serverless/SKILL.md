@@ -15,6 +15,11 @@ version: 1
 
 # AWS Serverless
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Domain expertise for building serverless applications on AWS: Lambda, API Gateway, Step Functions, EventBridge, event source mappings, concurrency, cold starts, deployment, and troubleshooting.
 
 **Works best with** the [AWS MCP server](https://docs.aws.amazon.com/aws-mcp/) — run CLI commands, query CloudWatch, validate configs directly. All guidance also works with standard AWS CLI access.

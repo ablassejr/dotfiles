@@ -13,6 +13,11 @@ version: 2
 
 # AWS Messaging & Streaming Services
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
      
 When answering AWS messaging and streaming questions, verify specific numbers, versions, limits, and behavioral details from service-specific skills or official AWS documentation. When uncertain, search skills or docs rather than guessing. Fabricated configuration options or incorrect version numbers are worse than admitting uncertainty.
 

@@ -5,6 +5,11 @@ description: Compile substantial architecture, product, implementation, or decis
 
 # Multimodal research compiler
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Convert the user's question into one normalized Research Model, verify that model against claim-appropriate sources, and generate only the projections that help the intended audience. Every conclusion must trace to evidence, every inference must be labeled, every unresolved normative judgment must be routed to the human, and every output must preserve the meaning and confidence recorded in the model.
 
 ## Select the mode

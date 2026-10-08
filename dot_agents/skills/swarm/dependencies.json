@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "skill": "swarm",
+  "tools": [
+    {
+      "id": "it2",
+      "kind": "pip",
+      "package": "it2",
+      "module": "it2",
+      "distribution": "it2",
+      "purpose": "Selected terminal agent orchestration",
+      "depends": [
+        "python"
+      ],
+      "documentation": "https://pypi.org/project/it2/",
+      "required": false
+    },
+    {
+      "id": "python",
+      "command": "python3",
+      "kind": "brew",
+      "package": "python",
+      "purpose": "Run bundled Python helpers",
+      "documentation": "https://formulae.brew.sh/formula/python",
+      "min_version": "3.9.0",
+      "required": false
+    }
+  ],
+  "external_requirements": [
+    "Agent connectors, authenticated accounts, provider permissions, and project configuration use the existing session. Package installation does not authenticate or grant write authority."
+  ]
+}

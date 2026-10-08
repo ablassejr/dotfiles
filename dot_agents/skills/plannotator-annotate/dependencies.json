@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "skill": "plannotator-annotate",
+  "tools": [
+    {
+      "id": "plannotator",
+      "kind": "official-script",
+      "command": "plannotator",
+      "url": "https://plannotator.ai/install.sh",
+      "arguments": [
+        "--minimal"
+      ],
+      "purpose": "Install only the Plannotator binary; retain agent hooks and settings",
+      "documentation": "https://docs.plannotator.ai/open-source/start/installation",
+      "required": true
+    }
+  ],
+  "external_requirements": []
+}

@@ -18,6 +18,11 @@ version: 1
 
 # Amazon EC2 Compute
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Best experience with the AWS MCP server; also works with the AWS CLI alone — no hard dependency on either.
 
 ## Critical Warnings

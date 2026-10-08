@@ -19,6 +19,11 @@ version: 1
 
 ## Overview
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 This skill provides domain expertise for choosing among AWS storage services, selecting storage classes, optimizing cost, and routing to resources for operating storage services. It covers object storage (S3 General Purpose buckets and their storage classes, S3 Express One Zone on directory buckets, S3 Tables, S3 Vectors), file storage (Amazon EFS, S3 Files, FSx for Lustre, FSx for NetApp ONTAP, FSx for OpenZFS, and FSx for Windows File Server), block storage (EBS volume types and EC2 instance store), and the data-movement and protection services that connect them (DataSync, Storage Gateway, Transfer Family, and AWS Backup). It does not advise on databases or analytics query engines. It works with or without the AWS MCP server; when available, the [AWS MCP server](https://docs.aws.amazon.com/agent-toolkit/) is recommended for verifying current specifications and pricing, and all guidance also works with the standard AWS CLI. For deep single-service tasks, route to the specialized skills listed in the Routing section below.
 
 ## How to Handle User Queries

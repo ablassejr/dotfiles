@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "skill": "codebase-review",
+  "tools": [],
+  "external_requirements": []
+}

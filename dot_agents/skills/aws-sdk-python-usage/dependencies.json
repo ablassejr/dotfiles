@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill": "aws-sdk-python-usage",
+  "tools": [
+    {
+      "id": "aws",
+      "command": "aws",
+      "kind": "brew",
+      "package": "awscli",
+      "purpose": "Selected AWS operations",
+      "documentation": "https://formulae.brew.sh/formula/awscli",
+      "required": false
+    }
+  ],
+  "external_requirements": []
+}

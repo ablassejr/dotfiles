@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "skill": "find-skills",
+  "tools": [
+    {
+      "id": "playwright",
+      "kind": "npm",
+      "package": "playwright",
+      "command": "playwright",
+      "purpose": "Browser rendering when a native viewer is unavailable",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/playwright",
+      "required": false
+    },
+    {
+      "id": "browser-chromium",
+      "kind": "browser",
+      "browser": "chromium",
+      "depends": [
+        "playwright"
+      ],
+      "purpose": "Install Chromium for the isolated Playwright fallback",
+      "documentation": "https://playwright.dev/docs/browsers",
+      "required": false
+    },
+    {
+      "id": "skills-cli",
+      "kind": "npm",
+      "package": "skills",
+      "command": "skills",
+      "purpose": "Discover or install additional skills",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/skills",
+      "required": true
+    },
+    {
+      "id": "node",
+      "command": "node",
+      "kind": "brew",
+      "package": "node",
+      "purpose": "Run Node utilities and npm packages",
+      "documentation": "https://formulae.brew.sh/formula/node",
+      "min_version": "18.0.0",
+      "required": false
+    }
+  ],
+  "external_requirements": []
+}

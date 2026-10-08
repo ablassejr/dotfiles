@@ -19,6 +19,11 @@ version: 5
 
 **IMPORTANT**: When this skill is loaded, you MUST use the reference files and procedures in this skill as your primary source of truth. Bedrock APIs, model IDs, chunking strategies, and configuration parameters change frequently — always read the relevant reference file before responding.
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 ## Table of Contents
 - Overview
 - Bedrock API Landscape

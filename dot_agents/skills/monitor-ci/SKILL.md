@@ -5,6 +5,11 @@ description: Monitor Nx Cloud CI pipeline and handle self-healing fixes. USE WHE
 
 # Monitor CI Command
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 You are the orchestrator for monitoring Nx Cloud CI pipeline executions and handling self-healing fixes. You spawn subagents to interact with Nx Cloud, run deterministic decision scripts, and take action based on the results.
 
 ## Context

@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_adversarial-review-workflow" targetNamespace="https://specflow.local/workflows">
+  <bpmn:process id="adversarial-review-workflow" name="Adversarial review and human disposition" isExecutable="true">
+    <bpmn:extensionElements>
+      <zeebe:versionTag value="v1" />
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="start" name="Start">
+      <bpmn:outgoing>flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="review_semantics" name="Review Semantics">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.review-semantics" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="adversarial-specification-review" />
+          <zeebe:header key="phase" value="review_semantics" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+          <zeebe:header key="approvalRoute" value="review" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_1</bpmn:incoming>
+      <bpmn:outgoing>flow_2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="review_disposition" name="Review Disposition">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:taskHeaders>
+          <zeebe:header key="bindingVariable" value="reviewBinding" />
+          <zeebe:header key="responseVariable" value="reviewResponse" />
+          <zeebe:header key="actions" value="approved,revise_basis,research,decision,repair" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>review_needs_human</bpmn:incoming>
+      <bpmn:outgoing>flow_3</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="record_review_disposition" name="Record Review Disposition">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.record-review-disposition" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="adversarial-specification-review" />
+          <zeebe:header key="phase" value="record_review_disposition" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+          <zeebe:header key="approvalRoute" value="human-review" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_3</bpmn:incoming>
+      <bpmn:outgoing>flow_4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="review_complete" name="Review Complete">
+      <bpmn:incoming>flow_4</bpmn:incoming>
+      <bpmn:incoming>review_automated</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="flow_1" sourceRef="start" targetRef="review_semantics" />
+    <bpmn:sequenceFlow id="flow_2" sourceRef="review_semantics" targetRef="review_route" />
+    <bpmn:sequenceFlow id="flow_3" sourceRef="review_disposition" targetRef="record_review_disposition" />
+    <bpmn:sequenceFlow id="flow_4" sourceRef="record_review_disposition" targetRef="review_complete" />
+    <bpmn:exclusiveGateway id="review_route" name="Continue clean review or scoped repair; ask for judgment">
+      <bpmn:incoming>flow_2</bpmn:incoming>
+      <bpmn:outgoing>review_needs_human</bpmn:outgoing>
+      <bpmn:outgoing>review_automated</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="review_needs_human" sourceRef="review_route" targetRef="review_disposition">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= reviewDisposition = "human"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="review_automated" sourceRef="review_route" targetRef="review_complete">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= reviewDisposition = "approved" or reviewDisposition = "repair"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_adversarial-review-workflow">
+    <bpmndi:BPMNPlane id="BPMNPlane_adversarial-review-workflow" bpmnElement="adversarial-review-workflow">
+      <bpmndi:BPMNShape id="start_di" bpmnElement="start">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="review_semantics_di" bpmnElement="review_semantics">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="review_disposition_di" bpmnElement="review_disposition">
+        <dc:Bounds x="325" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="record_review_disposition_di" bpmnElement="record_review_disposition">
+        <dc:Bounds x="475" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="review_complete_di" bpmnElement="review_complete">
+        <dc:Bounds x="657" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="review_route_di" bpmnElement="review_route">
+        <dc:Bounds x="840" y="580" width="100" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_1_di" bpmnElement="flow_1">
+        <di:waypoint x="75.0" y="70.0" />
+        <di:waypoint x="225.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_2_di" bpmnElement="flow_2">
+        <di:waypoint x="225.0" y="70.0" />
+        <di:waypoint x="890.0" y="615.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_3_di" bpmnElement="flow_3">
+        <di:waypoint x="375.0" y="70.0" />
+        <di:waypoint x="525.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_4_di" bpmnElement="flow_4">
+        <di:waypoint x="525.0" y="70.0" />
+        <di:waypoint x="675.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="review_needs_human_di" bpmnElement="review_needs_human">
+        <di:waypoint x="890.0" y="615.0" />
+        <di:waypoint x="375.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="review_automated_di" bpmnElement="review_automated">
+        <di:waypoint x="890.0" y="615.0" />
+        <di:waypoint x="675.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

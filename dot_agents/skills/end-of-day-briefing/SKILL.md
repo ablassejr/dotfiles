@@ -5,6 +5,11 @@ description: Autonomously prepare concise visual end-of-day (EOD) engineering up
 
 # End-of-day briefing
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Prepare one meeting-ready update that helps colleagues understand what changed today, what that means for their work, and what needs attention before work continues. Write for the people in the daily meeting, including those outside the presenting workstream.
 
 ## Keep the scope daily

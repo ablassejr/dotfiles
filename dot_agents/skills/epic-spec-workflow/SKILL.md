@@ -5,6 +5,11 @@ description: Design or resume a large epic before implementation. Establish appr
 
 # Epic specification workflow
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Design the required behavior and its rationale, then deliver a verified semantic handoff. Stop at the specification boundary; this request does not implicitly start implementation, create delivery issues, or publish to an external service.
 
 Read [workspace and destinations](references/workspace-and-destinations.md) and [review and artifact design](references/review-and-artifact-design.md). Use the current project's organization, repositories, audience, conventions, and chosen document and issue homes. No organization, tracker, wiki, project container, or process engine is required merely to use this skill.

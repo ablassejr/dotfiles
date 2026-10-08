@@ -1,0 +1,429 @@
+{
+  "schema_version": 1,
+  "workflows": {
+    "epic-spec-workflow": {
+      "label": "Specification",
+      "processName": "Epic specification and semantic handoff",
+      "stages": [
+        {
+          "id": "basis",
+          "label": "First principles",
+          "elements": [
+            "draft_basis",
+            "approve_basis"
+          ],
+          "purpose": "Approve the intended outcome and constraints."
+        },
+        {
+          "id": "context",
+          "label": "Context and reconciliation",
+          "elements": [
+            "gather_context",
+            "reconcile_basis"
+          ],
+          "purpose": "Reconcile current evidence with the approved basis."
+        },
+        {
+          "id": "research",
+          "label": "Research",
+          "elements": [
+            "research"
+          ],
+          "purpose": "Resolve factual gaps or route the remaining uncertainty."
+        },
+        {
+          "id": "decisions",
+          "label": "Design decisions",
+          "elements": [
+            "decisions"
+          ],
+          "purpose": "Resolve the material human decisions."
+        },
+        {
+          "id": "semantics",
+          "label": "Semantic design",
+          "elements": [
+            "draft_semantics"
+          ],
+          "purpose": "Prepare the proposed behavior and constraints."
+        },
+        {
+          "id": "review",
+          "label": "Adversarial review",
+          "elements": [
+            "adversarial_review"
+          ],
+          "purpose": "Resolve findings or return to the affected stage."
+        },
+        {
+          "id": "proposal",
+          "label": "Visuals and design proposal",
+          "elements": [
+            "compile_visuals",
+            "review_visuals",
+            "publish_notion_draft",
+            "publish_design_proposal"
+          ],
+          "purpose": "Publish and verify the supervisor design proposal."
+        },
+        {
+          "id": "approval",
+          "label": "Supervisor review",
+          "elements": [
+            "approve_release"
+          ],
+          "purpose": "Review the exact design and visuals together."
+        },
+        {
+          "id": "handoff",
+          "label": "Release and handoff",
+          "elements": [
+            "finalize_release",
+            "verify_handoff",
+            "handoff_ready"
+          ],
+          "purpose": "Verify the immutable semantic release and handoff."
+        }
+      ],
+      "completion": "Specification scope is complete. Implementation planning is a separately invoked workflow."
+    },
+    "implementation-program-workflow": {
+      "label": "Implementation program",
+      "processName": "Explicit implementation program compilation",
+      "stages": [
+        {
+          "id": "basis",
+          "label": "First principles",
+          "elements": [
+            "draft_program_basis",
+            "approve_program_basis"
+          ],
+          "purpose": "Verify inherited intent or approve the program basis."
+        },
+        {
+          "id": "design",
+          "label": "Program design",
+          "elements": [
+            "compile_program"
+          ],
+          "purpose": "Prepare milestones, ownership, and dependency contracts."
+        },
+        {
+          "id": "proposal",
+          "label": "Design proposal",
+          "elements": [
+            "publish_design_proposal"
+          ],
+          "purpose": "Publish and verify the supervisor proposal."
+        },
+        {
+          "id": "approval",
+          "label": "Supervisor review",
+          "elements": [
+            "approve_program"
+          ],
+          "purpose": "Review the exact program and proposal."
+        },
+        {
+          "id": "resources",
+          "label": "Project resources",
+          "elements": [
+            "publish_project_resources"
+          ],
+          "purpose": "Upload every planning artifact and verify project-member access before issue creation."
+        },
+        {
+          "id": "publication",
+          "label": "Issue creation",
+          "elements": [
+            "publish_linear_program"
+          ],
+          "purpose": "Create all approved issues without team assignees."
+        },
+        {
+          "id": "issue_reviews",
+          "label": "Individual issue HITL",
+          "elements": [
+            "review_created_issues",
+            "verify_all_issue_reviews"
+          ],
+          "purpose": "Complete every created issue\u2019s own decisions and supervisor review before assignment."
+        },
+        {
+          "id": "assignment",
+          "label": "Team assignment",
+          "elements": [
+            "dispatch_tickets"
+          ],
+          "purpose": "Assign the fully reviewed issue set to the three approved workstreams."
+        },
+        {
+          "id": "delivery",
+          "label": "Ticket delivery",
+          "elements": [
+            "await_program_completion"
+          ],
+          "purpose": "Receive the verified program completion event."
+        },
+        {
+          "id": "reconciliation",
+          "label": "Program reconciliation",
+          "elements": [
+            "reconcile_program",
+            "program_complete"
+          ],
+          "purpose": "Verify integrated delivery against the approved program."
+        }
+      ],
+      "completion": "Program delivery and reconciliation are complete for this process."
+    },
+    "implementation-ticket-workflow": {
+      "label": "Ticket implementation",
+      "processName": "Ticket implementation and as-built reconciliation",
+      "stages": [
+        {
+          "id": "basis",
+          "label": "First principles",
+          "elements": [
+            "draft_ticket_basis",
+            "approve_ticket_basis"
+          ],
+          "purpose": "Verify inherited intent or approve the ticket basis."
+        },
+        {
+          "id": "design",
+          "label": "Ticket design",
+          "elements": [
+            "design_ticket",
+            "finalize_ticket_design"
+          ],
+          "purpose": "Prepare the bounded implementation design."
+        },
+        {
+          "id": "decisions",
+          "label": "Issue HITL decisions",
+          "elements": [
+            "ticket_decisions"
+          ],
+          "purpose": "Resolve and assess this issue\u2019s open-ended human decisions."
+        },
+        {
+          "id": "proposal",
+          "label": "Design proposal",
+          "elements": [
+            "publish_design_proposal"
+          ],
+          "purpose": "Publish and verify the supervisor proposal."
+        },
+        {
+          "id": "approval",
+          "label": "Supervisor review",
+          "elements": [
+            "approve_ticket_design"
+          ],
+          "purpose": "Review the exact ticket design and proposal."
+        },
+        {
+          "id": "review_handoff",
+          "label": "Review handoff",
+          "elements": [
+            "record_issue_review",
+            "issue_review_complete",
+            "verify_ticket_review"
+          ],
+          "purpose": "Return the approved review or verify its reuse for assigned execution."
+        },
+        {
+          "id": "implementation",
+          "label": "Implementation",
+          "elements": [
+            "implement_single_pr"
+          ],
+          "purpose": "Implement and verify the single pull request."
+        },
+        {
+          "id": "merge",
+          "label": "Merge confirmation",
+          "elements": [
+            "await_pr_merge"
+          ],
+          "purpose": "Receive the verified merge event."
+        },
+        {
+          "id": "reconciliation",
+          "label": "As-built reconciliation",
+          "elements": [
+            "reconcile_as_built"
+          ],
+          "purpose": "Verify the implemented behavior against its approved design."
+        },
+        {
+          "id": "cleanup",
+          "label": "Cleanup and completion",
+          "elements": [
+            "cleanup_ticket",
+            "ticket_complete"
+          ],
+          "purpose": "Finish provenance-scoped cleanup and reconciliation."
+        }
+      ],
+      "completion": "Ticket implementation and reconciliation are complete for this process."
+    },
+    "decision-workflow": {
+      "label": "Design decisions",
+      "processName": "Sequential decisions with integrated Ground Me",
+      "stages": [
+        {
+          "id": "frontier",
+          "label": "Select the next question",
+          "elements": [
+            "next_question",
+            "recompute_frontier"
+          ],
+          "purpose": "Select the next unresolved material question."
+        },
+        {
+          "id": "answer",
+          "label": "Human decision",
+          "elements": [
+            "answer_question"
+          ],
+          "purpose": "Record an explicit answer or investigate its premise."
+        },
+        {
+          "id": "assessment",
+          "label": "Assess the decision",
+          "elements": [
+            "analyze_decision",
+            "consider_decision"
+          ],
+          "purpose": "Analyze the answer and surface material concerns with a suggested change."
+        },
+        {
+          "id": "grounding",
+          "label": "Ground Me",
+          "elements": [
+            "ground_me",
+            "resume_grounded_decision"
+          ],
+          "purpose": "Verify the explanation and any explicit combined answer."
+        },
+        {
+          "id": "record",
+          "label": "Record and recompute",
+          "elements": [
+            "record_decision",
+            "decisions_resolved"
+          ],
+          "purpose": "Record the answer and recompute the affected frontier."
+        }
+      ],
+      "completion": "The decision subprocess is complete. Its parent workflow determines the next stage."
+    },
+    "ground-me-workflow": {
+      "label": "Ground Me",
+      "processName": "Ground Me evidence and understanding",
+      "stages": [
+        {
+          "id": "evidence",
+          "label": "Gather evidence",
+          "elements": [
+            "ground_code",
+            "ground_lineage"
+          ],
+          "purpose": "Reconstruct the implementation and its decision lineage."
+        },
+        {
+          "id": "provenance",
+          "label": "Review provenance",
+          "elements": [
+            "review_provenance"
+          ],
+          "purpose": "Check the explanation against its sources."
+        },
+        {
+          "id": "explanation",
+          "label": "Visual explanation",
+          "elements": [
+            "ground_visuals"
+          ],
+          "purpose": "Prepare the evidenced explanation."
+        },
+        {
+          "id": "understanding",
+          "label": "Understanding alignment",
+          "elements": [
+            "confirm_understanding"
+          ],
+          "purpose": "Confirm, correct, deepen, or explicitly answer with alignment."
+        },
+        {
+          "id": "return",
+          "label": "Return to the decision",
+          "elements": [
+            "finalize_grounding",
+            "grounding_complete"
+          ],
+          "purpose": "Return validated evidence and the human response to the parent."
+        }
+      ],
+      "completion": "Grounding is complete. The parent decision workflow determines the next action."
+    },
+    "multimodal-research-workflow": {
+      "label": "Research",
+      "processName": "Evidence research gate",
+      "stages": [
+        {
+          "id": "evidence",
+          "label": "Gather research",
+          "elements": [
+            "gather_research"
+          ],
+          "purpose": "Gather applicable evidence for the factual questions."
+        },
+        {
+          "id": "evaluation",
+          "label": "Evaluate evidence",
+          "elements": [
+            "evaluate_research",
+            "research_complete"
+          ],
+          "purpose": "Continue research, request a decision, revise intent, or proceed."
+        }
+      ],
+      "completion": "The research subprocess is complete. Its parent consumes the reported outcome."
+    },
+    "adversarial-review-workflow": {
+      "label": "Adversarial review",
+      "processName": "Adversarial review and human disposition",
+      "stages": [
+        {
+          "id": "review",
+          "label": "Review the design",
+          "elements": [
+            "review_semantics"
+          ],
+          "purpose": "Identify material findings against the current source."
+        },
+        {
+          "id": "judgment",
+          "label": "Human disposition",
+          "elements": [
+            "review_disposition"
+          ],
+          "purpose": "Resolve findings that require human judgment."
+        },
+        {
+          "id": "record",
+          "label": "Record the outcome",
+          "elements": [
+            "record_review_disposition",
+            "review_complete"
+          ],
+          "purpose": "Return the review outcome to its owning workflow."
+        }
+      ],
+      "completion": "The review subprocess is complete. Its parent routes the reported disposition."
+    }
+  }
+}

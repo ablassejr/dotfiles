@@ -15,6 +15,11 @@ description: >-
 
 # Override `superpowers:writing-plans`
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 This skill performs a one-time file mutation. It locates the installed `superpowers:writing-plans` SKILL.md on the user's machine, backs it up, and replaces its contents with the human-targeted version bundled at `replacement-SKILL.md`.
 
 This is an operational skill, not a behavior skill. Run only when the user explicitly invokes it.

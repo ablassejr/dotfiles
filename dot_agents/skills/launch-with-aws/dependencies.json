@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "skill": "launch-with-aws",
+  "tools": [
+    {
+      "id": "python",
+      "command": "python3",
+      "kind": "brew",
+      "package": "python",
+      "purpose": "Run bundled Python helpers",
+      "documentation": "https://formulae.brew.sh/formula/python",
+      "min_version": "3.9.0",
+      "required": true
+    },
+    {
+      "id": "aws",
+      "command": "aws",
+      "kind": "brew",
+      "package": "awscli",
+      "purpose": "Selected AWS operations",
+      "documentation": "https://formulae.brew.sh/formula/awscli",
+      "required": false
+    },
+    {
+      "id": "boto3",
+      "kind": "pip",
+      "package": "boto3",
+      "module": "boto3",
+      "distribution": "boto3",
+      "purpose": "Run selected AWS Python helpers",
+      "depends": [
+        "python"
+      ],
+      "documentation": "https://pypi.org/project/boto3/",
+      "required": true
+    },
+    {
+      "id": "botocore",
+      "kind": "pip",
+      "package": "botocore",
+      "module": "botocore",
+      "distribution": "botocore",
+      "purpose": "AWS helper protocol and error handling",
+      "depends": [
+        "python"
+      ],
+      "documentation": "https://pypi.org/project/botocore/",
+      "required": true
+    }
+  ],
+  "external_requirements": [
+    "Agent connectors, authenticated accounts, provider permissions, and project configuration use the existing session. Package installation does not authenticate or grant write authority."
+  ]
+}

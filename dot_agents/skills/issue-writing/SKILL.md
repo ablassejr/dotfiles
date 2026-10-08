@@ -5,7 +5,12 @@ description: Write self-explanatory issues and work items in the selected tracke
 
 # Issue writing: describe the problem and required outcome
 
-For human interactions and team outputs, follow [review and artifact design](../epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
+For human interactions and team outputs, follow [review and artifact design](references/bundled/epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
 
 **When writing or editing any issue or work item** (create, save, comment, or when a user asks to "clean up", "polish", or "strip implementation details from" an issue), the description **must describe *the problem* and *the required outcome* — nothing about *how* the assignee will build it, and nothing about *what the finished thing will look like from the outside*.**
 
@@ -17,7 +22,7 @@ Use when preparing or saving an issue description, comment, or work-item draft i
 
 ## Issue destination
 
-Use the organization, tracker, project or queue, status, labels, and owner established by the current request or verified project conventions. Reuse an existing issue's associations. Do not assume any team's inbox or label, and do not create a container just to satisfy a template. Prepare a portable draft when no destination is selected; ask only when an actual publication needs missing destination information. Follow [workspace and destinations](../epic-spec-workflow/references/workspace-and-destinations.md).
+Use the organization, tracker, project or queue, status, labels, and owner established by the current request or verified project conventions. Reuse an existing issue's associations. Do not assume any team's inbox or label, and do not create a container just to satisfy a template. Prepare a portable draft when no destination is selected; ask only when an actual publication needs missing destination information. Follow [workspace and destinations](references/bundled/epic-spec-workflow/references/workspace-and-destinations.md).
 
 ## Treat these as implementation (remove)
 
@@ -61,7 +66,7 @@ Applies to issue descriptions and comments in the selected tracker. Does **not**
 
 - Operator runbooks (by design pin exact commands/paths — that's their job).
 - ADRs (by design record a specific decision + its concrete rationale).
-- PR implementation explanations, including relevant paths and command names. PRs follow the separate [PR-writing contract](../pull-request-writing/SKILL.md) for standalone readability and proposal-only document references.
+- PR implementation explanations, including relevant paths and command names. PRs follow the separate [PR-writing contract](references/bundled/pull-request-writing/SKILL.md) for standalone readability and proposal-only document references.
 
 ## Shared rule for every workflow
 
@@ -77,7 +82,7 @@ Native parent, child, dependency, duplicate, milestone, owner, and PR relationsh
 
 When a workflow prepares an issue, write the complete problem or question and its required outcome from the approved scope. Read it as an assignee with no starting context and repair gaps, undefined terms, unsupported requirements, and references that carry essential meaning. Keep detailed source authority, basis lineage, grounding evidence, code-mass records, and implementation rationale in the design proposal and structured workflow records.
 
-Before an authorized write, identify the actual design proposal URL if one exists and validate the exact issue-facing content with [the shared content validator](../implementation-specification-compiler/references/issue-content.md). If there is no proposal, omit the reference and keep the issue self-contained; do not create an unrelated document solely to satisfy the validator.
+Before an authorized write, identify the actual design proposal URL if one exists and validate the exact issue-facing content with [the shared content validator](references/bundled/implementation-specification-compiler/references/issue-content.md). If there is no proposal, omit the reference and keep the issue self-contained; do not create an unrelated document solely to satisfy the validator.
 
 After publication, fetch the title, description, workflow-authored comments, and document attachments. Validate that readback and compare it with the prepared content. If publication is partial or adds a disallowed reference, reconcile and repair through the existing authorized write path before reporting success or advancing the workflow. Repeat the standalone reading pass after a material HITL edit. These are agent tasks within the stage, not new human approvals. An unavailable provider or validator leaves its verification explicitly pending.
 

@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "skill": "aws-containers",
+  "tools": [
+    {
+      "id": "aws",
+      "command": "aws",
+      "kind": "brew",
+      "package": "awscli",
+      "purpose": "Selected AWS operations",
+      "documentation": "https://formulae.brew.sh/formula/awscli",
+      "required": false
+    },
+    {
+      "id": "gh",
+      "command": "gh",
+      "kind": "brew",
+      "package": "gh",
+      "purpose": "Selected GitHub CLI operations",
+      "documentation": "https://formulae.brew.sh/formula/gh",
+      "required": false
+    },
+    {
+      "id": "kubectl",
+      "command": "kubectl",
+      "kind": "brew",
+      "package": "kubernetes-cli",
+      "purpose": "Selected Kubernetes operations",
+      "documentation": "https://formulae.brew.sh/formula/kubernetes-cli",
+      "required": false
+    },
+    {
+      "id": "helm",
+      "command": "helm",
+      "kind": "brew",
+      "package": "helm",
+      "purpose": "Selected Helm operations",
+      "documentation": "https://formulae.brew.sh/formula/helm",
+      "required": false
+    }
+  ],
+  "external_requirements": [
+    "Agent connectors, authenticated accounts, provider permissions, and project configuration use the existing session. Package installation does not authenticate or grant write authority."
+  ]
+}

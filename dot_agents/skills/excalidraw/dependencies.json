@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "skill": "excalidraw",
+  "tools": [
+    {
+      "id": "python",
+      "command": "python3",
+      "kind": "brew",
+      "package": "python",
+      "purpose": "Run bundled Python helpers",
+      "documentation": "https://formulae.brew.sh/formula/python",
+      "min_version": "3.9.0",
+      "required": true
+    },
+    {
+      "id": "playwright",
+      "kind": "npm",
+      "package": "playwright",
+      "command": "playwright",
+      "purpose": "Browser rendering when a native viewer is unavailable",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/playwright",
+      "required": false
+    },
+    {
+      "id": "browser-chromium",
+      "kind": "browser",
+      "browser": "chromium",
+      "depends": [
+        "playwright"
+      ],
+      "purpose": "Install Chromium for the isolated Playwright fallback",
+      "documentation": "https://playwright.dev/docs/browsers",
+      "required": false
+    },
+    {
+      "id": "excalidraw-export",
+      "kind": "npm",
+      "package": "excalidraw-brute-export-cli",
+      "command": "excalidraw-brute-export",
+      "purpose": "Selected Excalidraw export",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/excalidraw-brute-export-cli",
+      "required": false
+    },
+    {
+      "id": "browser-firefox",
+      "kind": "browser",
+      "browser": "firefox",
+      "depends": [
+        "playwright"
+      ],
+      "purpose": "Install Firefox for selected Excalidraw browser export",
+      "documentation": "https://playwright.dev/docs/browsers",
+      "required": false
+    },
+    {
+      "id": "curl",
+      "command": "curl",
+      "kind": "brew",
+      "package": "curl",
+      "purpose": "Retrieve documented HTTP resources",
+      "documentation": "https://formulae.brew.sh/formula/curl",
+      "required": false
+    },
+    {
+      "id": "node",
+      "command": "node",
+      "kind": "brew",
+      "package": "node",
+      "purpose": "Run Node utilities and npm packages",
+      "documentation": "https://formulae.brew.sh/formula/node",
+      "min_version": "18.0.0",
+      "required": false
+    }
+  ],
+  "external_requirements": [
+    "Agent connectors, authenticated accounts, provider permissions, and project configuration use the existing session. Package installation does not authenticate or grant write authority."
+  ]
+}

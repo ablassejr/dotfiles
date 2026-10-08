@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "skill": "list-mcp-servers",
+  "tools": [],
+  "external_requirements": [
+    "Agent connectors, authenticated accounts, provider permissions, and project configuration use the existing session. Package installation does not authenticate or grant write authority."
+  ]
+}

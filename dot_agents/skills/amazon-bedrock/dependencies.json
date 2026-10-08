@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "skill": "amazon-bedrock",
+  "tools": [
+    {
+      "id": "python",
+      "command": "python3",
+      "kind": "brew",
+      "package": "python",
+      "purpose": "Run bundled Python helpers",
+      "documentation": "https://formulae.brew.sh/formula/python",
+      "min_version": "3.9.0",
+      "required": true
+    },
+    {
+      "id": "aws",
+      "command": "aws",
+      "kind": "brew",
+      "package": "awscli",
+      "purpose": "Selected AWS operations",
+      "documentation": "https://formulae.brew.sh/formula/awscli",
+      "required": false
+    },
+    {
+      "id": "agentcore",
+      "kind": "npm",
+      "package": "@aws/agentcore@preview",
+      "command": "agentcore",
+      "purpose": "Selected AWS AgentCore workflow",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/@aws/agentcore",
+      "required": false
+    },
+    {
+      "id": "docker",
+      "command": "docker",
+      "kind": "brew",
+      "package": "docker-desktop",
+      "purpose": "Container-backed test or analysis workflow",
+      "documentation": "https://formulae.brew.sh/cask/docker-desktop",
+      "cask": true,
+      "required": false
+    },
+    {
+      "id": "node",
+      "command": "node",
+      "kind": "brew",
+      "package": "node",
+      "purpose": "Run Node utilities and npm packages",
+      "documentation": "https://formulae.brew.sh/formula/node",
+      "min_version": "18.0.0",
+      "required": false
+    },
+    {
+      "id": "npm-aws-sdk-client-bedrock-runtime",
+      "kind": "npm",
+      "package": "@aws-sdk/client-bedrock-runtime@^3.0.0",
+      "command": null,
+      "required": false,
+      "depends": [
+        "node"
+      ],
+      "purpose": "Selected package used by the skill’s executable examples; integrate application dependencies through their project manifest",
+      "documentation": "https://www.npmjs.com/package/@aws-sdk/client-bedrock-runtime"
+    }
+  ],
+  "external_requirements": [
+    "Agent connectors, authenticated accounts, provider permissions, and project configuration use the existing session. Package installation does not authenticate or grant write authority.",
+    "Docker Desktop must be running for container workflows. Tool installation does not start the daemon or prepare project-specific images."
+  ]
+}

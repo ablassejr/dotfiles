@@ -9,6 +9,11 @@ metadata:
 
 # Upgrade to Prisma ORM 7
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Complete guide for migrating from Prisma ORM v6 to v7. This upgrade introduces significant breaking changes around the new `prisma-client` generator, driver adapters, `prisma.config.ts`, explicit environment loading, and generated client entrypoints.
 
 ## When to Apply

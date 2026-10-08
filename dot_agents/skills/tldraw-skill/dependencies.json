@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "skill": "tldraw-skill",
+  "tools": [
+    {
+      "id": "tldraw-cli",
+      "kind": "npm",
+      "package": "@kitschpatrol/tldraw-cli",
+      "command": "tldraw",
+      "purpose": "Selected tldraw CLI export workflow",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/@kitschpatrol/tldraw-cli",
+      "required": true
+    },
+    {
+      "id": "node",
+      "command": "node",
+      "kind": "brew",
+      "package": "node",
+      "purpose": "Run Node utilities and npm packages",
+      "documentation": "https://formulae.brew.sh/formula/node",
+      "min_version": "18.0.0",
+      "required": false
+    }
+  ],
+  "external_requirements": [
+    "Agent connectors, authenticated accounts, provider permissions, and project configuration use the existing session. Package installation does not authenticate or grant write authority."
+  ]
+}

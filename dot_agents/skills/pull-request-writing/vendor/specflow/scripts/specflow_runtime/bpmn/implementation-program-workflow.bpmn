@@ -1,0 +1,391 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_implementation-program-workflow" targetNamespace="https://specflow.local/workflows">
+  <bpmn:process id="implementation-program-workflow" name="Explicit implementation program compilation" isExecutable="true">
+    <bpmn:extensionElements>
+      <zeebe:versionTag value="v1" />
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="start" name="Start">
+      <bpmn:outgoing>flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="draft_program_basis" name="Draft Program Basis">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.draft-program-basis" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="first-principles-intake" />
+          <zeebe:header key="phase" value="draft_program_basis" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+          <zeebe:header key="inheritBasisVariable" value="programBasisBinding" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_1</bpmn:incoming>
+      <bpmn:incoming>flow_4</bpmn:incoming>
+      <bpmn:outgoing>flow_2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="approve_program_basis" name="Approve Program Basis">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:taskHeaders>
+          <zeebe:header key="bindingVariable" value="programBasisBinding" />
+          <zeebe:header key="responseVariable" value="programBasisResponse" />
+          <zeebe:header key="actions" value="approved,changes_requested" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>basis_requires_review</bpmn:incoming>
+      <bpmn:outgoing>flow_3</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="program_basis_outcome" name="Program Basis Outcome">
+      <bpmn:incoming>flow_3</bpmn:incoming>
+      <bpmn:outgoing>flow_4</bpmn:outgoing>
+      <bpmn:outgoing>flow_5</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="compile_program" name="Compile Program">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.compile-program" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="implementation-specification-compiler" />
+          <zeebe:header key="phase" value="compile_program" />
+          <zeebe:header key="programPolicy" value="three-person-workstreams-v1" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="visualInventory" value="required" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_5</bpmn:incoming>
+      <bpmn:incoming>flow_8</bpmn:incoming>
+      <bpmn:incoming>basis_inherited</bpmn:incoming>
+      <bpmn:outgoing>flow_6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="publish_design_proposal" name="Publish Supervisor Design in Linear">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.publish-design-proposal" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="visual-language-compiler" />
+          <zeebe:header key="phase" value="publish_design_proposal" />
+          <zeebe:header key="programPolicy" value="three-person-workstreams-v1" />
+          <zeebe:header key="resultContract" value="linear-design-proposal-v1" />
+          <zeebe:header key="planningScope" value="program" />
+          <zeebe:header key="sourceBindingVariable" value="programBinding" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="visualBindingVariable" value="designProposalBinding" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_6</bpmn:incoming>
+      <bpmn:incoming>presentation_revision</bpmn:incoming>
+      <bpmn:outgoing>flow_design_proposal_review</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="approve_program" name="Approve Program">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:taskHeaders>
+          <zeebe:header key="bindingVariable" value="designProposalBinding" />
+          <zeebe:header key="responseVariable" value="programResponse" />
+          <zeebe:header key="actions" value="approved,changes_requested,presentation_change,semantic_change" />
+          <zeebe:header key="resultContract" value="linear-design-proposal-v1" />
+          <zeebe:header key="planningScope" value="program" />
+          <zeebe:header key="sourceBindingVariable" value="programBinding" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="visualBindingVariable" value="designProposalBinding" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+          <zeebe:header key="revisionSources" value="programBasisBinding,programBinding" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_design_proposal_review</bpmn:incoming>
+      <bpmn:outgoing>flow_7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="program_outcome" name="Program Outcome">
+      <bpmn:incoming>flow_7</bpmn:incoming>
+      <bpmn:outgoing>flow_8</bpmn:outgoing>
+      <bpmn:outgoing>flow_9</bpmn:outgoing>
+      <bpmn:outgoing>presentation_revision</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="publish_project_resources" name="Upload All Artifacts to Project Resources">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.publish-project-resources" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="speckit-tasks-to-linear" />
+          <zeebe:header key="phase" value="publish_project_resources" />
+          <zeebe:header key="programPolicy" value="three-person-workstreams-v1" />
+          <zeebe:header key="projectResourcePolicy" value="linear-project-resources-v1" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_9</bpmn:incoming>
+      <bpmn:outgoing>resources_ready</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="publish_linear_program" name="Distill Approved Linear Issues">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.publish-linear-program" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="speckit-tasks-to-linear" />
+          <zeebe:header key="phase" value="publish_linear_program" />
+          <zeebe:header key="programPolicy" value="three-person-workstreams-v1" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+          <zeebe:header key="projectResourcePolicy" value="linear-project-resources-v1" />
+          <zeebe:header key="issueReviewPolicy" value="all-issues-before-assignment-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>resources_ready</bpmn:incoming>
+      <bpmn:outgoing>flow_10</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="dispatch_tickets" name="Assign Reviewed Issues to the Team">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.dispatch-tickets" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="implementation-program-compiler" />
+          <zeebe:header key="phase" value="dispatch_tickets" />
+          <zeebe:header key="programPolicy" value="three-person-workstreams-v1" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+          <zeebe:header key="projectResourcePolicy" value="linear-project-resources-v1" />
+          <zeebe:header key="issueReviewPolicy" value="all-issues-before-assignment-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>all_issue_reviews_verified</bpmn:incoming>
+      <bpmn:outgoing>flow_11</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:intermediateCatchEvent id="await_program_completion" name="Await Program Completion">
+      <bpmn:incoming>flow_11</bpmn:incoming>
+      <bpmn:outgoing>flow_12</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="await_program_completion_message" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:serviceTask id="reconcile_program" name="Reconcile Program">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.reconcile-program" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="specification-reconciliation" />
+          <zeebe:header key="phase" value="reconcile_program" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="visualInventory" value="required" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_12</bpmn:incoming>
+      <bpmn:outgoing>flow_13</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="program_complete" name="Program Complete">
+      <bpmn:incoming>flow_13</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="flow_1" sourceRef="start" targetRef="draft_program_basis" />
+    <bpmn:sequenceFlow id="flow_2" sourceRef="draft_program_basis" targetRef="basis_route" />
+    <bpmn:sequenceFlow id="flow_3" sourceRef="approve_program_basis" targetRef="program_basis_outcome" />
+    <bpmn:sequenceFlow id="flow_4" sourceRef="program_basis_outcome" targetRef="draft_program_basis">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= programBasisResponse.action = "changes_requested"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_5" sourceRef="program_basis_outcome" targetRef="compile_program">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= programBasisResponse.action = "approved"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_6" sourceRef="compile_program" targetRef="publish_design_proposal" />
+    <bpmn:sequenceFlow id="flow_7" sourceRef="approve_program" targetRef="program_outcome" />
+    <bpmn:sequenceFlow id="flow_8" sourceRef="program_outcome" targetRef="compile_program">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= programResponse.action = "changes_requested" or programResponse.action = "semantic_change"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_9" sourceRef="program_outcome" targetRef="publish_project_resources">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= programResponse.action = "approved"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_10" sourceRef="publish_linear_program" targetRef="review_created_issues" />
+    <bpmn:sequenceFlow id="flow_11" sourceRef="dispatch_tickets" targetRef="await_program_completion" />
+    <bpmn:sequenceFlow id="flow_12" sourceRef="await_program_completion" targetRef="reconcile_program" />
+    <bpmn:sequenceFlow id="flow_13" sourceRef="reconcile_program" targetRef="program_complete" />
+    <bpmn:sequenceFlow id="flow_design_proposal_review" sourceRef="publish_design_proposal" targetRef="approve_program" />
+    <bpmn:exclusiveGateway id="basis_route" name="Reuse exact approved basis or request human review">
+      <bpmn:incoming>flow_2</bpmn:incoming>
+      <bpmn:outgoing>basis_requires_review</bpmn:outgoing>
+      <bpmn:outgoing>basis_inherited</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="basis_requires_review" sourceRef="basis_route" targetRef="approve_program_basis">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= basisApprovalMode = "HUMAN_REQUIRED"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="basis_inherited" sourceRef="basis_route" targetRef="compile_program">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= basisApprovalMode = "INHERITED"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="presentation_revision" sourceRef="program_outcome" targetRef="publish_design_proposal">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= programResponse.action = "presentation_change"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="resources_ready" sourceRef="publish_project_resources" targetRef="publish_linear_program" />
+    <bpmn:callActivity id="review_created_issues" name="Review Every Created Issue">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="implementation-ticket-workflow" bindingType="deployment" propagateAllChildVariables="true" propagateAllParentVariables="false" />
+        <zeebe:ioMapping>
+          <zeebe:input source="= createdIssue" target="createdIssue" />
+          <zeebe:input source="= programBinding" target="programBinding" />
+          <zeebe:input source="= programProcessInstanceKey" target="programProcessInstanceKey" />
+          <zeebe:input source="= &quot;REVIEW_ONLY&quot;" target="ticketMode" />
+          <zeebe:input source="= &quot;ticket:&quot; + createdIssue.identifier" target="workflowBusinessId" />
+          <zeebe:input source="= projectResourcesBinding" target="projectResourcesBinding" />
+          <zeebe:input source="= semanticManifest" target="semanticManifest" />
+          <zeebe:output source="= issueReviewReceipt" target="issueReviewReceipt" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_10</bpmn:incoming>
+      <bpmn:outgoing>all_issue_reviews_returned</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true">
+        <bpmn:extensionElements>
+          <zeebe:loopCharacteristics inputCollection="= createdIssues" inputElement="createdIssue" outputCollection="issueReviewReceipts" outputElement="= issueReviewReceipt" />
+        </bpmn:extensionElements>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:callActivity>
+    <bpmn:serviceTask id="verify_all_issue_reviews" name="Verify All Issue Reviews">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.verify-all-issue-reviews" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="linear-ticket-implementation" />
+          <zeebe:header key="phase" value="verify_all_issue_reviews" />
+          <zeebe:header key="issueReviewPolicy" value="all-issues-before-assignment-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="programPolicy" value="three-person-workstreams-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>all_issue_reviews_returned</bpmn:incoming>
+      <bpmn:outgoing>all_issue_reviews_verified</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="all_issue_reviews_returned" sourceRef="review_created_issues" targetRef="verify_all_issue_reviews" />
+    <bpmn:sequenceFlow id="all_issue_reviews_verified" sourceRef="verify_all_issue_reviews" targetRef="dispatch_tickets" />
+  </bpmn:process>
+  <bpmn:message id="await_program_completion_message" name="specflow.program.completed">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="= workflowBusinessId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_implementation-program-workflow">
+    <bpmndi:BPMNPlane id="BPMNPlane_implementation-program-workflow" bpmnElement="implementation-program-workflow">
+      <bpmndi:BPMNShape id="start_di" bpmnElement="start">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="draft_program_basis_di" bpmnElement="draft_program_basis">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="approve_program_basis_di" bpmnElement="approve_program_basis">
+        <dc:Bounds x="325" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="program_basis_outcome_di" bpmnElement="program_basis_outcome" isMarkerVisible="true">
+        <dc:Bounds x="500" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="compile_program_di" bpmnElement="compile_program">
+        <dc:Bounds x="625" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="approve_program_di" bpmnElement="approve_program">
+        <dc:Bounds x="945.0" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="program_outcome_di" bpmnElement="program_outcome" isMarkerVisible="true">
+        <dc:Bounds x="1120.0" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="publish_linear_program_di" bpmnElement="publish_linear_program">
+        <dc:Bounds x="1425.0" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dispatch_tickets_di" bpmnElement="dispatch_tickets">
+        <dc:Bounds x="1960" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="await_program_completion_di" bpmnElement="await_program_completion">
+        <dc:Bounds x="1757.0" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="reconcile_program_di" bpmnElement="reconcile_program">
+        <dc:Bounds x="1875.0" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="program_complete_di" bpmnElement="program_complete">
+        <dc:Bounds x="2057.0" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="publish_design_proposal_di" bpmnElement="publish_design_proposal">
+        <dc:Bounds x="775.0" y="30.0" width="100.0" height="80.0" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="basis_route_di" bpmnElement="basis_route">
+        <dc:Bounds x="840" y="580" width="100" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="publish_project_resources_di" bpmnElement="publish_project_resources">
+        <dc:Bounds x="1245" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="review_created_issues_di" bpmnElement="review_created_issues">
+        <dc:Bounds x="1600" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="verify_all_issue_reviews_di" bpmnElement="verify_all_issue_reviews">
+        <dc:Bounds x="1780" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_1_di" bpmnElement="flow_1">
+        <di:waypoint x="75.0" y="70.0" />
+        <di:waypoint x="225.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_2_di" bpmnElement="flow_2">
+        <di:waypoint x="225.0" y="70.0" />
+        <di:waypoint x="890.0" y="615.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_3_di" bpmnElement="flow_3">
+        <di:waypoint x="375.0" y="70.0" />
+        <di:waypoint x="525.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_4_di" bpmnElement="flow_4">
+        <di:waypoint x="525.0" y="70.0" />
+        <di:waypoint x="225.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_5_di" bpmnElement="flow_5">
+        <di:waypoint x="525.0" y="70.0" />
+        <di:waypoint x="675.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_6_di" bpmnElement="flow_6">
+        <di:waypoint x="675.0" y="70.0" />
+        <di:waypoint x="825.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_7_di" bpmnElement="flow_7">
+        <di:waypoint x="995.0" y="70.0" />
+        <di:waypoint x="1145.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_8_di" bpmnElement="flow_8">
+        <di:waypoint x="1145.0" y="70.0" />
+        <di:waypoint x="675.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_9_di" bpmnElement="flow_9">
+        <di:waypoint x="1145.0" y="70.0" />
+        <di:waypoint x="1295.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_10_di" bpmnElement="flow_10">
+        <di:waypoint x="1475.0" y="70.0" />
+        <di:waypoint x="1650.0" y="270.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_11_di" bpmnElement="flow_11">
+        <di:waypoint x="2010.0" y="270.0" />
+        <di:waypoint x="1775.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_12_di" bpmnElement="flow_12">
+        <di:waypoint x="1775.0" y="70.0" />
+        <di:waypoint x="1925.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_13_di" bpmnElement="flow_13">
+        <di:waypoint x="1925.0" y="70.0" />
+        <di:waypoint x="2075.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_design_proposal_review_di" bpmnElement="flow_design_proposal_review">
+        <di:waypoint x="825.0" y="70.0" />
+        <di:waypoint x="995.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="basis_requires_review_di" bpmnElement="basis_requires_review">
+        <di:waypoint x="890.0" y="615.0" />
+        <di:waypoint x="375.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="basis_inherited_di" bpmnElement="basis_inherited">
+        <di:waypoint x="890.0" y="615.0" />
+        <di:waypoint x="675.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="presentation_revision_di" bpmnElement="presentation_revision">
+        <di:waypoint x="1145.0" y="70.0" />
+        <di:waypoint x="825.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="resources_ready_di" bpmnElement="resources_ready">
+        <di:waypoint x="1295.0" y="70.0" />
+        <di:waypoint x="1475.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="all_issue_reviews_returned_di" bpmnElement="all_issue_reviews_returned">
+        <di:waypoint x="1650.0" y="270.0" />
+        <di:waypoint x="1830.0" y="270.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="all_issue_reviews_verified_di" bpmnElement="all_issue_reviews_verified">
+        <di:waypoint x="1830.0" y="270.0" />
+        <di:waypoint x="2010.0" y="270.0" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -11,6 +11,11 @@ metadata: {"openclaw":{"requires":{"anyBins":["draw.io","drawio"]},"emoji":"📐
 
 # Draw.io Diagrams
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 ## Overview
 
 Generate `.drawio` XML files and export to PNG/SVG/PDF/JPG locally using the native draw.io desktop app CLI.

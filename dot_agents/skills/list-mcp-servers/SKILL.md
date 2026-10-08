@@ -5,6 +5,11 @@ description: Use when the user asks which MCP servers are available, configured,
 
 # List MCP Servers
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 ## Overview
 
 Codex and Codex Desktop maintain **separate** MCP configurations. This skill produces one consolidated listing of both, including connection health for Codex.

@@ -10,6 +10,11 @@ metadata: {"openclaw":{"requires":{"bins":["tldraw"]},"emoji":"📝","os":["darw
 
 # tldraw Whiteboard Diagrams
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 ## Overview
 
 Generate modern whiteboard-style diagrams as `.tldr` JSON files and export to PNG/SVG using `@kitschpatrol/tldraw-cli`. tldraw produces clean hand-drawn aesthetic diagrams with rich shape libraries and smooth arrow routing — well-suited for casual or whiteboard-style visualizations.

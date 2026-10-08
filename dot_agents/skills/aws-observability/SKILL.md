@@ -18,6 +18,11 @@ version: 2
 
 # AWS Observability
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 ## Overview
 
 Domain expertise for AWS observability across metrics, logs, and traces, covering the full lifecycle: **enabling/onboarding** a service to Application Signals using ADOT (AWS Distro for OpenTelemetry) auto-instrumentation SDKs and ServiceEvents — making the service show up in Application Signals — on EC2, ECS, EKS, and Lambda in Python, Node.js, Java, and .NET.

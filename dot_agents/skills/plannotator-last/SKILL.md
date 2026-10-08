@@ -6,6 +6,11 @@ disable-model-invocation: true
 
 # Plannotator Last
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Use this skill when the user wants to annotate the latest assistant response in Plannotator.
 
 Do not send a commentary/status message before running the command. The command

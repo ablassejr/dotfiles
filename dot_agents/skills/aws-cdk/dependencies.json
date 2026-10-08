@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "skill": "aws-cdk",
+  "tools": [
+    {
+      "id": "aws",
+      "command": "aws",
+      "kind": "brew",
+      "package": "awscli",
+      "purpose": "Selected AWS operations",
+      "documentation": "https://formulae.brew.sh/formula/awscli",
+      "required": false
+    },
+    {
+      "id": "aws-cdk",
+      "kind": "npm",
+      "package": "aws-cdk",
+      "command": "cdk",
+      "purpose": "Selected AWS CDK workflow",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/aws-cdk",
+      "required": false
+    },
+    {
+      "id": "node",
+      "command": "node",
+      "kind": "brew",
+      "package": "node",
+      "purpose": "Run Node utilities and npm packages",
+      "documentation": "https://formulae.brew.sh/formula/node",
+      "min_version": "18.0.0",
+      "required": false
+    },
+    {
+      "id": "npm-cdk-nag",
+      "kind": "npm",
+      "package": "cdk-nag",
+      "command": null,
+      "required": false,
+      "depends": [
+        "node"
+      ],
+      "purpose": "Selected package used by the skill’s executable examples; integrate application dependencies through their project manifest",
+      "documentation": "https://www.npmjs.com/package/cdk-nag"
+    },
+    {
+      "id": "npm-esbuild",
+      "kind": "npm",
+      "package": "esbuild",
+      "command": null,
+      "required": false,
+      "depends": [
+        "node"
+      ],
+      "purpose": "Selected package used by the skill’s executable examples; integrate application dependencies through their project manifest",
+      "documentation": "https://www.npmjs.com/package/esbuild"
+    }
+  ],
+  "external_requirements": []
+}

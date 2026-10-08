@@ -7,6 +7,11 @@ metadata: {"version":"1.3.0","openclaw":{"requires":{"bins":["curl"]},"emoji":"�
 
 # Excalidraw Diagrams
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 ## Overview
 
 Generate `.excalidraw` JSON files and export to PNG/SVG.

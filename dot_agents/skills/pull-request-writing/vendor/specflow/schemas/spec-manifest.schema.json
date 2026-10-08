@@ -1,0 +1,362 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://specflow.local/schemas/spec-manifest.schema.json",
+  "title": "Specflow semantic manifest",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "kind",
+    "epic_id",
+    "slug",
+    "stage",
+    "repository",
+    "first_principles_basis",
+    "stable_id_counters",
+    "semantic_ids",
+    "view_registry",
+    "decision_log",
+    "evidence_ledger",
+    "subtractive_code_mass",
+    "notion",
+    "approval",
+    "linear_compilation",
+    "provenance"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 3
+    },
+    "kind": {
+      "const": "specflow.semantic-manifest"
+    },
+    "epic_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "slug": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stage": {
+      "type": "string",
+      "minLength": 1
+    },
+    "repository": {
+      "type": "object",
+      "required": ["baseline", "spec_kit_feature_directory"],
+      "properties": {
+        "baseline": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "spec_kit_feature_directory": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "first_principles_basis": {
+      "type": "object",
+      "required": ["status", "current_basis_id", "current_version", "lineage"],
+      "properties": {
+        "status": {"enum": ["pending", "approved"]},
+        "current_basis_id": {"type": ["string", "null"], "minLength": 1, "pattern": "\\S"},
+        "current_version": {"type": ["integer", "null"], "minimum": 1},
+        "lineage": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["basis_id", "version", "supersedes_basis_id", "approved_by", "approved_at"],
+            "properties": {
+              "basis_id": {"type": "string", "minLength": 1, "pattern": "\\S"},
+              "version": {"type": "integer", "minimum": 1},
+              "supersedes_basis_id": {"type": ["string", "null"], "minLength": 1, "pattern": "\\S"},
+              "approved_by": {"type": "string", "minLength": 1, "pattern": "\\S"},
+              "approved_at": {"type": "string", "minLength": 1, "pattern": "\\S"}
+            }
+          }
+        }
+      }
+    },
+    "stable_id_counters": {
+      "type": "object",
+      "propertyNames": {
+        "minLength": 1,
+        "pattern": "\\S"
+      },
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "semantic_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "\\S"
+      }
+    },
+    "view_registry": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "decision_log": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "evidence_ledger": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "subtractive_code_mass": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy",
+        "opportunity_maps",
+        "net_addition_exceptions",
+        "milestone_ledgers"
+      ],
+      "properties": {
+        "policy": {"const": "subtractive-code-mass-v1"},
+        "opportunity_maps": {
+          "type": "array",
+          "items": {"type": "object"}
+        },
+        "net_addition_exceptions": {
+          "type": "array",
+          "items": {"type": "object"}
+        },
+        "milestone_ledgers": {
+          "type": "array",
+          "items": {"type": "object"}
+        }
+      }
+    },
+    "notion": {
+      "type": "object",
+      "required": [
+        "page_id",
+        "url",
+        "published_revision",
+        "readback_revision",
+        "readback_content_hash",
+        "readback_verified",
+        "readback_verified_at"
+      ],
+      "properties": {
+        "page_id": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "url": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "published_revision": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "readback_revision": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "readback_content_hash": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "readback_verified": {
+          "type": "boolean"
+        },
+        "readback_verified_at": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "approval": {
+      "type": "object",
+      "required": ["status", "revision", "approved_by", "approved_at"],
+      "properties": {
+        "status": {
+          "enum": ["pending", "approved"]
+        },
+        "revision": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "approved_by": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "approved_at": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "linear_compilation": {
+      "type": "object",
+      "required": ["status", "plan_path", "carrier_project_id", "compiled_at"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "plan_path": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "carrier_project_id": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "compiled_at": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["temporary_artifacts", "preserved_artifacts"],
+      "properties": {
+        "temporary_artifacts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "preserved_artifacts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "approval": {
+            "properties": {
+              "status": {
+                "const": "approved"
+              }
+            },
+            "required": ["status"]
+          }
+        },
+        "required": ["approval"]
+      },
+      "then": {
+        "properties": {
+          "semantic_ids": {
+            "minItems": 1
+          },
+          "first_principles_basis": {
+            "properties": {
+              "status": {"const": "approved"},
+              "current_basis_id": {"type": "string", "minLength": 1, "pattern": "\\S"},
+              "current_version": {"type": "integer", "minimum": 1},
+              "lineage": {"minItems": 1}
+            }
+          },
+          "repository": {
+            "properties": {
+              "baseline": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            }
+          },
+          "notion": {
+            "properties": {
+              "page_id": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "url": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "published_revision": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "readback_revision": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "readback_content_hash": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "readback_verified": {
+                "const": true
+              },
+              "readback_verified_at": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            }
+          },
+          "approval": {
+            "properties": {
+              "revision": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "approved_by": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "approved_at": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

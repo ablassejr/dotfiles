@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "skill": "issue-implementation-designer",
+  "tools": [
+    {
+      "id": "specflow",
+      "kind": "bundle",
+      "path": "scripts/specflow",
+      "command": "specflow",
+      "depends": [
+        "python"
+      ],
+      "purpose": "Packaged planning, content, visual, and workflow validation client",
+      "documentation": "references/setup.md",
+      "required": false
+    },
+    {
+      "id": "likec4",
+      "kind": "npm",
+      "package": "likec4",
+      "command": "likec4",
+      "purpose": "Render formal architecture diagrams",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/likec4",
+      "required": false
+    },
+    {
+      "id": "python",
+      "command": "python3",
+      "kind": "brew",
+      "package": "python",
+      "purpose": "Run bundled Python helpers",
+      "documentation": "https://formulae.brew.sh/formula/python",
+      "min_version": "3.9.0",
+      "required": false
+    },
+    {
+      "id": "node",
+      "command": "node",
+      "kind": "brew",
+      "package": "node",
+      "purpose": "Run Node utilities and npm packages",
+      "documentation": "https://formulae.brew.sh/formula/node",
+      "min_version": "22.18.0",
+      "required": false
+    },
+    {
+      "id": "c8ctl",
+      "kind": "npm",
+      "package": "@camunda8/cli",
+      "command": "c8ctl",
+      "purpose": "Camunda linting, FEEL, templates, and selected cluster operations",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/@camunda8/cli",
+      "min_version": "3.2.0",
+      "required": false
+    },
+    {
+      "id": "java",
+      "command": "java",
+      "kind": "brew",
+      "package": "openjdk@21",
+      "purpose": "Java workers, connectors, tests, or local Camunda runtime",
+      "documentation": "https://formulae.brew.sh/formula/openjdk@21",
+      "min_version": "21.0.0",
+      "version_args": [
+        "-version"
+      ],
+      "required": false
+    },
+    {
+      "id": "cloc",
+      "command": "cloc",
+      "kind": "brew",
+      "package": "cloc",
+      "purpose": "Measure maintained code",
+      "documentation": "https://formulae.brew.sh/formula/cloc",
+      "required": false
+    },
+    {
+      "id": "archify",
+      "kind": "bundle",
+      "path": "scripts/archify",
+      "command": "archify",
+      "required": false,
+      "depends": [
+        "node",
+        "python"
+      ],
+      "purpose": "Bundled Archify renderer and schemas for a selected graph output",
+      "documentation": "https://github.com/tt-a1i/archify"
+    },
+    {
+      "id": "git",
+      "command": "git",
+      "kind": "brew",
+      "package": "git",
+      "purpose": "Read local source history and comparisons",
+      "documentation": "https://formulae.brew.sh/formula/git",
+      "required": false
+    }
+  ],
+  "external_requirements": [
+    "Agent connectors, authenticated accounts, provider permissions, and project configuration use the existing session. Package installation does not authenticate or grant write authority."
+  ]
+}

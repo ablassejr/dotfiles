@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "skill": "sentry-cli",
+  "tools": [
+    {
+      "id": "sentry",
+      "kind": "npm",
+      "package": "sentry",
+      "command": "sentry",
+      "purpose": "Sentry issue and trace CLI",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/sentry",
+      "required": true
+    },
+    {
+      "id": "jq",
+      "command": "jq",
+      "kind": "brew",
+      "package": "jq",
+      "purpose": "Process API JSON",
+      "documentation": "https://formulae.brew.sh/formula/jq",
+      "required": false
+    },
+    {
+      "id": "node",
+      "command": "node",
+      "kind": "brew",
+      "package": "node",
+      "purpose": "Run Node utilities and npm packages",
+      "documentation": "https://formulae.brew.sh/formula/node",
+      "min_version": "20.0.0",
+      "required": false
+    }
+  ],
+  "external_requirements": []
+}

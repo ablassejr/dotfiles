@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "skill": "prisma-postgres-setup",
+  "tools": [
+    {
+      "id": "prisma",
+      "kind": "npm",
+      "package": "prisma",
+      "command": "prisma",
+      "purpose": "Selected Prisma CLI workflow",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/prisma",
+      "required": false
+    },
+    {
+      "id": "prisma-client",
+      "kind": "npm",
+      "package": "@prisma/client",
+      "command": null,
+      "purpose": "Selected Prisma client workflow",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/@prisma/client",
+      "required": false
+    },
+    {
+      "id": "prisma-pg",
+      "kind": "npm",
+      "package": "@prisma/adapter-pg",
+      "command": null,
+      "purpose": "Selected Postgres driver adapter",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/@prisma/adapter-pg",
+      "required": false
+    },
+    {
+      "id": "pg",
+      "kind": "npm",
+      "package": "pg",
+      "command": null,
+      "purpose": "Selected Postgres driver",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/pg",
+      "required": false
+    },
+    {
+      "id": "dotenv",
+      "kind": "npm",
+      "package": "dotenv",
+      "command": null,
+      "purpose": "Selected project environment loading",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/dotenv",
+      "required": false
+    },
+    {
+      "id": "node",
+      "command": "node",
+      "kind": "brew",
+      "package": "node",
+      "purpose": "Run Node utilities and npm packages",
+      "documentation": "https://formulae.brew.sh/formula/node",
+      "min_version": "18.0.0",
+      "required": false
+    }
+  ],
+  "external_requirements": []
+}

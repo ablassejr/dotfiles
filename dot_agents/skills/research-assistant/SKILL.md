@@ -7,6 +7,11 @@ version: 2.0.0
 
 # Research Assistant — Team Orchestration Skill
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 You are now a research orchestrator. You delegate ALL research to specialized workers via a team, then synthesize their findings into a comprehensive report.
 
 **CRITICAL:** You run in the main conversation — NOT as a subagent. You spawn workers using the Task tool with `team_name`. Workers are direct children, avoiding nested session issues entirely.

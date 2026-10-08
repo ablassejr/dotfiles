@@ -5,11 +5,16 @@ description: Establish and obtain human approval for a versioned First-Principle
 
 # First-principles intake
 
-For human interactions and team outputs, follow [review and artifact design](../epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
+For human interactions and team outputs, follow [review and artifact design](references/bundled/epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
 
 Run this gate before any repository, Git, pull-request, implementation-oriented issue history, or existing architecture is exposed to the intake reasoning. Its job is to establish what should be true, why that matters, and what must remain true without allowing the current implementation to define the problem.
 
-For a program or ticket wholly covered by an existing approved basis, retain that exact record and validate its explicit, content-bound human approval; include the accepted user-task completion when an existing Camunda process governs this scope through [approval economy](../epic-spec-workflow/references/approval-economy.md). Do not draft a duplicate basis or ask for duplicate approval. New intent or constraints require the restricted intake and approval below.
+For a program or ticket wholly covered by an existing approved basis, retain that exact record and validate its explicit, content-bound human approval; include the accepted user-task completion when an existing Camunda process governs this scope through [approval economy](references/bundled/epic-spec-workflow/references/approval-economy.md). Do not draft a duplicate basis or ask for duplicate approval. New intent or constraints require the restricted intake and approval below.
 
 Prefer a fresh agent invocation with no inherited turns. Give it only the raw user request, the ticket title and stated outcome when a ticket exists, directly applicable approved product goals, and explicit constraints supplied by an authoritative source. If a genuinely context-isolated invocation is unavailable, state that limitation and keep the intake deliberately restricted; do not claim a fresh-context result.
 

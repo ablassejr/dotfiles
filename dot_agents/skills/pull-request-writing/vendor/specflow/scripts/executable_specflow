@@ -1,0 +1,3099 @@
+#!/usr/bin/env python3
+"""Initialize and validate local epic specification workflow artifacts."""
+
+from __future__ import annotations
+
+import argparse
+from collections import Counter
+import json
+from pathlib import Path, PurePath
+import subprocess
+import sys
+sys.dont_write_bytecode = True
+from typing import Any, Sequence
+from uuid import uuid4
+from specflow_runtime.workstreams import analyze_workstreams
+from specflow_runtime.issue_content import validate_content, plan_content
+from specflow_runtime.client import RuntimeFailure
+
+
+SPEC_SCHEMA_VERSION = 3
+PLAN_SCHEMA_VERSION = 4
+SPEC_KIND = "specflow.semantic-manifest"
+PLAN_KIND = "specflow.linear-plan"
+WORKSPACE_FILES = (
+    "linear-plan.json",
+    "semantic-spec.json",
+    "specflow.manifest.json",
+)
+RELATION_TYPES = {"blocks", "duplicate", "related", "similar"}
+RELATION_FIELD_NAMES = {
+    "blockedby",
+    "blocks",
+    "dependencies",
+    "dependency",
+    "duplicateof",
+    "duplicates",
+    "relatedto",
+    "relations",
+    "similar",
+}
+PROJECT_FIELD_NAMES = {"carrierproject", "project", "projectid", "projects"}
+DELETION_SAFETY_STATES = {
+    "SAFE",
+    "SAFE_WITH_REPLACEMENT",
+    "REQUIRES_GROUNDING",
+    "BLOCKED_BY_CURRENT_CONSTRAINT",
+    "BEHAVIOR_STILL_REQUIRED",
+    "UNKNOWN",
+}
+CODE_MASS_LIFECYCLE_STATES = {
+    "code-mass:unassessed",
+    "code-mass:targeted",
+    "code-mass:pass",
+    "code-mass:deficit",
+    "net-addition:review-required",
+    "net-addition:approved-exception",
+    "deletion:grounding-required",
+}
+NET_ADDITION_CATEGORIES = {
+    "New externally required behavior",
+    "Security or compliance requirements",
+    "Compatibility shims that cannot yet replace an old path",
+    "Test additions needed to expose previously unverified behavior",
+    "Migration scaffolding",
+    "New protocol or platform obligations",
+    "Emergency correctness fixes",
+}
+TEMPORARY_DIRECTORY_NAMES = {".specflow", ".specify"}
+TEMPORARY_FILE_NAMES = {
+    "linear-plan.json",
+    "semantic-spec.json",
+    "specflow.manifest.json",
+}
+ADR_DIRECTORY_NAMES = {"adr", "adrs"}
+SOURCE_EXTENSIONS = {
+    ".bash", ".c", ".cc", ".cjs", ".clj", ".cljs", ".cpp", ".cs",
+    ".css", ".dart", ".erl", ".ex", ".exs", ".fish", ".go", ".gradle",
+    ".graphql", ".groovy", ".h", ".hcl", ".hpp", ".hrl", ".java", ".js",
+    ".json", ".jsx", ".kt", ".kts", ".lua", ".mjs", ".nix", ".php",
+    ".pl", ".proto", ".ps1", ".py", ".pyi", ".r", ".rb", ".rs", ".scala",
+    ".scss", ".sh", ".sql", ".svelte", ".swift", ".tf", ".toml", ".ts",
+    ".tsx", ".vue", ".xml", ".yaml", ".yml", ".zsh",
+}
+EXCLUDED_DIRECTORY_NAMES = {
+    ".git", ".next", "build", "compiled", "coverage", "dist", "generated",
+    "node_modules", "out", "target", "third_party", "vendor", "vendors",
+    "__snapshots__", "snapshots",
+}
+EXCLUDED_FILE_NAMES = {
+    "bun.lock", "cargo.lock", "composer.lock", "package-lock.json", "pnpm-lock.yaml",
+    "poetry.lock", "uv.lock", "yarn.lock",
+}
+DATA_FIXTURE_DIRECTORY_NAMES = {
+    "fixture", "fixtures", "test-data", "test_data", "testdata",
+}
+DATA_FIXTURE_EXTENSIONS = {".json", ".toml", ".xml", ".yaml", ".yml"}
+
+
+def _error(code: str, path: str, message: str) -> dict[str, str]:
+    return {"code": code, "path": path, "message": message}
+
+
+def _normalized_field(name: object) -> str:
+    if not isinstance(name, str):
+        return ""
+    return "".join(character for character in name.casefold() if character.isalnum())
+
+
+def _nonempty_string(value: object) -> bool:
+    return isinstance(value, str) and bool(value.strip())
+
+
+def _safe_relative_path(value: object) -> bool:
+    if not _nonempty_string(value):
+        return False
+    candidate = Path(str(value))
+    return not candidate.is_absolute() and ".." not in PurePath(candidate).parts
+
+
+def _load_json(path: Path, command: str) -> tuple[dict[str, Any] | None, list[dict[str, str]]]:
+    try:
+        with path.open("r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+    except FileNotFoundError:
+        return None, [_error("file_not_found", str(path), "The JSON file does not exist.")]
+    except json.JSONDecodeError as exception:
+        return None, [
+            _error(
+                "invalid_json",
+                str(path),
+                f"JSON parsing failed at line {exception.lineno}, column {exception.colno}.",
+            )
+        ]
+    except OSError as exception:
+        return None, [_error("read_failed", str(path), str(exception))]
+
+    if not isinstance(payload, dict):
+        return None, [
+            _error(
+                "invalid_document",
+                "$",
+                f"{command} expects a JSON object at the document root.",
+            )
+        ]
+    return payload, []
+
+
+def _write_json_exclusive(path: Path, payload: object) -> None:
+    with path.open("x", encoding="utf-8") as handle:
+        json.dump(payload, handle, indent=2, sort_keys=True)
+        handle.write("\n")
+
+
+def _manifest_for(slug: str) -> dict[str, Any]:
+    return {
+        "schema_version": SPEC_SCHEMA_VERSION,
+        "kind": SPEC_KIND,
+        "epic_id": str(uuid4()),
+        "slug": slug,
+        "stage": "draft",
+        "repository": {
+            "baseline": None,
+            "spec_kit_feature_directory": None,
+        },
+        "first_principles_basis": {
+            "status": "pending",
+            "current_basis_id": None,
+            "current_version": None,
+            "lineage": [],
+        },
+        "stable_id_counters": {},
+        "semantic_ids": [],
+        "view_registry": [],
+        "decision_log": [],
+        "evidence_ledger": [],
+        "subtractive_code_mass": {
+            "policy": "subtractive-code-mass-v1",
+            "opportunity_maps": [],
+            "net_addition_exceptions": [],
+            "milestone_ledgers": [],
+        },
+        "notion": {
+            "page_id": None,
+            "url": None,
+            "published_revision": None,
+            "readback_revision": None,
+            "readback_content_hash": None,
+            "readback_verified": False,
+            "readback_verified_at": None,
+        },
+        "approval": {
+            "status": "pending",
+            "revision": None,
+            "approved_by": None,
+            "approved_at": None,
+        },
+        "linear_compilation": {
+            "status": "not_started",
+            "plan_path": "linear-plan.json",
+            "carrier_project_id": None,
+            "compiled_at": None,
+        },
+        "provenance": {
+            "temporary_artifacts": list(WORKSPACE_FILES),
+            "preserved_artifacts": [],
+        },
+    }
+
+
+def _semantic_spec_for(slug: str) -> dict[str, Any]:
+    return {
+        "schema_version": SPEC_SCHEMA_VERSION,
+        "kind": "specflow.semantic-spec",
+        "slug": slug,
+        "problem": "",
+        "desired_state": "",
+        "constitutional_invariants": ["Subtractive Code Mass"],
+        "semantic_items": [],
+    }
+
+
+def _linear_plan_for(slug: str) -> dict[str, Any]:
+    return {
+        "schema_version": PLAN_SCHEMA_VERSION,
+        "kind": PLAN_KIND,
+        "spec_slug": slug,
+        "repository_baseline": None,
+        "semantic_release": {
+            "notion_page_id": None,
+            "revision": None,
+            "content_hash": None,
+            "basis_id": None,
+            "basis_version": None,
+        },
+        "carrier_project": None,
+        "milestones": [],
+        "issues": [],
+        "relations": [],
+    }
+
+
+def _run_init(directory: Path, slug: str) -> tuple[int, dict[str, Any]]:
+    command = "init"
+    if not slug.strip():
+        errors = [_error("invalid_slug", "--slug", "The epic slug cannot be empty.")]
+        return 2, {"status": "error", "command": command, "errors": errors}
+
+    destinations = {name: directory / name for name in WORKSPACE_FILES}
+    conflicts = [path for path in destinations.values() if path.exists() or path.is_symlink()]
+    if conflicts:
+        errors = [
+            _error("path_exists", str(path), "Initialization does not overwrite existing files.")
+            for path in sorted(conflicts)
+        ]
+        return 1, {"status": "error", "command": command, "errors": errors}
+
+    payloads = {
+        "linear-plan.json": _linear_plan_for(slug),
+        "semantic-spec.json": _semantic_spec_for(slug),
+        "specflow.manifest.json": _manifest_for(slug),
+    }
+    directory_was_created = not directory.exists()
+    created: list[Path] = []
+    try:
+        directory.mkdir(parents=True, exist_ok=True)
+        if not directory.is_dir():
+            raise NotADirectoryError(f"{directory} is not a directory")
+        for name in WORKSPACE_FILES:
+            destination = destinations[name]
+            _write_json_exclusive(destination, payloads[name])
+            created.append(destination)
+    except (OSError, TypeError, ValueError) as exception:
+        for path in reversed(created):
+            try:
+                path.unlink()
+            except OSError:
+                pass
+        if directory_was_created:
+            try:
+                directory.rmdir()
+            except OSError:
+                pass
+        return 2, {
+            "status": "error",
+            "command": command,
+            "errors": [_error("write_failed", str(directory), str(exception))],
+        }
+
+    return 0, {
+        "status": "ok",
+        "command": command,
+        "directory": str(directory),
+        "slug": slug,
+        "files": list(WORKSPACE_FILES),
+        "errors": [],
+    }
+
+
+def _validate_string_list(
+    value: object,
+    path: str,
+    errors: list[dict[str, str]],
+    *,
+    paths: bool = False,
+) -> list[str]:
+    if not isinstance(value, list):
+        errors.append(_error("invalid_list", path, "Expected a JSON array."))
+        return []
+    valid: list[str] = []
+    for index, item in enumerate(value):
+        item_path = f"{path}[{index}]"
+        if not _nonempty_string(item):
+            errors.append(_error("invalid_string", item_path, "Expected a non-empty string."))
+        elif paths and not _safe_relative_path(item):
+            errors.append(
+                _error("unsafe_path", item_path, "Artifact paths must stay relative to the workspace.")
+            )
+        else:
+            valid.append(str(item))
+    return valid
+
+
+def _validate_object_list(
+    value: object,
+    path: str,
+    errors: list[dict[str, str]],
+) -> None:
+    if not isinstance(value, list):
+        errors.append(_error("invalid_list", path, "Expected a JSON array."))
+        return
+    for index, item in enumerate(value):
+        if not isinstance(item, dict):
+            errors.append(
+                _error("invalid_object", f"{path}[{index}]", "Expected a JSON object.")
+            )
+
+
+def _require_fields(
+    value: dict[str, Any],
+    fields: Sequence[str],
+    path: str,
+    code: str,
+    errors: list[dict[str, str]],
+) -> None:
+    for field in fields:
+        if field not in value:
+            errors.append(
+                _error(code, f"{path}.{field}", "The durable state field is required.")
+            )
+
+
+def _validate_spec(payload: dict[str, Any]) -> tuple[list[dict[str, str]], bool]:
+    errors: list[dict[str, str]] = []
+    if payload.get("schema_version") != SPEC_SCHEMA_VERSION:
+        errors.append(_error("schema_version", "$.schema_version", "Expected semantic manifest schema version 3."))
+    if payload.get("kind") != SPEC_KIND:
+        errors.append(_error("document_kind", "$.kind", f"Expected {SPEC_KIND}."))
+    if not _nonempty_string(payload.get("epic_id")):
+        errors.append(_error("invalid_epic_id", "$.epic_id", "Expected a non-empty epic ID."))
+    if not _nonempty_string(payload.get("slug")):
+        errors.append(_error("invalid_slug", "$.slug", "Expected a non-empty epic slug."))
+    if not _nonempty_string(payload.get("stage")):
+        errors.append(_error("invalid_stage", "$.stage", "Expected a non-empty workflow stage."))
+
+    repository = payload.get("repository")
+    if not isinstance(repository, dict):
+        errors.append(
+            _error("invalid_repository", "$.repository", "Expected a repository state object.")
+        )
+        repository = {}
+    _require_fields(
+        repository,
+        ("baseline", "spec_kit_feature_directory"),
+        "$.repository",
+        "invalid_repository",
+        errors,
+    )
+    for field in ("baseline", "spec_kit_feature_directory"):
+        if repository.get(field) is not None and not _nonempty_string(repository.get(field)):
+            errors.append(
+                _error(
+                    "invalid_repository",
+                    f"$.repository.{field}",
+                    "Expected null or a non-empty string.",
+                )
+            )
+
+    basis = payload.get("first_principles_basis")
+    if not isinstance(basis, dict):
+        errors.append(
+            _error(
+                "invalid_first_principles_basis",
+                "$.first_principles_basis",
+                "Expected a First-Principles Basis state object.",
+            )
+        )
+        basis = {}
+    _require_fields(
+        basis,
+        ("status", "current_basis_id", "current_version", "lineage"),
+        "$.first_principles_basis",
+        "invalid_first_principles_basis",
+        errors,
+    )
+    basis_status = basis.get("status")
+    if basis_status not in {"pending", "approved"}:
+        errors.append(
+            _error(
+                "invalid_first_principles_basis",
+                "$.first_principles_basis.status",
+                "Basis status must be pending or approved.",
+            )
+        )
+    current_basis_id = basis.get("current_basis_id")
+    current_basis_version = basis.get("current_version")
+    basis_lineage = basis.get("lineage")
+    if current_basis_id is not None and not _nonempty_string(current_basis_id):
+        errors.append(_error("invalid_first_principles_basis", "$.first_principles_basis.current_basis_id", "Expected null or a non-empty basis ID."))
+    if current_basis_version is not None and (type(current_basis_version) is not int or current_basis_version < 1):
+        errors.append(_error("invalid_first_principles_basis", "$.first_principles_basis.current_version", "Expected null or a positive integer version."))
+    if not isinstance(basis_lineage, list):
+        errors.append(_error("invalid_first_principles_basis", "$.first_principles_basis.lineage", "Expected a basis lineage array."))
+        basis_lineage = []
+    seen_basis_ids: set[str] = set()
+    prior_basis_id: str | None = None
+    prior_version = 0
+    valid_basis_entries: list[dict[str, Any]] = []
+    for index, entry in enumerate(basis_lineage):
+        path = f"$.first_principles_basis.lineage[{index}]"
+        if not isinstance(entry, dict):
+            errors.append(_error("invalid_basis_lineage", path, "Expected a basis lineage object."))
+            continue
+        _require_fields(entry, ("basis_id", "version", "supersedes_basis_id", "approved_by", "approved_at"), path, "invalid_basis_lineage", errors)
+        basis_id = entry.get("basis_id")
+        version = entry.get("version")
+        if not _nonempty_string(basis_id):
+            errors.append(_error("invalid_basis_lineage", f"{path}.basis_id", "Expected a non-empty basis ID."))
+        elif basis_id in seen_basis_ids:
+            errors.append(_error("duplicate_basis_id", f"{path}.basis_id", "Basis IDs must not be reused."))
+        else:
+            seen_basis_ids.add(str(basis_id))
+        if type(version) is not int or version != prior_version + 1:
+            errors.append(_error("basis_version_sequence", f"{path}.version", "Basis versions must begin at one and increment by one."))
+        expected_supersedes = prior_basis_id
+        if entry.get("supersedes_basis_id") != expected_supersedes:
+            errors.append(_error("basis_lineage_link", f"{path}.supersedes_basis_id", "Each basis version must point to its immediate predecessor."))
+        for field in ("approved_by", "approved_at"):
+            if not _nonempty_string(entry.get(field)):
+                errors.append(_error("basis_approval", f"{path}.{field}", "Every retained basis version needs explicit approval evidence."))
+        if _nonempty_string(basis_id) and type(version) is int:
+            prior_basis_id = str(basis_id)
+            prior_version = version
+            valid_basis_entries.append(entry)
+    if basis_status == "approved":
+        if not valid_basis_entries:
+            errors.append(_error("basis_approval", "$.first_principles_basis.lineage", "An approved basis needs retained version lineage."))
+        elif current_basis_id != valid_basis_entries[-1].get("basis_id") or current_basis_version != valid_basis_entries[-1].get("version"):
+            errors.append(_error("basis_current_mismatch", "$.first_principles_basis", "The current basis must match the last retained version."))
+
+    stable_id_counters = payload.get("stable_id_counters")
+    if not isinstance(stable_id_counters, dict):
+        errors.append(
+            _error(
+                "invalid_stable_id_counters",
+                "$.stable_id_counters",
+                "Expected an object of non-negative integer counters.",
+            )
+        )
+    else:
+        for counter_name, counter_value in stable_id_counters.items():
+            if not _nonempty_string(counter_name):
+                errors.append(
+                    _error(
+                        "invalid_stable_id_counter",
+                        "$.stable_id_counters",
+                        "Counter names must be non-empty strings.",
+                    )
+                )
+            if type(counter_value) is not int or counter_value < 0:
+                errors.append(
+                    _error(
+                        "invalid_stable_id_counter",
+                        f"$.stable_id_counters.{counter_name}",
+                        "Counter values must be non-negative integers.",
+                    )
+                )
+
+    semantic_ids = _validate_string_list(payload.get("semantic_ids"), "$.semantic_ids", errors)
+    seen_ids: set[str] = set()
+    for index, semantic_id in enumerate(semantic_ids):
+        if semantic_id in seen_ids:
+            errors.append(
+                _error(
+                    "duplicate_semantic_id",
+                    f"$.semantic_ids[{index}]",
+                    f"Semantic identifier {semantic_id!r} is repeated.",
+                )
+            )
+        seen_ids.add(semantic_id)
+
+    for field in ("view_registry", "decision_log", "evidence_ledger"):
+        _validate_object_list(payload.get(field), f"$.{field}", errors)
+
+    subtractive = payload.get("subtractive_code_mass")
+    if not isinstance(subtractive, dict):
+        errors.append(
+            _error(
+                "invalid_subtractive_code_mass",
+                "$.subtractive_code_mass",
+                "Expected the durable subtractive-code-mass state.",
+            )
+        )
+        subtractive = {}
+    _require_fields(
+        subtractive,
+        ("policy", "opportunity_maps", "net_addition_exceptions", "milestone_ledgers"),
+        "$.subtractive_code_mass",
+        "invalid_subtractive_code_mass",
+        errors,
+    )
+    if subtractive.get("policy") != "subtractive-code-mass-v1":
+        errors.append(
+            _error(
+                "invalid_subtractive_code_mass",
+                "$.subtractive_code_mass.policy",
+                "Expected the subtractive-code-mass-v1 constitutional policy.",
+            )
+        )
+    for field in ("opportunity_maps", "net_addition_exceptions", "milestone_ledgers"):
+        _validate_object_list(
+            subtractive.get(field), f"$.subtractive_code_mass.{field}", errors
+        )
+
+    notion = payload.get("notion")
+    if not isinstance(notion, dict):
+        errors.append(_error("invalid_notion", "$.notion", "Expected a Notion state object."))
+        notion = {}
+    _require_fields(
+        notion,
+        (
+            "page_id",
+            "url",
+            "published_revision",
+            "readback_revision",
+            "readback_content_hash",
+            "readback_verified",
+            "readback_verified_at",
+        ),
+        "$.notion",
+        "invalid_notion",
+        errors,
+    )
+    for field in (
+        "page_id",
+        "url",
+        "published_revision",
+        "readback_revision",
+        "readback_content_hash",
+        "readback_verified_at",
+    ):
+        if notion.get(field) is not None and not _nonempty_string(notion.get(field)):
+            errors.append(
+                _error("invalid_notion", f"$.notion.{field}", "Expected null or a non-empty string.")
+            )
+    if not isinstance(notion.get("readback_verified"), bool):
+        errors.append(
+            _error(
+                "invalid_notion",
+                "$.notion.readback_verified",
+                "Expected a boolean read-back result.",
+            )
+        )
+
+    approval = payload.get("approval")
+    if not isinstance(approval, dict):
+        errors.append(_error("invalid_approval", "$.approval", "Expected an approval state object."))
+        approval = {}
+    _require_fields(
+        approval,
+        ("status", "revision", "approved_by", "approved_at"),
+        "$.approval",
+        "invalid_approval",
+        errors,
+    )
+    approval_status = approval.get("status")
+    if approval_status not in {"pending", "approved"}:
+        errors.append(
+            _error(
+                "invalid_approval",
+                "$.approval.status",
+                "Approval status must be pending or approved.",
+            )
+        )
+    for field in ("revision", "approved_by", "approved_at"):
+        if approval.get(field) is not None and not _nonempty_string(approval.get(field)):
+            errors.append(
+                _error("invalid_approval", f"$.approval.{field}", "Expected null or a non-empty string.")
+            )
+
+    linear_compilation = payload.get("linear_compilation")
+    if not isinstance(linear_compilation, dict):
+        errors.append(
+            _error(
+                "invalid_linear_compilation",
+                "$.linear_compilation",
+                "Expected a Linear compilation state object.",
+            )
+        )
+        linear_compilation = {}
+    _require_fields(
+        linear_compilation,
+        ("status", "plan_path", "carrier_project_id", "compiled_at"),
+        "$.linear_compilation",
+        "invalid_linear_compilation",
+        errors,
+    )
+    if not _nonempty_string(linear_compilation.get("status")):
+        errors.append(
+            _error(
+                "invalid_linear_compilation",
+                "$.linear_compilation.status",
+                "Expected a non-empty compilation status.",
+            )
+        )
+    for field in ("plan_path", "carrier_project_id", "compiled_at"):
+        if linear_compilation.get(field) is not None and not _nonempty_string(
+            linear_compilation.get(field)
+        ):
+            errors.append(
+                _error(
+                    "invalid_linear_compilation",
+                    f"$.linear_compilation.{field}",
+                    "Expected null or a non-empty string.",
+                )
+            )
+
+    provenance = payload.get("provenance")
+    if not isinstance(provenance, dict):
+        errors.append(
+            _error("invalid_provenance", "$.provenance", "Expected an artifact provenance object.")
+        )
+        provenance = {}
+    _validate_string_list(
+        provenance.get("temporary_artifacts"),
+        "$.provenance.temporary_artifacts",
+        errors,
+        paths=True,
+    )
+    _validate_string_list(
+        provenance.get("preserved_artifacts"),
+        "$.provenance.preserved_artifacts",
+        errors,
+        paths=True,
+    )
+
+    ready = approval_status == "approved"
+    if ready:
+        if basis_status != "approved":
+            errors.append(
+                _error(
+                    "approval_readiness",
+                    "$.first_principles_basis.status",
+                    "An approved semantic release needs an approved First-Principles Basis.",
+                )
+            )
+        if not semantic_ids:
+            errors.append(
+                _error(
+                    "approval_readiness",
+                    "$.semantic_ids",
+                    "An approved specification needs at least one stable semantic identifier.",
+                )
+            )
+        if not _nonempty_string(repository.get("baseline")):
+            errors.append(
+                _error(
+                    "approval_readiness",
+                    "$.repository.baseline",
+                    "An approved specification needs its exact repository baseline.",
+                )
+            )
+        if not _nonempty_string(approval.get("revision")):
+            errors.append(
+                _error(
+                    "approval_readiness",
+                    "$.approval.revision",
+                    "An approved specification needs its exact revision.",
+                )
+            )
+        if not _nonempty_string(approval.get("approved_by")):
+            errors.append(
+                _error(
+                    "approval_readiness",
+                    "$.approval.approved_by",
+                    "An approved specification needs the approving identity.",
+                )
+            )
+        if not _nonempty_string(approval.get("approved_at")):
+            errors.append(
+                _error(
+                    "approval_readiness",
+                    "$.approval.approved_at",
+                    "An approved specification needs its approval timestamp.",
+                )
+            )
+        if notion.get("readback_verified") is not True:
+            errors.append(
+                _error(
+                    "approval_readiness",
+                    "$.notion.readback_verified",
+                    "An approved specification needs a successful Notion read-back.",
+                )
+            )
+        if not _nonempty_string(notion.get("page_id")) or not _nonempty_string(notion.get("url")):
+            errors.append(
+                _error(
+                    "approval_readiness",
+                    "$.notion",
+                    "An approved specification needs its Notion page identifier and URL.",
+                )
+            )
+        for field, description in (
+            ("published_revision", "published revision"),
+            ("readback_revision", "read-back revision"),
+            ("readback_content_hash", "read-back content hash"),
+            ("readback_verified_at", "read-back verification timestamp"),
+        ):
+            if not _nonempty_string(notion.get(field)):
+                errors.append(
+                    _error(
+                        "approval_readiness",
+                        f"$.notion.{field}",
+                        f"An approved specification needs its {description}.",
+                    )
+                )
+        revisions = (
+            notion.get("published_revision"),
+            notion.get("readback_revision"),
+            approval.get("revision"),
+        )
+        if all(_nonempty_string(value) for value in revisions) and len(set(revisions)) != 1:
+            errors.append(
+                _error(
+                    "revision_mismatch",
+                    "$.notion.readback_revision",
+                    "Published, read-back, and approved revisions must match exactly.",
+                )
+            )
+
+    return errors, ready and not errors
+
+
+def _markdown_headings(content: str) -> list[str]:
+    headings: list[str] = []
+    previous_line: str | None = None
+    fence: str | None = None
+    for line in content.splitlines():
+        stripped = line.lstrip()
+        if stripped.startswith("```") or stripped.startswith("~~~"):
+            marker = stripped[:3]
+            if fence is None:
+                fence = marker
+            elif fence == marker:
+                fence = None
+            previous_line = None
+            continue
+        if fence is not None:
+            continue
+
+        hash_count = 0
+        while hash_count < len(stripped) and stripped[hash_count] == "#":
+            hash_count += 1
+        if 1 <= hash_count <= 6 and len(stripped) > hash_count and stripped[hash_count].isspace():
+            heading = stripped[hash_count:].strip()
+            while heading.endswith("#"):
+                heading = heading[:-1].rstrip()
+            headings.append(heading)
+            previous_line = None
+            continue
+
+        marker = stripped.strip()
+        if (
+            previous_line
+            and len(marker) >= 3
+            and marker
+            and set(marker) in ({"="}, {"-"})
+        ):
+            headings.append(previous_line)
+            previous_line = None
+        else:
+            previous_line = marker or None
+    return headings
+
+
+def _normalized_heading(heading: str) -> str:
+    return " ".join(heading.casefold().strip(" \t:._-").split())
+
+
+def _forbidden_heading(heading: str) -> bool:
+    normalized = _normalized_heading(heading)
+    forbidden_prefixes = (
+        "dependencies",
+        "dependency",
+        "blocked by",
+        "blocking",
+        "blocks",
+        "issue relations",
+        "relations",
+    )
+    return any(
+        normalized == prefix or normalized.startswith(prefix + " ")
+        for prefix in forbidden_prefixes
+    )
+
+
+def _validate_carrier_project(
+    value: object, errors: list[dict[str, str]]
+) -> str | None:
+    if not isinstance(value, dict):
+        errors.append(
+            _error(
+                "carrier_project",
+                "$.carrier_project",
+                "Select one existing carrier project or record one approved minimal creation.",
+            )
+        )
+        return None
+
+    mode = value.get("mode")
+    if mode == "existing":
+        if not _nonempty_string(value.get("id")):
+            errors.append(
+                _error(
+                    "carrier_project",
+                    "$.carrier_project.id",
+                    "An existing carrier project needs its Linear identifier.",
+                )
+            )
+        return mode
+
+    if mode == "create":
+        if not _nonempty_string(value.get("name")):
+            errors.append(
+                _error(
+                    "carrier_project",
+                    "$.carrier_project.name",
+                    "A carrier-project creation record needs a name.",
+                )
+            )
+        if value.get("minimal") is not True:
+            errors.append(
+                _error(
+                    "carrier_project",
+                    "$.carrier_project.minimal",
+                    "The project must be recorded as a minimal carrier for milestones.",
+                )
+            )
+        approval = value.get("approval")
+        if not isinstance(approval, dict) or approval.get("status") != "approved":
+            errors.append(
+                _error(
+                    "carrier_project_approval",
+                    "$.carrier_project.approval.status",
+                    "Creating the carrier project needs explicit approval.",
+                )
+            )
+        else:
+            if not _nonempty_string(approval.get("approved_by")):
+                errors.append(
+                    _error(
+                        "carrier_project_approval",
+                        "$.carrier_project.approval.approved_by",
+                        "Record who approved carrier-project creation.",
+                    )
+                )
+            if not _nonempty_string(approval.get("approved_at")):
+                errors.append(
+                    _error(
+                        "carrier_project_approval",
+                        "$.carrier_project.approval.approved_at",
+                        "Record when carrier-project creation was approved.",
+                    )
+                )
+        return mode
+
+    errors.append(
+        _error(
+            "carrier_project",
+            "$.carrier_project.mode",
+            "Carrier project mode must be existing or create.",
+        )
+    )
+    return None
+
+
+def _validate_work_item_semantic_ids(
+    value: object, path: str, errors: list[dict[str, str]]
+) -> None:
+    if not isinstance(value, list) or not value:
+        errors.append(
+            _error(
+                "semantic_ids",
+                path,
+                "Each milestone and issue needs at least one stable semantic identifier.",
+            )
+        )
+        return
+    for index, semantic_id in enumerate(value):
+        if not _nonempty_string(semantic_id):
+            errors.append(
+                _error(
+                    "semantic_id",
+                    f"{path}[{index}]",
+                    "Expected a non-empty stable semantic identifier.",
+                )
+            )
+
+
+def _mass_ratio(removed: int, added: int) -> float | None:
+    return round(removed / added, 3) if added else None
+
+
+def _required_removals(added: int) -> int:
+    return (6 * added + 4) // 5
+
+
+def _mass_sum(values: Sequence[int | str]) -> int | str:
+    return "UNKNOWN" if "UNKNOWN" in values else sum(values)
+
+
+def _mass_summary(added: int | str, removed: int | str) -> dict[str, Any]:
+    summary = {"added": added, "removed": removed}
+    if "UNKNOWN" in (added, removed):
+        return {**summary, **dict.fromkeys(("net", "ratio", "deficit", "surplus", "status"), "UNKNOWN")}
+    required = _required_removals(added)
+    return {
+        **summary,
+        "net": added - removed,
+        "ratio": _mass_ratio(removed, added),
+        "deficit": max(0, required - removed),
+        "surplus": max(0, removed - required),
+        "status": "PASS" if removed >= required else "DEFICIT",
+    }
+
+
+def _validate_mass_measurements(
+    value: object, path: str, errors: list[dict[str, str]], *, allow_unknown: bool = False
+) -> dict[str, Any] | None:
+    if not isinstance(value, dict):
+        errors.append(
+            _error("code_mass_metrics", path, "Expected production, test, and combined metrics.")
+        )
+        return None
+    pairs: dict[str, dict[str, int | str]] = {}
+    for category in ("production", "tests"):
+        category_value = value.get(category)
+        category_path = f"{path}.{category}"
+        if not isinstance(category_value, dict):
+            errors.append(_error("code_mass_metrics", category_path, "Expected added and removed SLOC."))
+            continue
+        pair = {}
+        for field in ("added", "removed"):
+            measurement = category_value.get(field)
+            if (allow_unknown and measurement == "UNKNOWN") or (
+                type(measurement) is int and measurement >= 0
+            ):
+                pair[field] = measurement
+            else:
+                errors.append(_error(
+                    "code_mass_metrics", f"{category_path}.{field}",
+                    "Expected non-negative integer SLOC" + (" or UNKNOWN." if allow_unknown else "."),
+                ))
+        if len(pair) == 2:
+            pairs[category] = pair
+    combined = value.get("combined")
+    if not isinstance(combined, dict):
+        errors.append(_error("code_mass_metrics", f"{path}.combined", "Expected combined metrics."))
+        return None
+    if len(pairs) != 2:
+        return None
+    summary = _mass_summary(
+        _mass_sum([pair["added"] for pair in pairs.values()]),
+        _mass_sum([pair["removed"] for pair in pairs.values()]),
+    )
+    for field in ("added", "removed", "net", "ratio"):
+        actual, expected = combined.get(field), summary[field]
+        matches = actual == expected and type(actual) is type(expected)
+        if field == "ratio" and type(expected) is float:
+            matches = type(actual) in (int, float) and abs(actual - expected) <= 0.001
+        if not matches:
+            errors.append(_error(
+                "code_mass_metrics", f"{path}.combined.{field}",
+                "Combined metrics must follow production and test values; unavailable operands propagate UNKNOWN.",
+            ))
+    return summary
+
+
+def _validate_net_addition_exception(
+    value: object, path: str, errors: list[dict[str, str]]
+) -> str | None:
+    if not isinstance(value, dict):
+        errors.append(
+            _error(
+                "net_addition_exception",
+                path,
+                "An approved net addition requires a structured NET_ADDITION_EXCEPTION.",
+            )
+        )
+        return None
+    if value.get("kind") != "NET_ADDITION_EXCEPTION":
+        errors.append(
+            _error(
+                "net_addition_exception",
+                f"{path}.kind",
+                "Expected NET_ADDITION_EXCEPTION.",
+            )
+        )
+    for field in (
+        "exception_id",
+        "reason",
+        "why_no_safe_deletion_exists",
+        "why_the_addition_is_minimal",
+        "human_approver",
+        "review_date",
+    ):
+        if not _nonempty_string(value.get(field)):
+            errors.append(
+                _error(
+                    "net_addition_exception",
+                    f"{path}.{field}",
+                    "Expected a non-empty exception record value.",
+                )
+            )
+    if value.get("category") not in NET_ADDITION_CATEGORIES:
+        errors.append(
+            _error(
+                "net_addition_exception",
+                f"{path}.category",
+                "Expected one of the controlled exception categories.",
+            )
+        )
+    if type(value.get("temporary")) is not bool:
+        errors.append(
+            _error(
+                "net_addition_exception",
+                f"{path}.temporary",
+                "Expected a boolean temporary marker.",
+            )
+        )
+    expiration = value.get("expiration_condition")
+    _validate_string_list(expiration, f"{path}.expiration_condition", errors)
+    if value.get("temporary") is True and isinstance(expiration, list) and not expiration:
+        errors.append(
+            _error(
+                "net_addition_exception",
+                f"{path}.expiration_condition",
+                "A temporary exception needs an expiration condition.",
+            )
+        )
+    compensating = value.get("compensating_work")
+    if value.get("temporary") is True and not isinstance(compensating, dict):
+        errors.append(
+            _error(
+                "net_addition_exception",
+                f"{path}.compensating_work",
+                "A temporary exception needs a linked compensating issue and milestone.",
+            )
+        )
+    if compensating is not None:
+        if not isinstance(compensating, dict):
+            errors.append(
+                _error(
+                    "net_addition_exception",
+                    f"{path}.compensating_work",
+                    "Expected null or a linked issue and milestone.",
+                )
+            )
+        else:
+            for field in ("linear_issue", "milestone"):
+                if not _nonempty_string(compensating.get(field)):
+                    errors.append(
+                        _error(
+                            "net_addition_exception",
+                            f"{path}.compensating_work.{field}",
+                            "Expected a non-empty linked work reference.",
+                        )
+                    )
+    return str(value.get("exception_id")) if _nonempty_string(value.get("exception_id")) else None
+
+
+def _validate_net_addition_gate(
+    value: object,
+    path: str,
+    estimated_net: int | str,
+    errors: list[dict[str, str]],
+    *,
+    require_approved: bool = False,
+) -> str | None:
+    if not isinstance(value, dict):
+        errors.append(
+            _error("net_addition_gate", path, "Expected a Net Addition Gate record.")
+        )
+        return None
+    status = value.get("status")
+    if status not in {"NOT_REQUIRED", "REQUIRED", "APPROVED", "REJECTED"}:
+        errors.append(
+            _error(
+                "net_addition_gate",
+                f"{path}.status",
+                "Expected NOT_REQUIRED, REQUIRED, APPROVED, or REJECTED.",
+            )
+        )
+    if estimated_net == "UNKNOWN":
+        if status != "REQUIRED":
+            errors.append(_error(
+                "net_addition_gate", f"{path}.status",
+                "An unknown delta remains REQUIRED until numeric evidence establishes the gate outcome.",
+            ))
+        if require_approved:
+            errors.append(_error("net_addition_gate", path, "Committed verification requires measured SLOC."))
+        for field in ("validation", "verification", "approvals", "exception"):
+            if value.get(field) is not None:
+                errors.append(_error("net_addition_gate", f"{path}.{field}", "Unknown SLOC cannot claim gate approval evidence."))
+        return None
+    if estimated_net <= 0:
+        if status != "NOT_REQUIRED":
+            errors.append(
+                _error(
+                    "net_addition_gate",
+                    f"{path}.status",
+                    "A non-positive estimated delta uses NOT_REQUIRED.",
+                )
+            )
+        for field in ("validation", "verification", "approvals", "exception"):
+            if value.get(field) is not None:
+                errors.append(
+                    _error(
+                        "net_addition_gate",
+                        f"{path}.{field}",
+                        "A gate that is not required does not claim approval evidence.",
+                    )
+                )
+        return None
+
+    if status == "REQUIRED" and not require_approved:
+        return None
+    if status != "APPROVED":
+        errors.append(
+            _error(
+                "net_addition_gate",
+                f"{path}.status",
+                "A positive maintained-code delta must be explicitly approved.",
+            )
+        )
+    validation = value.get("validation")
+    required_validation = (
+        "approved_requirement",
+        "minimum_sufficient",
+        "no_existing_implementation",
+        "no_replacement_path",
+        "component_ownership",
+        "single_authority",
+        "scope_bounded",
+        "deficit_explicit",
+    )
+    if not isinstance(validation, dict):
+        errors.append(
+            _error(
+                "net_addition_gate",
+                f"{path}.validation",
+                "Expected first-principles evidence for the addition.",
+            )
+        )
+    else:
+        for field in required_validation:
+            if not _nonempty_string(validation.get(field)):
+                errors.append(
+                    _error(
+                        "net_addition_gate",
+                        f"{path}.validation.{field}",
+                        "Expected a non-empty validation finding.",
+                    )
+                )
+
+    verification = value.get("verification")
+    required_checks = {
+        "acceptance_tests",
+        "regression_tests",
+        "failure_paths",
+        "public_contracts",
+        "state_and_migration",
+        "security_boundaries",
+        "concurrency_and_retry",
+        "performance",
+        "observability",
+        "fault_injection",
+        "sloc_delta",
+    }
+    seen_checks: set[str] = set()
+    if not isinstance(verification, list):
+        errors.append(
+            _error(
+                "net_addition_gate",
+                f"{path}.verification",
+                "Expected verification evidence for every required behavior class.",
+            )
+        )
+    else:
+        for index, record in enumerate(verification):
+            record_path = f"{path}.verification[{index}]"
+            if not isinstance(record, dict):
+                errors.append(_error("net_addition_gate", record_path, "Expected an object."))
+                continue
+            check = record.get("check")
+            if check not in required_checks or check in seen_checks:
+                errors.append(
+                    _error(
+                        "net_addition_gate",
+                        f"{record_path}.check",
+                        "Expected one unique required verification check.",
+                    )
+                )
+            else:
+                seen_checks.add(str(check))
+            if record.get("status") not in {"VERIFIED", "NOT_APPLICABLE"}:
+                errors.append(
+                    _error(
+                        "net_addition_gate",
+                        f"{record_path}.status",
+                        "Expected VERIFIED or NOT_APPLICABLE.",
+                    )
+                )
+            if not _nonempty_string(record.get("evidence")):
+                errors.append(
+                    _error(
+                        "net_addition_gate",
+                        f"{record_path}.evidence",
+                        "Expected named verification evidence or an applicability rationale.",
+                    )
+                )
+        for missing in sorted(required_checks - seen_checks):
+            errors.append(
+                _error(
+                    "net_addition_gate",
+                    f"{path}.verification",
+                    f"Missing the {missing!r} verification check.",
+                )
+            )
+        for mandatory in ("acceptance_tests", "regression_tests", "failure_paths", "sloc_delta"):
+            record = next(
+                (
+                    item
+                    for item in verification
+                    if isinstance(item, dict) and item.get("check") == mandatory
+                ),
+                None,
+            )
+            if not isinstance(record, dict) or record.get("status") != "VERIFIED":
+                errors.append(
+                    _error(
+                        "net_addition_gate",
+                        f"{path}.verification",
+                        f"The {mandatory!r} check must be verified for a net addition.",
+                    )
+                )
+
+    approvals = value.get("approvals")
+    if not isinstance(approvals, dict):
+        errors.append(
+            _error(
+                "net_addition_gate",
+                f"{path}.approvals",
+                "Expected the required independent and human approvals.",
+            )
+        )
+    else:
+        expected_statuses = {
+            "first_principles_alignment": "ALIGNED",
+            "adversarial_review": "NO_BLOCKERS",
+            "code_mass_auditor": "VERIFIED",
+        }
+        for field, expected in expected_statuses.items():
+            if approvals.get(field) != expected:
+                errors.append(
+                    _error(
+                        "net_addition_gate",
+                        f"{path}.approvals.{field}",
+                        f"Expected {expected}.",
+                    )
+                )
+        for field in ("human_task_owner", "code_owner"):
+            if not _nonempty_string(approvals.get(field)):
+                errors.append(
+                    _error(
+                        "net_addition_gate",
+                        f"{path}.approvals.{field}",
+                        "Expected a named human approver.",
+                    )
+                )
+        conditional_owner = approvals.get("security_or_platform_owner")
+        if not isinstance(conditional_owner, dict) or conditional_owner.get("status") not in {
+            "APPROVED",
+            "NOT_APPLICABLE",
+        }:
+            errors.append(
+                _error(
+                    "net_addition_gate",
+                    f"{path}.approvals.security_or_platform_owner",
+                    "Expected APPROVED or NOT_APPLICABLE.",
+                )
+            )
+        elif conditional_owner.get("status") == "APPROVED" and not _nonempty_string(
+            conditional_owner.get("approved_by")
+        ):
+            errors.append(
+                _error(
+                    "net_addition_gate",
+                    f"{path}.approvals.security_or_platform_owner.approved_by",
+                    "Applicable security or platform review needs a named approver.",
+                )
+            )
+        if approvals.get("human_minimum_confirmation") is not True:
+            errors.append(
+                _error(
+                    "net_addition_gate",
+                    f"{path}.approvals.human_minimum_confirmation",
+                    "The human must confirm that this is the minimum responsible addition.",
+                )
+            )
+    return _validate_net_addition_exception(value.get("exception"), f"{path}.exception", errors)
+
+
+def _validate_code_mass_contract(
+    value: object, path: str, errors: list[dict[str, str]]
+) -> dict[str, Any] | None:
+    if not isinstance(value, dict):
+        errors.append(
+            _error("code_mass_contract", path, "Expected a structured Code Mass Contract.")
+        )
+        return None
+    irreducible = _validate_string_list(
+        value.get("irreducible_new_behavior"),
+        f"{path}.irreducible_new_behavior",
+        errors,
+    )
+    if not irreducible:
+        errors.append(
+            _error(
+                "code_mass_contract",
+                f"{path}.irreducible_new_behavior",
+                "Identify the irreducible behavior that requires maintained code.",
+            )
+        )
+    mechanisms = value.get("existing_mechanisms")
+    safe_removal = False
+    if not isinstance(mechanisms, list):
+        errors.append(
+            _error(
+                "code_mass_contract",
+                f"{path}.existing_mechanisms",
+                "Expected an array of replacement or removal candidates.",
+            )
+        )
+    else:
+        for index, mechanism in enumerate(mechanisms):
+            mechanism_path = f"{path}.existing_mechanisms[{index}]"
+            if not isinstance(mechanism, dict):
+                errors.append(_error("code_mass_contract", mechanism_path, "Expected an object."))
+                continue
+            for field in ("target", "responsibility", "why_unnecessary"):
+                if not _nonempty_string(mechanism.get(field)):
+                    errors.append(
+                        _error(
+                            "code_mass_contract",
+                            f"{mechanism_path}.{field}",
+                            "Expected a non-empty removal finding.",
+                        )
+                    )
+            grounding_record = mechanism.get("grounding_record")
+            if grounding_record is not None and not _nonempty_string(grounding_record):
+                errors.append(
+                    _error(
+                        "code_mass_contract",
+                        f"{mechanism_path}.grounding_record",
+                        "Expected null or a Ground Me record reference.",
+                    )
+                )
+            safety = mechanism.get("deletion_safety")
+            if safety not in DELETION_SAFETY_STATES:
+                errors.append(
+                    _error(
+                        "code_mass_contract",
+                        f"{mechanism_path}.deletion_safety",
+                        "Expected a supported deletion-safety state.",
+                    )
+                )
+            elif safety in {"SAFE", "SAFE_WITH_REPLACEMENT"}:
+                safe_removal = True
+                if not _nonempty_string(grounding_record):
+                    errors.append(
+                        _error(
+                            "code_mass_contract",
+                            f"{mechanism_path}.grounding_record",
+                            "Credited removal requires a confirmed Ground Me record.",
+                        )
+                    )
+
+    estimated = _validate_mass_measurements(value.get("estimated"), f"{path}.estimated", errors, allow_unknown=True)
+    reported = value.get("reported")
+    current = estimated
+    if reported is not None:
+        current = _validate_mass_measurements(reported, f"{path}.reported", errors)
+    if estimated and type(estimated["removed"]) is int and estimated["removed"] > 0 and not safe_removal:
+        errors.append(
+            _error(
+                "code_mass_contract",
+                f"{path}.existing_mechanisms",
+                "Estimated removal credit needs a safe or verified replacement candidate.",
+            )
+        )
+    if not _nonempty_string(value.get("removal_locality")):
+        errors.append(
+            _error(
+                "code_mass_contract",
+                f"{path}.removal_locality",
+                "Explain why additions and removals share one responsibility domain.",
+            )
+        )
+    alternatives = value.get("alternatives_considered")
+    if not isinstance(alternatives, dict):
+        errors.append(
+            _error(
+                "code_mass_contract",
+                f"{path}.alternatives_considered",
+                "Expected subtractive, reuse, and additive alternatives.",
+            )
+        )
+    else:
+        for field in ("delete_or_configuration", "reuse_existing", "additive"):
+            if not _nonempty_string(alternatives.get(field)):
+                errors.append(
+                    _error(
+                        "code_mass_contract",
+                        f"{path}.alternatives_considered.{field}",
+                        "Expected a concise sufficiency finding.",
+                    )
+                )
+    net = current["net"] if current else "UNKNOWN"
+    net_addition_gate = value.get("net_addition_gate")
+    exception_id = _validate_net_addition_gate(
+        net_addition_gate,
+        f"{path}.net_addition_gate",
+        net,
+        errors,
+    )
+    escrow = value.get("milestone_escrow")
+    if escrow is not None:
+        if not isinstance(escrow, dict):
+            errors.append(
+                _error(
+                    "code_mass_escrow",
+                    f"{path}.milestone_escrow",
+                    "Expected null or a bounded milestone escrow.",
+                )
+            )
+        else:
+            if escrow.get("status") != "ACTIVE":
+                errors.append(
+                    _error(
+                        "code_mass_escrow",
+                        f"{path}.milestone_escrow.status",
+                        "Expected ACTIVE while a bounded deficit remains.",
+                    )
+                )
+            for field in ("compensating_issue", "milestone", "responsibility_domain"):
+                if not _nonempty_string(escrow.get(field)):
+                    errors.append(
+                        _error(
+                            "code_mass_escrow",
+                            f"{path}.milestone_escrow.{field}",
+                            "Expected a linked same-domain compensation reference.",
+                        )
+                    )
+    lifecycle_state = value.get("lifecycle_state")
+    if lifecycle_state not in CODE_MASS_LIFECYCLE_STATES:
+        errors.append(
+            _error(
+                "code_mass_lifecycle",
+                f"{path}.lifecycle_state",
+                "Expected a supported structured code-mass lifecycle state.",
+            )
+        )
+    if net == "UNKNOWN" and lifecycle_state not in {
+        "code-mass:unassessed", "net-addition:review-required", "deletion:grounding-required",
+    }:
+        errors.append(_error(
+            "code_mass_lifecycle", f"{path}.lifecycle_state",
+            "Unknown SLOC remains unassessed or review-required; it cannot establish a numeric target, deficit, pass, or approved exception.",
+        ))
+    if type(net) is int and net > 0 and isinstance(net_addition_gate, dict):
+        gate_status = net_addition_gate.get("status")
+        expected_lifecycle = {
+            "REQUIRED": "net-addition:review-required",
+            "APPROVED": "net-addition:approved-exception",
+        }.get(gate_status)
+        if expected_lifecycle is not None and lifecycle_state != expected_lifecycle:
+            errors.append(
+                _error(
+                    "code_mass_lifecycle",
+                    f"{path}.lifecycle_state",
+                    f"A {gate_status} Net Addition Gate uses {expected_lifecycle!r}.",
+                )
+            )
+    return {
+        **(current or _mass_summary("UNKNOWN", "UNKNOWN")),
+        "exception_id": exception_id,
+        "net_addition_status": (
+            net_addition_gate.get("status") if isinstance(net_addition_gate, dict) else None
+        ),
+        "escrow": escrow if isinstance(escrow, dict) else None,
+    }
+
+
+def _validate_code_mass_ledger(
+    value: object,
+    path: str,
+    repository_baseline: object,
+    errors: list[dict[str, str]],
+) -> dict[str, Any] | None:
+    if not isinstance(value, dict):
+        errors.append(
+            _error("code_mass_ledger", path, "Expected a milestone Code Mass Ledger.")
+        )
+        return None
+    if value.get("baseline_commit") != repository_baseline:
+        errors.append(
+            _error(
+                "code_mass_ledger",
+                f"{path}.baseline_commit",
+                "The ledger baseline must match the approved repository baseline.",
+            )
+        )
+    issue_records = value.get("issues")
+    if not isinstance(issue_records, list):
+        errors.append(
+            _error(
+                "code_mass_ledger",
+                f"{path}.issues",
+                "Expected an array of milestone issue measurements.",
+            )
+        )
+        issue_records = []
+    seen: set[str] = set()
+    for index, record in enumerate(issue_records):
+        record_path = f"{path}.issues[{index}]"
+        if not isinstance(record, dict):
+            errors.append(_error("code_mass_ledger", record_path, "Expected an object."))
+            continue
+        issue = record.get("issue")
+        if not _nonempty_string(issue) or issue in seen:
+            errors.append(
+                _error(
+                    "code_mass_ledger",
+                    f"{record_path}.issue",
+                    "Expected one unique issue key.",
+                )
+            )
+        else:
+            seen.add(str(issue))
+        added = record.get("added")
+        removed = record.get("removed")
+        valid = True
+        for field, measurement in (("added", added), ("removed", removed)):
+            if measurement != "UNKNOWN" and (type(measurement) is not int or measurement < 0):
+                valid = False
+                errors.append(_error("code_mass_ledger", f"{record_path}.{field}", "Expected non-negative integer SLOC or UNKNOWN."))
+        if valid:
+            expected = _mass_summary(added, removed)
+            for field in ("ratio", "deficit", "surplus"):
+                if record.get(field) != expected[field] or isinstance(record.get(field), bool):
+                    errors.append(_error("code_mass_ledger", f"{record_path}.{field}", "The issue ledger must follow its SLOC values, including UNKNOWN."))
+
+    totals = value.get("totals")
+    if not isinstance(totals, dict):
+        errors.append(
+            _error("code_mass_ledger", f"{path}.totals", "Expected aggregate metrics.")
+        )
+    else:
+        for field in ("added", "removed", "net"):
+            measurement = totals.get(field)
+            if measurement != "UNKNOWN" and (type(measurement) is not int or (field != "net" and measurement < 0)):
+                errors.append(
+                    _error(
+                        "code_mass_ledger",
+                        f"{path}.totals.{field}",
+                        "Expected an integer aggregate normalized SLOC value.",
+                    )
+                )
+        if totals.get("status") not in {"PASS", "DEFICIT", "UNKNOWN"}:
+            errors.append(
+                _error(
+                    "code_mass_ledger",
+                    f"{path}.totals.status",
+                    "Expected PASS, DEFICIT, or UNKNOWN.",
+                )
+            )
+        project_exception = totals.get("project_exception")
+        if project_exception is not None and not _nonempty_string(project_exception):
+            errors.append(
+                _error(
+                    "code_mass_ledger",
+                    f"{path}.totals.project_exception",
+                    "Expected null or an approved exception ID.",
+                )
+            )
+    return value
+
+
+def _validate_linear_plan(payload: dict[str, Any]) -> tuple[list[dict[str, str]], str | None]:
+    errors, _ = analyze_workstreams(payload)
+    if payload.get("schema_version") != PLAN_SCHEMA_VERSION:
+        errors.append(_error("schema_version", "$.schema_version", "Expected Linear plan schema version 4; recompile the plan for three people."))
+    if payload.get("kind") != PLAN_KIND:
+        errors.append(_error("document_kind", "$.kind", f"Expected {PLAN_KIND}."))
+    if not _nonempty_string(payload.get("spec_slug")):
+        errors.append(_error("invalid_slug", "$.spec_slug", "Expected a non-empty spec slug."))
+    if not _nonempty_string(payload.get("repository_baseline")):
+        errors.append(
+            _error(
+                "repository_baseline",
+                "$.repository_baseline",
+                "Expected the exact repository baseline from the semantic release.",
+            )
+        )
+    semantic_release = payload.get("semantic_release")
+    if not isinstance(semantic_release, dict):
+        errors.append(
+            _error(
+                "semantic_release",
+                "$.semantic_release",
+                "Expected an approved semantic release binding.",
+            )
+        )
+        semantic_release = {}
+    for field in ("notion_page_id", "revision", "content_hash", "basis_id"):
+        if not _nonempty_string(semantic_release.get(field)):
+            errors.append(
+                _error(
+                    "semantic_release",
+                    f"$.semantic_release.{field}",
+                    "Expected a non-empty release binding value.",
+                )
+            )
+    if type(semantic_release.get("basis_version")) is not int or semantic_release.get("basis_version") < 1:
+        errors.append(
+            _error(
+                "semantic_release",
+                "$.semantic_release.basis_version",
+                "Expected a positive basis version.",
+            )
+        )
+    if "projects" in payload:
+        errors.append(
+            _error(
+                "per_workstream_project",
+                "$.projects",
+                "The plan has one carrier project; milestones are the workstreams.",
+            )
+        )
+
+    carrier_mode = _validate_carrier_project(payload.get("carrier_project"), errors)
+
+    milestones = payload.get("milestones")
+    if not isinstance(milestones, list) or not milestones:
+        errors.append(
+            _error("milestones", "$.milestones", "Expected at least one milestone workstream.")
+        )
+        milestones = []
+    milestone_keys: set[str] = set()
+    milestone_domains: dict[str, str] = {}
+    milestone_ledgers: dict[str, dict[str, Any]] = {}
+    for index, milestone in enumerate(milestones):
+        path = f"$.milestones[{index}]"
+        if not isinstance(milestone, dict):
+            errors.append(_error("milestone", path, "Expected a milestone object."))
+            continue
+        for field in milestone:
+            if _normalized_field(field) in PROJECT_FIELD_NAMES:
+                errors.append(
+                    _error(
+                        "per_workstream_project",
+                        f"{path}.{field}",
+                        "Milestones inherit the single top-level carrier project.",
+                    )
+                )
+        key = milestone.get("key")
+        if not _nonempty_string(key):
+            errors.append(_error("milestone_key", f"{path}.key", "Expected a non-empty key."))
+        elif key in milestone_keys:
+            errors.append(
+                _error("duplicate_milestone", f"{path}.key", f"Milestone key {key!r} is repeated.")
+            )
+        else:
+            milestone_keys.add(str(key))
+            domain = milestone.get("responsibility_domain")
+            if not _nonempty_string(domain):
+                errors.append(
+                    _error(
+                        "responsibility_domain",
+                        f"{path}.responsibility_domain",
+                        "Each milestone owns one named responsibility domain.",
+                    )
+                )
+            else:
+                milestone_domains[str(key)] = str(domain)
+            ledger = _validate_code_mass_ledger(
+                milestone.get("code_mass_ledger"),
+                f"{path}.code_mass_ledger",
+                payload.get("repository_baseline"),
+                errors,
+            )
+            if ledger is not None:
+                milestone_ledgers[str(key)] = ledger
+        if not _nonempty_string(milestone.get("name")):
+            errors.append(_error("milestone_name", f"{path}.name", "Expected a non-empty name."))
+        if not _nonempty_string(milestone.get("owner")):
+            errors.append(
+                _error(
+                    "owner_cardinality",
+                    f"{path}.owner",
+                    "Each milestone has exactly one owner string.",
+                )
+            )
+        _validate_work_item_semantic_ids(
+            milestone.get("semantic_ids"), f"{path}.semantic_ids", errors
+        )
+
+    issues = payload.get("issues")
+    if not isinstance(issues, list) or not issues:
+        errors.append(_error("issues", "$.issues", "Expected at least one single-PR issue."))
+        issues = []
+    issue_keys: set[str] = set()
+    issue_contracts: dict[str, dict[str, Any]] = {}
+    issue_milestones: dict[str, str] = {}
+    for index, issue in enumerate(issues):
+        path = f"$.issues[{index}]"
+        if not isinstance(issue, dict):
+            errors.append(_error("issue", path, "Expected an issue object."))
+            continue
+        for field in issue:
+            normalized = _normalized_field(field)
+            if normalized in RELATION_FIELD_NAMES:
+                errors.append(
+                    _error(
+                        "misplaced_relation",
+                        f"{path}.{field}",
+                        "Write dependencies and other issue relations in the top-level relations list.",
+                    )
+                )
+            if normalized in PROJECT_FIELD_NAMES:
+                errors.append(
+                    _error(
+                        "per_workstream_project",
+                        f"{path}.{field}",
+                        "Issues inherit their project through milestone membership.",
+                    )
+                )
+
+        key = issue.get("key")
+        if not _nonempty_string(key):
+            errors.append(_error("issue_key", f"{path}.key", "Expected a non-empty key."))
+        elif key in issue_keys:
+            errors.append(_error("duplicate_issue", f"{path}.key", f"Issue key {key!r} is repeated."))
+        else:
+            issue_keys.add(str(key))
+        if not _nonempty_string(issue.get("title")):
+            errors.append(_error("issue_title", f"{path}.title", "Expected a non-empty title."))
+
+        body = issue.get("body")
+        if not isinstance(body, str):
+            errors.append(_error("issue_body", f"{path}.body", "Expected a Markdown string."))
+        else:
+            headings = _markdown_headings(body)
+            for heading in headings:
+                if _forbidden_heading(heading):
+                    errors.append(
+                        _error(
+                            "forbidden_issue_section",
+                            f"{path}.body",
+                            f"Remove the {heading!r} section from the issue body.",
+                        )
+                    )
+            try:
+                validate_content(plan_content(issue))
+            except RuntimeFailure as error:
+                for detail in error.details or []:
+                    errors.append(_error(detail["code"], f"{path}.{detail['path']}", detail["message"]))
+
+        milestone = issue.get("milestone")
+        if not _nonempty_string(milestone):
+            errors.append(
+                _error(
+                    "milestone_cardinality",
+                    f"{path}.milestone",
+                    "Each issue belongs to exactly one milestone key.",
+                )
+            )
+        elif milestone not in milestone_keys:
+            errors.append(
+                _error(
+                    "unknown_milestone",
+                    f"{path}.milestone",
+                    f"Milestone {milestone!r} is not defined in this plan.",
+                )
+            )
+        if not _nonempty_string(issue.get("owner")):
+            errors.append(
+                _error(
+                    "owner_cardinality",
+                    f"{path}.owner",
+                    "Each issue has exactly one owner string.",
+                )
+            )
+        _validate_work_item_semantic_ids(
+            issue.get("semantic_ids"), f"{path}.semantic_ids", errors
+        )
+        contract = _validate_code_mass_contract(
+            issue.get("code_mass_contract"), f"{path}.code_mass_contract", errors
+        )
+        if _nonempty_string(key) and contract is not None:
+            issue_contracts[str(key)] = contract
+        if _nonempty_string(key) and _nonempty_string(milestone):
+            issue_milestones[str(key)] = str(milestone)
+        pull_request = issue.get("pull_request")
+        if (
+            not isinstance(pull_request, dict)
+            or type(pull_request.get("count")) is not int
+            or pull_request.get("count") != 1
+        ):
+            errors.append(
+                _error(
+                    "pull_request_cardinality",
+                    f"{path}.pull_request.count",
+                    "Each issue produces exactly one pull request.",
+                )
+            )
+
+    existing_refs = payload.get("existing_issue_refs", [])
+    existing_keys: set[str] = set()
+    existing_ids: set[str] = set()
+    if not isinstance(existing_refs, list):
+        errors.append(_error("existing_issue_ref", "$.existing_issue_refs", "Expected an array of reference-only existing issues."))
+        existing_refs = []
+    for index, reference in enumerate(existing_refs):
+        path = f"$.existing_issue_refs[{index}]"
+        if not isinstance(reference, dict):
+            errors.append(_error("existing_issue_ref", path, "Expected a reference-only issue object."))
+            continue
+        key, identity = reference.get("key"), reference.get("id")
+        if not _nonempty_string(key) or key in issue_keys or key in existing_keys:
+            errors.append(_error("existing_issue_ref", f"{path}.key", "Expected a unique existing issue key outside this plan's work items."))
+        elif not _nonempty_string(identity) or identity in existing_ids:
+            errors.append(_error("existing_issue_ref", f"{path}.id", "Expected a unique existing provider identity."))
+        elif reference.get("operation") != "reference_only":
+            errors.append(_error("existing_issue_ref", f"{path}.operation", "Existing issue declarations are reference_only."))
+        else:
+            existing_keys.add(key)
+            existing_ids.add(identity)
+
+    relations = payload.get("relations")
+    if not isinstance(relations, list):
+        errors.append(
+            _error("relations", "$.relations", "Expected a top-level native relations array.")
+        )
+        relations = []
+    relation_keys: set[tuple[str, str, str]] = set()
+    for index, relation in enumerate(relations):
+        path = f"$.relations[{index}]"
+        if not isinstance(relation, dict):
+            errors.append(_error("relation", path, "Expected a native relation object."))
+            continue
+        relation_type = relation.get("type")
+        source = relation.get("source")
+        target = relation.get("target")
+        if relation_type not in RELATION_TYPES:
+            errors.append(
+                _error(
+                    "relation_type",
+                    f"{path}.type",
+                    "Relation type must be blocks, duplicate, related, or similar.",
+                )
+            )
+        for field_name, value in (("source", source), ("target", target)):
+            if not _nonempty_string(value) or value not in issue_keys | existing_keys:
+                errors.append(
+                    _error(
+                        "unknown_relation_issue",
+                        f"{path}.{field_name}",
+                        f"Relation {field_name} must name a planned issue or a declared existing issue reference.",
+                    )
+                )
+        if _nonempty_string(source) and source == target:
+            errors.append(
+                _error("self_relation", path, "An issue cannot have a relation to itself.")
+            )
+        if (
+            isinstance(relation_type, str)
+            and isinstance(source, str)
+            and isinstance(target, str)
+        ):
+            relation_key = (relation_type, source, target)
+            if relation_key in relation_keys:
+                errors.append(_error("duplicate_relation", path, "This relation is repeated."))
+            relation_keys.add(relation_key)
+
+    linked_issue_pairs = {
+        frozenset((source, target))
+        for _, source, target in relation_keys
+        if source != target
+    }
+    for issue_key, contract in issue_contracts.items():
+        added = contract["added"]
+        removed = contract["removed"]
+        target_met = None if "UNKNOWN" in (added, removed) else 5 * removed >= 6 * added
+        exception_id = contract.get("exception_id")
+        escrow = contract.get("escrow")
+        pending_net_addition = (
+            type(added) is int and type(removed) is int
+            and added > removed and contract.get("net_addition_status") == "REQUIRED"
+        )
+        ledger = milestone_ledgers.get(issue_milestones.get(issue_key, ""), {})
+        ledger_totals = ledger.get("totals") if isinstance(ledger, dict) else None
+        project_exception = (
+            ledger_totals.get("project_exception")
+            if isinstance(ledger_totals, dict)
+            else None
+        )
+        if (
+            target_met is False
+            and not exception_id
+            and not escrow
+            and not pending_net_addition
+            and not _nonempty_string(project_exception)
+        ):
+            errors.append(
+                _error(
+                    "code_mass_target",
+                    f"$.issues[{issue_key}].code_mass_contract",
+                    "A 6:5 deficit needs bounded same-milestone escrow or an approved exception.",
+                )
+            )
+        if isinstance(escrow, dict):
+            milestone_key = issue_milestones.get(issue_key)
+            compensating_issue = escrow.get("compensating_issue")
+            if escrow.get("milestone") != milestone_key:
+                errors.append(
+                    _error(
+                        "code_mass_escrow",
+                        f"$.issues[{issue_key}].code_mass_contract.milestone_escrow.milestone",
+                        "Escrow must stay in the issue's milestone.",
+                    )
+                )
+            if escrow.get("responsibility_domain") != milestone_domains.get(milestone_key or ""):
+                errors.append(
+                    _error(
+                        "code_mass_escrow",
+                        f"$.issues[{issue_key}].code_mass_contract.milestone_escrow.responsibility_domain",
+                        "Escrow must stay in the milestone's responsibility domain.",
+                    )
+                )
+            if (
+                not _nonempty_string(compensating_issue)
+                or issue_milestones.get(str(compensating_issue)) != milestone_key
+            ):
+                errors.append(
+                    _error(
+                        "code_mass_escrow",
+                        f"$.issues[{issue_key}].code_mass_contract.milestone_escrow.compensating_issue",
+                        "Compensating work must be a known issue in the same milestone.",
+                    )
+                )
+            elif frozenset((issue_key, str(compensating_issue))) not in linked_issue_pairs:
+                errors.append(
+                    _error(
+                        "code_mass_escrow",
+                        f"$.issues[{issue_key}].code_mass_contract.milestone_escrow.compensating_issue",
+                        "Escrow issues must be linked through a native Linear relation.",
+                    )
+                )
+
+    for milestone_key, ledger in milestone_ledgers.items():
+        expected_issue_keys = {
+            issue_key
+            for issue_key, issue_milestone in issue_milestones.items()
+            if issue_milestone == milestone_key
+        }
+        records = ledger.get("issues")
+        record_by_issue = (
+            {
+                str(record.get("issue")): record
+                for record in records
+                if isinstance(record, dict) and _nonempty_string(record.get("issue"))
+            }
+            if isinstance(records, list)
+            else {}
+        )
+        if set(record_by_issue) != expected_issue_keys:
+            errors.append(
+                _error(
+                    "code_mass_ledger_mismatch",
+                    f"$.milestones[{milestone_key}].code_mass_ledger.issues",
+                    "The ledger must contain every issue in this milestone exactly once.",
+                )
+        )
+        total_added = 0
+        total_removed = 0
+        for issue_key in expected_issue_keys:
+            contract = issue_contracts.get(issue_key)
+            record = record_by_issue.get(issue_key)
+            if contract is None or record is None:
+                continue
+            total_added = _mass_sum([total_added, contract["added"]])
+            total_removed = _mass_sum([total_removed, contract["removed"]])
+            if record.get("added") != contract["added"] or record.get("removed") != contract["removed"]:
+                errors.append(
+                    _error(
+                        "code_mass_ledger_mismatch",
+                        f"$.milestones[{milestone_key}].code_mass_ledger.issues[{issue_key}]",
+                        "Ledger issue metrics must match the issue Code Mass Contract.",
+                    )
+                )
+        totals = ledger.get("totals")
+        if isinstance(totals, dict):
+            summary = _mass_summary(total_added, total_removed)
+            expected_totals = {field: summary[field] for field in ("added", "removed", "ratio", "net", "status")}
+            for field, expected in expected_totals.items():
+                if totals.get(field) != expected or isinstance(totals.get(field), bool):
+                    errors.append(
+                        _error(
+                            "code_mass_ledger_mismatch",
+                            f"$.milestones[{milestone_key}].code_mass_ledger.totals.{field}",
+                            "The milestone total does not match its issue contracts.",
+                        )
+                    )
+
+    return errors, carrier_mode
+
+
+def _bind_linear_plan_to_manifest(
+    plan: dict[str, Any],
+    manifest: dict[str, Any],
+    errors: list[dict[str, str]],
+) -> None:
+    if plan.get("spec_slug") != manifest.get("slug"):
+        errors.append(
+            _error(
+                "spec_slug_mismatch",
+                "$.spec_slug",
+                "The plan slug must match the approved semantic manifest.",
+            )
+        )
+
+    repository = manifest.get("repository")
+    manifest_baseline = repository.get("baseline") if isinstance(repository, dict) else None
+    if plan.get("repository_baseline") != manifest_baseline:
+        errors.append(
+            _error(
+                "repository_baseline_mismatch",
+                "$.repository_baseline",
+                "The plan baseline must match the approved semantic manifest.",
+            )
+        )
+
+    semantic_release = plan.get("semantic_release")
+    notion = manifest.get("notion")
+    approval = manifest.get("approval")
+    if not isinstance(semantic_release, dict):
+        semantic_release = {}
+    if not isinstance(notion, dict):
+        notion = {}
+    if not isinstance(approval, dict):
+        approval = {}
+    release_bindings = (
+        ("notion_page_id", notion.get("page_id")),
+        ("revision", approval.get("revision")),
+        ("content_hash", notion.get("readback_content_hash")),
+        (
+            "basis_id",
+            manifest.get("first_principles_basis", {}).get("current_basis_id")
+            if isinstance(manifest.get("first_principles_basis"), dict)
+            else None,
+        ),
+        (
+            "basis_version",
+            manifest.get("first_principles_basis", {}).get("current_version")
+            if isinstance(manifest.get("first_principles_basis"), dict)
+            else None,
+        ),
+    )
+    for field, expected in release_bindings:
+        if semantic_release.get(field) != expected:
+            errors.append(
+                _error(
+                    "semantic_release_mismatch",
+                    f"$.semantic_release.{field}",
+                    "The plan release binding must match the approved Notion read-back.",
+                )
+            )
+
+    manifest_semantic_ids = {
+        semantic_id
+        for semantic_id in manifest.get("semantic_ids", [])
+        if _nonempty_string(semantic_id)
+    }
+    for collection_name in ("milestones", "issues"):
+        collection = plan.get(collection_name)
+        if not isinstance(collection, list):
+            continue
+        for item_index, item in enumerate(collection):
+            if not isinstance(item, dict):
+                continue
+            semantic_ids = item.get("semantic_ids")
+            if not isinstance(semantic_ids, list):
+                continue
+            for semantic_index, semantic_id in enumerate(semantic_ids):
+                if _nonempty_string(semantic_id) and semantic_id not in manifest_semantic_ids:
+                    errors.append(
+                        _error(
+                            "unknown_semantic_id",
+                            (
+                                f"$.{collection_name}[{item_index}]"
+                                f".semantic_ids[{semantic_index}]"
+                            ),
+                            "The semantic identifier is absent from the approved manifest.",
+                        )
+                    )
+
+
+def _run_validate_spec(path: Path) -> tuple[int, dict[str, Any]]:
+    command = "validate-spec"
+    payload, read_errors = _load_json(path, command)
+    if read_errors:
+        return 2, {"status": "error", "command": command, "errors": read_errors}
+    assert payload is not None
+    errors, ready = _validate_spec(payload)
+    return (1 if errors else 0), {
+        "status": "invalid" if errors else "ok",
+        "command": command,
+        "manifest": str(path),
+        "ready_for_compilation": ready,
+        "errors": errors,
+    }
+
+
+def _run_validate_linear_plan(path: Path, manifest_path: Path) -> tuple[int, dict[str, Any]]:
+    command = "validate-linear-plan"
+    payload, read_errors = _load_json(path, command)
+    if read_errors:
+        return 2, {"status": "error", "command": command, "errors": read_errors}
+    assert payload is not None
+
+    manifest, manifest_read_errors = _load_json(manifest_path, command)
+    if manifest_read_errors:
+        return 2, {
+            "status": "error",
+            "command": command,
+            "plan": str(path),
+            "manifest": str(manifest_path),
+            "errors": manifest_read_errors,
+        }
+    assert manifest is not None
+
+    errors, carrier_mode = _validate_linear_plan(payload)
+    manifest_errors, manifest_ready = _validate_spec(manifest)
+    errors.extend(
+        {
+            **item,
+            "path": f"manifest{item['path']}",
+        }
+        for item in manifest_errors
+    )
+    if not manifest_ready:
+        errors.append(
+            _error(
+                "manifest_not_ready",
+                "--manifest",
+                "The semantic manifest must be approved and bound to a verified Notion read-back.",
+            )
+        )
+    else:
+        _bind_linear_plan_to_manifest(payload, manifest, errors)
+    milestones = payload.get("milestones")
+    issues = payload.get("issues")
+    relations = payload.get("relations")
+    return (1 if errors else 0), {
+        "status": "invalid" if errors else "ok",
+        "command": command,
+        "plan": str(path),
+        "manifest": str(manifest_path),
+        "carrier_project_mode": carrier_mode,
+        "milestones": len(milestones) if isinstance(milestones, list) else 0,
+        "issues": len(issues) if isinstance(issues, list) else 0,
+        "relations": len(relations) if isinstance(relations, list) else 0,
+        "workstreams": analyze_workstreams(payload)[1] if not errors else None,
+        "errors": errors,
+    }
+
+
+def _run_git(
+    repository: Path, arguments: list[str]
+) -> tuple[subprocess.CompletedProcess[bytes] | None, dict[str, str] | None]:
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(repository), *arguments],
+            check=False,
+            capture_output=True,
+        )
+    except OSError as exception:
+        return None, _error("git_unavailable", "git", str(exception))
+    if result.returncode != 0:
+        message = result.stderr.decode("utf-8", errors="replace").strip()
+        return None, _error(
+            "git_failed",
+            "git " + " ".join(arguments),
+            message or "Git could not read the requested repository state.",
+        )
+    return result, None
+
+
+def _resolve_commit(
+    repository: Path, reference: str
+) -> tuple[str | None, dict[str, str] | None]:
+    result, error = _run_git(repository, ["rev-parse", "--verify", f"{reference}^{{commit}}"])
+    if error:
+        return None, error
+    assert result is not None
+    return result.stdout.decode("ascii", errors="replace").strip(), None
+
+
+def _verify_checkout_for_formatting(
+    repository: Path, measured_head: str
+) -> dict[str, str] | None:
+    checked_out_head, head_error = _resolve_commit(repository, "HEAD")
+    if head_error:
+        return head_error
+    if checked_out_head != measured_head:
+        return _error(
+            "checkout_head_mismatch",
+            "--head",
+            "The repository checkout must be at the exact measured head before formatting verification.",
+        )
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(repository), "diff", "--quiet", "HEAD", "--"],
+            check=False,
+            capture_output=True,
+        )
+    except OSError as exception:
+        return _error("git_unavailable", "git", str(exception))
+    if result.returncode == 1:
+        return _error(
+            "checkout_not_clean",
+            str(repository),
+            "Formatting verification requires a clean tracked checkout at the measured head.",
+        )
+    if result.returncode != 0:
+        message = result.stderr.decode("utf-8", errors="replace").strip()
+        return _error(
+            "git_failed",
+            "git diff --quiet HEAD --",
+            message or "Git could not verify the checkout state.",
+        )
+    return None
+
+
+def _tree_paths(
+    repository: Path, commit: str
+) -> tuple[list[str], dict[str, str] | None]:
+    result, error = _run_git(
+        repository, ["ls-tree", "-r", "--name-only", "-z", commit]
+    )
+    if error:
+        return [], error
+    assert result is not None
+    return [
+        item.decode("utf-8", errors="surrogateescape")
+        for item in result.stdout.split(b"\0")
+        if item
+    ], None
+
+
+def _blob_at(
+    repository: Path, commit: str, path: str
+) -> tuple[bytes | None, dict[str, str] | None]:
+    result, error = _run_git(repository, ["show", f"{commit}:{path}"])
+    if error:
+        return None, error
+    assert result is not None
+    return result.stdout, None
+
+
+def _static_exclusion(path: str) -> str | None:
+    candidate = PurePath(path)
+    folded_parts = {part.casefold() for part in candidate.parts[:-1]}
+    if folded_parts & EXCLUDED_DIRECTORY_NAMES:
+        return "generated, vendored, compiled, distribution, or snapshot directory"
+    if (
+        folded_parts & DATA_FIXTURE_DIRECTORY_NAMES
+        and candidate.suffix.casefold() in DATA_FIXTURE_EXTENSIONS
+    ):
+        return "test fixture data"
+    name = candidate.name.casefold()
+    if name in EXCLUDED_FILE_NAMES or name.endswith(".lock"):
+        return "package-manager lockfile"
+    return None
+
+
+def _source_candidate(path: str, content: bytes) -> bool:
+    candidate = PurePath(path)
+    if candidate.suffix.casefold() in SOURCE_EXTENSIONS:
+        return True
+    if candidate.name.casefold() in {
+        "dockerfile",
+        "jenkinsfile",
+        "justfile",
+        "makefile",
+        "rakefile",
+    }:
+        return True
+    return not candidate.suffix and content.startswith(b"#!")
+
+
+def _test_source(path: str) -> bool:
+    candidate = PurePath(path)
+    parts = {part.casefold() for part in candidate.parts[:-1]}
+    stem = candidate.stem.casefold()
+    return bool(
+        parts & {"test", "tests", "__tests__"}
+        or stem.startswith("test_")
+        or stem.endswith("_test")
+        or ".test." in candidate.name.casefold()
+        or ".spec." in candidate.name.casefold()
+    )
+
+
+def _normalize_spacing(line: str) -> str:
+    normalized: list[str] = []
+    quote: str | None = None
+    escaped = False
+    for character in line:
+        if quote is not None:
+            normalized.append(character)
+            if escaped:
+                escaped = False
+            elif character == "\\":
+                escaped = True
+            elif character == quote:
+                quote = None
+            continue
+        if character in {"'", '"', "`"}:
+            quote = character
+            normalized.append(character)
+        elif not character.isspace():
+            normalized.append(character)
+    return "".join(normalized)
+
+
+def _normalized_source_lines(content: str, suffix: str) -> list[str]:
+    hash_comments = suffix in {
+        ".bash", ".fish", ".hcl", ".nix", ".ps1", ".py", ".pyi", ".r",
+        ".rb", ".sh", ".tf", ".toml", ".yaml", ".yml", ".zsh",
+    }
+    dash_comments = suffix in {".lua", ".sql"}
+    slash_comments = suffix in {
+        ".c", ".cc", ".cjs", ".cpp", ".cs", ".css", ".dart", ".go",
+        ".gradle", ".groovy", ".h", ".hpp", ".java", ".js", ".jsx", ".kt",
+        ".kts", ".mjs", ".php", ".rs", ".scala", ".scss", ".swift", ".ts",
+        ".tsx",
+    }
+    normalized: list[str] = []
+    block_comment: str | None = None
+    for physical_line in content.splitlines():
+        stripped = physical_line.strip()
+        if not stripped:
+            continue
+        if block_comment is not None:
+            if block_comment in stripped:
+                remainder = stripped.split(block_comment, 1)[1].strip()
+                block_comment = None
+                if not remainder:
+                    continue
+                stripped = remainder
+            else:
+                continue
+        if stripped.startswith("/*"):
+            if "*/" not in stripped[2:]:
+                block_comment = "*/"
+                continue
+            stripped = stripped.split("*/", 1)[1].strip()
+            if not stripped:
+                continue
+        if stripped.startswith("<!--"):
+            if "-->" not in stripped[4:]:
+                block_comment = "-->"
+                continue
+            stripped = stripped.split("-->", 1)[1].strip()
+            if not stripped:
+                continue
+        if hash_comments and stripped.startswith("#") and not stripped.startswith("#!"):
+            continue
+        if slash_comments and stripped.startswith("//"):
+            continue
+        if dash_comments and stripped.startswith("--"):
+            continue
+        normalized.append(_normalize_spacing(stripped))
+    return normalized
+
+
+def _source_snapshot(
+    repository: Path, commit: str
+) -> tuple[dict[str, Any] | None, list[dict[str, str]]]:
+    paths, path_error = _tree_paths(repository, commit)
+    if path_error:
+        return None, [path_error]
+    counters = {"production": Counter(), "tests": Counter()}
+    files: dict[str, dict[str, Any]] = {}
+    exclusions: dict[str, str] = {}
+    errors: list[dict[str, str]] = []
+    for path in paths:
+        static_reason = _static_exclusion(path)
+        if static_reason:
+            exclusions[path] = static_reason
+            continue
+        content, content_error = _blob_at(repository, commit, path)
+        if content_error:
+            errors.append(content_error)
+            continue
+        assert content is not None
+        if b"\0" in content:
+            exclusions[path] = "binary asset"
+            continue
+        if not _source_candidate(path, content):
+            exclusions[path] = "non-executable documentation or data"
+            continue
+        try:
+            text = content.decode("utf-8")
+        except UnicodeDecodeError:
+            exclusions[path] = "non-UTF-8 or binary asset"
+            continue
+        category = "tests" if _test_source(path) else "production"
+        lines = Counter(_normalized_source_lines(text, PurePath(path).suffix.casefold()))
+        counters[category].update(lines)
+        files[path] = {"category": category, "lines": lines, "sloc": sum(lines.values())}
+    if errors:
+        return None, errors
+    return {"counters": counters, "files": files, "exclusions": exclusions}, []
+
+
+def _changed_records(
+    repository: Path, base: str, head: str
+) -> tuple[list[dict[str, str]], list[dict[str, str]], dict[str, str] | None]:
+    result, error = _run_git(
+        repository, ["diff", "--name-status", "-M", "-z", base, head]
+    )
+    if error:
+        return [], [], error
+    assert result is not None
+    tokens = [
+        token.decode("utf-8", errors="surrogateescape")
+        for token in result.stdout.split(b"\0")
+        if token
+    ]
+    records: list[dict[str, str]] = []
+    renames: list[dict[str, str]] = []
+    index = 0
+    while index < len(tokens):
+        status = tokens[index]
+        index += 1
+        if status.startswith(("R", "C")):
+            if index + 1 >= len(tokens):
+                return [], [], _error(
+                    "git_diff_parse", "git diff", "Rename or copy output was incomplete."
+                )
+            old_path, new_path = tokens[index], tokens[index + 1]
+            index += 2
+            records.append({"status": status, "from": old_path, "to": new_path})
+            if status.startswith("R"):
+                renames.append({"from": old_path, "to": new_path})
+        else:
+            if index >= len(tokens):
+                return [], [], _error(
+                    "git_diff_parse", "git diff", "Changed-path output was incomplete."
+                )
+            path = tokens[index]
+            index += 1
+            records.append({"status": status, "path": path})
+    return records, renames, None
+
+
+def _measured_metrics(base: dict[str, Any], head: dict[str, Any]) -> dict[str, Any]:
+    deltas: dict[str, dict[str, Counter[str]]] = {}
+    for category in ("production", "tests"):
+        base_counter = base["counters"][category]
+        head_counter = head["counters"][category]
+        deltas[category] = {
+            "added": head_counter - base_counter,
+            "removed": base_counter - head_counter,
+        }
+    production_to_tests = deltas["tests"]["added"] & deltas["production"]["removed"]
+    tests_to_production = deltas["production"]["added"] & deltas["tests"]["removed"]
+    for line, count in production_to_tests.items():
+        deltas["tests"]["added"][line] -= count
+        deltas["production"]["removed"][line] -= count
+    for line, count in tests_to_production.items():
+        deltas["production"]["added"][line] -= count
+        deltas["tests"]["removed"][line] -= count
+
+    metrics: dict[str, Any] = {}
+    for category in ("production", "tests"):
+        added = sum(deltas[category]["added"].values())
+        removed = sum(deltas[category]["removed"].values())
+        metrics[category] = {"added": added, "removed": removed, "net": added - removed}
+    added = metrics["production"]["added"] + metrics["tests"]["added"]
+    removed = metrics["production"]["removed"] + metrics["tests"]["removed"]
+    required = _required_removals(added)
+    metrics["combined"] = {
+        "added": added,
+        "removed": removed,
+        "net": added - removed,
+        "ratio": _mass_ratio(removed, added),
+        "required_removals": required,
+        "deficit": max(0, required - removed),
+        "base_sloc": sum(sum(counter.values()) for counter in base["counters"].values()),
+        "head_sloc": sum(sum(counter.values()) for counter in head["counters"].values()),
+    }
+    return metrics
+
+
+def _raw_change_report(
+    records: list[dict[str, str]], base: dict[str, Any], head: dict[str, Any]
+) -> list[dict[str, Any]]:
+    report: list[dict[str, Any]] = []
+    for record in records:
+        old_path = record.get("from") or record.get("path")
+        new_path = record.get("to") or record.get("path")
+        old_file = base["files"].get(old_path)
+        new_file = head["files"].get(new_path)
+        base_lines = old_file["lines"] if old_file else Counter()
+        head_lines = new_file["lines"] if new_file else Counter()
+        item: dict[str, Any] = {
+            "status": record["status"],
+            "added": sum((head_lines - base_lines).values()),
+            "removed": sum((base_lines - head_lines).values()),
+        }
+        if "from" in record:
+            item["from"] = old_path
+            item["to"] = new_path
+        else:
+            item["path"] = old_path
+        category = (new_file or old_file or {}).get("category")
+        item["category"] = category or "excluded"
+        report.append(item)
+    return report
+
+
+def _find_issue_contract(
+    plan: dict[str, Any], issue_key: str
+) -> tuple[dict[str, Any] | None, dict[str, str] | None]:
+    issues = plan.get("issues")
+    if not isinstance(issues, list):
+        return None, _error("issue_not_found", "$.issues", "The plan has no issue list.")
+    matches = [
+        issue
+        for issue in issues
+        if isinstance(issue, dict) and issue.get("key") == issue_key
+    ]
+    if len(matches) != 1:
+        return None, _error(
+            "issue_not_found",
+            "--issue",
+            "Expected exactly one matching issue in the Linear plan.",
+        )
+    contract = matches[0].get("code_mass_contract")
+    if not isinstance(contract, dict):
+        return None, _error(
+            "code_mass_contract",
+            f"$.issues[{issue_key}].code_mass_contract",
+            "The selected issue has no structured Code Mass Contract.",
+        )
+    return contract, None
+
+
+def _milestone_exception_for_issue(plan: dict[str, Any], issue_key: str) -> str | None:
+    issues = plan.get("issues")
+    milestones = plan.get("milestones")
+    if not isinstance(issues, list) or not isinstance(milestones, list):
+        return None
+    milestone_key = next(
+        (
+            issue.get("milestone")
+            for issue in issues
+            if isinstance(issue, dict) and issue.get("key") == issue_key
+        ),
+        None,
+    )
+    if not _nonempty_string(milestone_key):
+        return None
+    ledger = next(
+        (
+            milestone.get("code_mass_ledger")
+            for milestone in milestones
+            if isinstance(milestone, dict) and milestone.get("key") == milestone_key
+        ),
+        None,
+    )
+    totals = ledger.get("totals") if isinstance(ledger, dict) else None
+    exception = totals.get("project_exception") if isinstance(totals, dict) else None
+    return str(exception) if _nonempty_string(exception) else None
+
+
+def _compare_reported_metrics(
+    reported: object, metrics: dict[str, Any], errors: list[dict[str, str]]
+) -> None:
+    if not isinstance(reported, dict):
+        errors.append(
+            _error(
+                "missing_reported_measurements",
+                "$.code_mass_contract.reported",
+                "Record the measured base/head result in the issue contract.",
+            )
+        )
+        return
+    for category in ("production", "tests", "combined"):
+        report = reported.get(category)
+        if not isinstance(report, dict):
+            errors.append(
+                _error(
+                    "contract_mismatch",
+                    f"$.code_mass_contract.reported.{category}",
+                    "Reported measurements are missing.",
+                )
+            )
+            continue
+        fields = ("added", "removed")
+        if category == "combined":
+            fields = (*fields, "net", "ratio")
+        for field in fields:
+            actual = metrics[category][field]
+            claimed = report.get(field)
+            agrees = claimed == actual
+            if field == "ratio" and isinstance(claimed, (int, float)) and actual is not None:
+                agrees = abs(float(claimed) - float(actual)) <= 0.001
+            if not agrees:
+                errors.append(
+                    _error(
+                        "contract_mismatch",
+                        f"$.code_mass_contract.reported.{category}.{field}",
+                        f"Reported {claimed!r}; measured {actual!r}.",
+                    )
+                )
+
+
+def _run_code_mass_policy(
+    repository: Path,
+    base_ref: str,
+    head_ref: str,
+    plan_path: Path,
+    issue_key: str,
+    format_command_json: str,
+) -> tuple[int, dict[str, Any]]:
+    command = "code-mass-policy"
+    if not repository.is_dir():
+        return 2, {
+            "status": "error",
+            "command": command,
+            "errors": [_error("repository_not_found", str(repository), "Expected a repository directory.")],
+        }
+    try:
+        format_command = json.loads(format_command_json)
+    except json.JSONDecodeError as exception:
+        return 2, {
+            "status": "error",
+            "command": command,
+            "errors": [_error("format_command", "--format-command-json", str(exception))],
+        }
+    if (
+        not isinstance(format_command, list)
+        or not format_command
+        or not all(_nonempty_string(item) for item in format_command)
+    ):
+        return 2, {
+            "status": "error",
+            "command": command,
+            "errors": [
+                _error(
+                    "format_command",
+                    "--format-command-json",
+                    "Expected a JSON array containing one formatter verification command.",
+                )
+            ],
+        }
+    base, base_error = _resolve_commit(repository, base_ref)
+    head, head_error = _resolve_commit(repository, head_ref)
+    operational_errors = [item for item in (base_error, head_error) if item]
+    if operational_errors:
+        return 2, {
+            "status": "error",
+            "command": command,
+            "repository": str(repository),
+            "errors": operational_errors,
+        }
+    assert base is not None and head is not None
+    checkout_error = _verify_checkout_for_formatting(repository, head)
+    if checkout_error:
+        return 2, {
+            "status": "error",
+            "command": command,
+            "repository": str(repository),
+            "base": base,
+            "head": head,
+            "errors": [checkout_error],
+        }
+    try:
+        format_result = subprocess.run(
+            [str(item) for item in format_command],
+            cwd=repository,
+            check=False,
+            capture_output=True,
+        )
+    except OSError as exception:
+        return 2, {
+            "status": "error",
+            "command": command,
+            "errors": [_error("format_command_unavailable", "--format-command-json", str(exception))],
+        }
+    errors: list[dict[str, str]] = []
+    if format_result.returncode != 0:
+        errors.append(
+            _error(
+                "format_check_failed",
+                "--format-command-json",
+                "The repository-selected formatting verification failed.",
+            )
+        )
+    post_format_checkout_error = _verify_checkout_for_formatting(repository, head)
+    if post_format_checkout_error:
+        errors.append(post_format_checkout_error)
+
+    plan, plan_read_errors = _load_json(plan_path, command)
+    if plan_read_errors:
+        return 2, {
+            "status": "error",
+            "command": command,
+            "plan": str(plan_path),
+            "errors": plan_read_errors,
+        }
+    assert plan is not None
+    plan_errors, _ = _validate_linear_plan(plan)
+    errors.extend(plan_errors)
+    contract, contract_error = _find_issue_contract(plan, issue_key)
+    milestone_exception = _milestone_exception_for_issue(plan, issue_key)
+    if contract_error:
+        errors.append(contract_error)
+
+    base_snapshot, base_errors = _source_snapshot(repository, base)
+    head_snapshot, head_errors = _source_snapshot(repository, head)
+    if base_errors or head_errors:
+        return 2, {
+            "status": "error",
+            "command": command,
+            "repository": str(repository),
+            "base": base,
+            "head": head,
+            "errors": base_errors + head_errors,
+        }
+    assert base_snapshot is not None and head_snapshot is not None
+    records, renames, diff_error = _changed_records(repository, base, head)
+    if diff_error:
+        return 2, {
+            "status": "error",
+            "command": command,
+            "repository": str(repository),
+            "base": base,
+            "head": head,
+            "errors": [diff_error],
+        }
+    metrics = _measured_metrics(base_snapshot, head_snapshot)
+    if contract is not None:
+        _compare_reported_metrics(contract.get("reported"), metrics, errors)
+        actual_net = metrics["combined"]["net"]
+        gate_errors: list[dict[str, str]] = []
+        actual_exception = _validate_net_addition_gate(
+            contract.get("net_addition_gate"),
+            "$.code_mass_contract.net_addition_gate",
+            actual_net,
+            gate_errors,
+            require_approved=True,
+        )
+        if actual_net > 0:
+            errors.extend(gate_errors)
+        target_met = 5 * metrics["combined"]["removed"] >= 6 * metrics["combined"]["added"]
+        escrowed = isinstance(contract.get("milestone_escrow"), dict)
+        applicable_exception = actual_exception or (
+            milestone_exception if actual_net <= 0 else None
+        )
+        if not target_met and not escrowed and not applicable_exception:
+            errors.append(
+                _error(
+                    "code_mass_target",
+                    "$.code_mass_contract",
+                    "Measured removals do not meet 6:5 and no valid escrow or exception applies.",
+                )
+            )
+        pr_target = (
+            "PASS"
+            if target_met
+            else "APPROVED_EXCEPTION"
+            if applicable_exception
+            else "ESCROWED"
+            if escrowed
+            else "FAIL"
+        )
+        net_gate = "APPROVED" if actual_net > 0 and actual_exception else (
+            "REQUIRED" if actual_net > 0 else "NOT_REQUIRED"
+        )
+    else:
+        pr_target = "FAIL"
+        net_gate = "UNKNOWN"
+
+    changed_paths = {
+        path
+        for record in records
+        for path in (record.get("path"), record.get("from"), record.get("to"))
+        if path
+    }
+    exclusion_map = {**base_snapshot["exclusions"], **head_snapshot["exclusions"]}
+    excluded = sorted(path for path in changed_paths if path in exclusion_map)
+    payload = {
+        "status": "invalid" if errors else "ok",
+        "command": command,
+        "repository": str(repository),
+        "base": base,
+        "head": head,
+        "plan": str(plan_path),
+        "issue": issue_key,
+        "formatting": {
+            "status": "PASS" if format_result.returncode == 0 else "FAIL",
+            "exit_code": format_result.returncode,
+        },
+        "metrics": metrics,
+        "renames": renames,
+        "excluded": excluded,
+        "exclusion_reasons": {path: exclusion_map[path] for path in excluded},
+        "raw_report": _raw_change_report(records, base_snapshot, head_snapshot),
+        "result": {
+            "pr_target": pr_target,
+            "net_addition_gate": net_gate,
+            "semantic_removal_validation": "REQUIRES_CODE_MASS_AUDITOR",
+        },
+        "errors": errors,
+    }
+    return (1 if errors else 0), payload
+
+
+def _inside_adr(path: Path) -> bool:
+    return any(part.casefold() in ADR_DIRECTORY_NAMES for part in path.parts)
+
+
+def _allowed(path: Path, allowed_paths: list[Path]) -> bool:
+    return any(path == allowed or allowed in path.parents for allowed in allowed_paths)
+
+
+def _temporary_paths_from_manifest(manifest: Path, repository: Path) -> set[Path]:
+    found: set[Path] = set()
+    try:
+        with manifest.open("r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+        artifacts = payload.get("provenance", {}).get("temporary_artifacts", [])
+    except (OSError, json.JSONDecodeError, AttributeError):
+        return found
+    if not isinstance(artifacts, list):
+        return found
+
+    repository_resolved = repository.resolve()
+    for artifact in artifacts:
+        if not _safe_relative_path(artifact):
+            continue
+        candidate = manifest.parent / str(artifact)
+        try:
+            candidate.resolve().relative_to(repository_resolved)
+        except (OSError, ValueError):
+            continue
+        if candidate.exists() or candidate.is_symlink():
+            found.add(candidate)
+    return found
+
+
+def _find_cleanup_residuals(repository: Path, allow: list[str]) -> tuple[list[str], list[dict[str, str]]]:
+    errors: list[dict[str, str]] = []
+    allowed_paths: list[Path] = []
+    for index, value in enumerate(allow):
+        if not _safe_relative_path(value):
+            errors.append(
+                _error(
+                    "invalid_allow_path",
+                    f"--allow[{index}]",
+                    "Allowed paths must be relative to the repository.",
+                )
+            )
+        else:
+            allowed_paths.append(Path(value))
+    if errors:
+        return [], errors
+
+    candidates: set[Path] = set()
+    manifests: list[Path] = []
+    try:
+        for path in repository.rglob("*"):
+            relative = path.relative_to(repository)
+            if _inside_adr(relative):
+                continue
+            if path.name in TEMPORARY_DIRECTORY_NAMES and path.is_dir():
+                candidates.add(path)
+            if path.name in TEMPORARY_FILE_NAMES and (path.is_file() or path.is_symlink()):
+                candidates.add(path)
+                if path.name == "specflow.manifest.json":
+                    manifests.append(path)
+    except OSError as exception:
+        return [], [_error("scan_failed", str(repository), str(exception))]
+
+    for manifest in manifests:
+        candidates.update(_temporary_paths_from_manifest(manifest, repository))
+
+    relative_candidates = {path.relative_to(repository) for path in candidates}
+    collapsed: set[Path] = set()
+    for candidate in relative_candidates:
+        marker_ancestor = next(
+            (
+                ancestor
+                for ancestor in (candidate, *candidate.parents)
+                if ancestor.name in TEMPORARY_DIRECTORY_NAMES
+                and ancestor in relative_candidates
+            ),
+            None,
+        )
+        collapsed.add(marker_ancestor or candidate)
+
+    residual = [
+        path.as_posix()
+        for path in sorted(collapsed, key=lambda item: item.as_posix())
+        if not _allowed(path, allowed_paths)
+    ]
+    return residual, []
+
+
+def _run_cleanup_check(repository: Path, allow: list[str]) -> tuple[int, dict[str, Any]]:
+    command = "cleanup-check"
+    if not repository.exists():
+        errors = [_error("repository_not_found", str(repository), "The repository does not exist.")]
+        return 2, {"status": "error", "command": command, "errors": errors}
+    if not repository.is_dir():
+        errors = [_error("not_a_directory", str(repository), "Expected a repository directory.")]
+        return 2, {"status": "error", "command": command, "errors": errors}
+
+    residual, errors = _find_cleanup_residuals(repository, allow)
+    if errors:
+        return 2, {"status": "error", "command": command, "errors": errors}
+    return (1 if residual else 0), {
+        "status": "incomplete" if residual else "ok",
+        "command": command,
+        "repository": str(repository),
+        "residual": residual,
+        "errors": [],
+    }
+
+
+def _add_json_option(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        dest="json_output",
+        default=argparse.SUPPRESS,
+        help="Write one machine-readable result to stdout.",
+    )
+
+
+def _parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="specflow",
+        description="Orchestrate Camunda workflows and validate epic specification artifacts.",
+    )
+    parser.set_defaults(json_output=False)
+    _add_json_option(parser)
+    commands = parser.add_subparsers(dest="command", required=True)
+
+    init_parser = commands.add_parser("init", help="Create a new local specification workspace.")
+    init_parser.add_argument("directory", type=Path)
+    init_parser.add_argument("--slug", required=True)
+    _add_json_option(init_parser)
+
+    spec_parser = commands.add_parser("validate-spec", help="Validate a semantic manifest.")
+    spec_parser.add_argument("manifest", type=Path)
+    _add_json_option(spec_parser)
+
+    plan_parser = commands.add_parser(
+        "validate-linear-plan", help="Validate a milestone-first Linear plan."
+    )
+    plan_parser.add_argument("plan", type=Path)
+    plan_parser.add_argument("--manifest", required=True, type=Path)
+    _add_json_option(plan_parser)
+
+    mass_parser = commands.add_parser(
+        "code-mass-policy",
+        help="Verify normalized maintained SLOC against one issue Code Mass Contract.",
+    )
+    mass_parser.add_argument("repository", type=Path)
+    mass_parser.add_argument("--base", required=True, help="Committed measurement baseline.")
+    mass_parser.add_argument(
+        "--head",
+        required=True,
+        help="Committed measurement head and required clean checkout revision.",
+    )
+    mass_parser.add_argument("--plan", required=True, type=Path)
+    mass_parser.add_argument("--issue", required=True)
+    mass_parser.add_argument(
+        "--format-command-json",
+        required=True,
+        help="JSON array for the repository-selected formatting verification command.",
+    )
+    _add_json_option(mass_parser)
+
+    cleanup_parser = commands.add_parser(
+        "cleanup-check", help="Report temporary specification artifacts without deleting them."
+    )
+    cleanup_parser.add_argument("repository", type=Path)
+    cleanup_parser.add_argument("--allow", action="append", default=[])
+    _add_json_option(cleanup_parser)
+    from specflow_runtime.cli import add_commands
+    add_commands(commands)
+    return parser
+
+
+def _emit(payload: dict[str, Any], json_output: bool, exit_code: int) -> None:
+    if json_output:
+        print(json.dumps(payload, sort_keys=True))
+        return
+    if exit_code == 0:
+        if payload["command"] == "cleanup-check":
+            print("clean: no temporary specification artifacts found")
+        elif payload["command"] == "code-mass-policy":
+            metrics = payload["metrics"]["combined"]
+            print(
+                "code mass: "
+                f"+{metrics['added']} / -{metrics['removed']} "
+                f"({payload['result']['pr_target']})"
+            )
+        elif payload["command"] == "init":
+            print(f"initialized: {payload['directory']}")
+        else:
+            print(f"valid: {payload.get('manifest', payload.get('plan'))}")
+        return
+    if payload.get("residual"):
+        for path in payload["residual"]:
+            print(f"residual: {path}", file=sys.stderr)
+    for item in payload.get("errors", []):
+        print(f"{item['code']}: {item['path']}: {item['message']}", file=sys.stderr)
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    arguments = _parser().parse_args(argv)
+    from specflow_runtime.cli import COMMANDS, run
+    if arguments.command in COMMANDS:
+        return run(arguments)
+    if arguments.command == "init":
+        exit_code, payload = _run_init(arguments.directory, arguments.slug)
+    elif arguments.command == "validate-spec":
+        exit_code, payload = _run_validate_spec(arguments.manifest)
+    elif arguments.command == "validate-linear-plan":
+        exit_code, payload = _run_validate_linear_plan(arguments.plan, arguments.manifest)
+    elif arguments.command == "code-mass-policy":
+        exit_code, payload = _run_code_mass_policy(
+            arguments.repository,
+            arguments.base,
+            arguments.head,
+            arguments.plan,
+            arguments.issue,
+            arguments.format_command_json,
+        )
+    else:
+        exit_code, payload = _run_cleanup_check(arguments.repository, arguments.allow)
+    _emit(payload, arguments.json_output, exit_code)
+    return exit_code
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except BrokenPipeError:
+        sys.exit(2)

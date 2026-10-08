@@ -5,6 +5,11 @@ description: Autonomously explain a proposed engineering design in a concise, se
 
 # Design document
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Create one clear explanation of a proposed design that a teammate can understand and review without the conversation. Establish the problem, the recommendation, how the design would work, its consequential tradeoffs, and any decision still needed. Let purposeful visuals and demonstrations carry the explanation, with short context, implications, and evidence limits.
 
 ## Establish the proposal's job and authority

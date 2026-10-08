@@ -5,6 +5,11 @@ description: Transforms workflow to use Manus-style persistent markdown files fo
 
 # Planning with Files
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Work like Manus: Use persistent markdown files as your "working memory on disk."
 
 ## Quick Start

@@ -5,7 +5,12 @@ description: Compile an approved specification into a reviewable delivery plan w
 
 # Implementation specification compiler
 
-Consume an approved specification on explicit invocation and prepare the delivery plan before any external issue creation. The semantic workflow stops at its handoff boundary. Read [workspace and destinations](../epic-spec-workflow/references/workspace-and-destinations.md), [review and artifact design](../epic-spec-workflow/references/review-and-artifact-design.md), and [delivery planning](references/delivery-planning.md).
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
+Consume an approved specification on explicit invocation and prepare the delivery plan before any external issue creation. The semantic workflow stops at its handoff boundary. Read [workspace and destinations](references/bundled/epic-spec-workflow/references/workspace-and-destinations.md), [review and artifact design](references/bundled/epic-spec-workflow/references/review-and-artifact-design.md), and [delivery planning](references/delivery-planning.md).
 
 ## Verify the source and scope
 
@@ -27,13 +32,13 @@ Bind the plan to its actual source and baseline. Read the complete plan as a rev
 
 ## Review and publication
 
-Prepare one `$design-document` explaining the program under the [supervisor proposal contract](../epic-spec-workflow/references/supervisor-design-document.md). Use a visual ownership/dependency view when it helps, with the actual people and groups. Keep supporting evidence optional and purpose-labeled. Readback and rendered verification retain their distinct limits, including the unavailable-viewer fallback.
+Prepare one `$design-document` explaining the program under the [supervisor proposal contract](references/bundled/epic-spec-workflow/references/supervisor-design-document.md). Use a visual ownership/dependency view when it helps, with the actual people and groups. Keep supporting evidence optional and purpose-labeled. Readback and rendered verification retain their distinct limits, including the unavailable-viewer fallback.
 
-Use the existing final approval for the concrete plan and proposal; do not create another approval per issue, split, or file. Prepare the deliberate team artifact set under [shared resources](../epic-spec-workflow/references/project-resources.md). Existing shared references may satisfy access without uploading duplicate files to the tracker. A local draft remains explicitly unpublished.
+Use the existing final approval for the concrete plan and proposal; do not create another approval per issue, split, or file. Prepare the deliberate team artifact set under [shared resources](references/bundled/epic-spec-workflow/references/project-resources.md). Existing shared references may satisfy access without uploading duplicate files to the tracker. A local draft remains explicitly unpublished.
 
 When external creation is requested and authorized, invoke `$tasks-to-issues` for the chosen tracker. Resolve its actual parent/container, workflow, and people. Create only needed authorized containers, create issues, retain returned identities, apply supported relationships, and read back content and associations. Preserve partial results for reconciliation. Do not report a graph published from local validation alone.
 
-Follow [issue review and assignment](../epic-spec-workflow/references/issue-review-before-assignment.md) when the governed program requires it. Review-only work does not implement issues; execution still observes live blockers. After the required design decisions and review pass, a separately authorized `$issue-implementation` invocation may execute the approved PR boundary.
+Follow [issue review and assignment](references/bundled/epic-spec-workflow/references/issue-review-before-assignment.md) when the governed program requires it. Review-only work does not implement issues; execution still observes live blockers. After the required design decisions and review pass, a separately authorized `$issue-implementation` invocation may execute the approved PR boundary.
 
 ## Optional packaged automation
 

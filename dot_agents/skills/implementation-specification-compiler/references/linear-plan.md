@@ -1,6 +1,6 @@
 # Milestone-first Linear plan contract
 
-This reference describes the explicitly selected Linear/Notion/Camunda automation profile. Apply its provider-specific schemas, fixed staffing policy, and runtime gates only when that setup governs the current project. It does not select a destination for another workspace. See [workspace and destinations](../../epic-spec-workflow/references/workspace-and-destinations.md) for the portable workflow and actual adapter limits.
+This reference describes the explicitly selected Linear/Notion/Camunda automation profile. Apply its provider-specific schemas, fixed staffing policy, and runtime gates only when that setup governs the current project. It does not select a destination for another workspace. See [workspace and destinations](bundled/epic-spec-workflow/references/workspace-and-destinations.md) for the portable workflow and actual adapter limits.
 
 ## Semantic release binding
 
@@ -70,4 +70,4 @@ The command requires a clean tracked checkout at the exact committed head. It ru
 
 ## Human presentation
 
-The validated plan is the source for the [supervisor design document](../../epic-spec-workflow/references/supervisor-design-document.md). Publish that visual-first, self-contained Linear proposal before requesting final program approval. Its reference is carried by the runtime review binding; the schema-v4 delivery-plan payload remains the source of the carrier, milestones, issue contracts, and native relations.
+The validated plan is the source for the [supervisor design document](bundled/epic-spec-workflow/references/supervisor-design-document.md). Publish that visual-first, self-contained Linear proposal before requesting final program approval. Its reference is carried by the runtime review binding; the schema-v4 delivery-plan payload remains the source of the carrier, milestones, issue contracts, and native relations.

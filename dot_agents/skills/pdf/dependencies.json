@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "skill": "pdf",
+  "tools": [
+    {
+      "id": "python",
+      "command": "python3",
+      "kind": "brew",
+      "package": "python",
+      "purpose": "Run bundled Python helpers",
+      "documentation": "https://formulae.brew.sh/formula/python",
+      "min_version": "3.9.0",
+      "required": true
+    },
+    {
+      "id": "pypdf",
+      "kind": "pip",
+      "package": "pypdf",
+      "module": "pypdf",
+      "distribution": "pypdf",
+      "purpose": "Read and edit PDF files",
+      "depends": [
+        "python"
+      ],
+      "documentation": "https://pypi.org/project/pypdf/",
+      "required": false
+    },
+    {
+      "id": "pdfplumber",
+      "kind": "pip",
+      "package": "pdfplumber",
+      "module": "pdfplumber",
+      "distribution": "pdfplumber",
+      "purpose": "Extract PDF content",
+      "depends": [
+        "python"
+      ],
+      "documentation": "https://pypi.org/project/pdfplumber/",
+      "required": false
+    },
+    {
+      "id": "pdf2image",
+      "kind": "pip",
+      "package": "pdf2image",
+      "module": "pdf2image",
+      "distribution": "pdf2image",
+      "purpose": "Convert PDF pages",
+      "depends": [
+        "python"
+      ],
+      "documentation": "https://pypi.org/project/pdf2image/",
+      "required": false
+    },
+    {
+      "id": "pillow",
+      "kind": "pip",
+      "package": "Pillow",
+      "module": "PIL",
+      "distribution": "Pillow",
+      "purpose": "Process PDF/image previews",
+      "depends": [
+        "python"
+      ],
+      "documentation": "https://pypi.org/project/Pillow/",
+      "required": false
+    },
+    {
+      "id": "reportlab",
+      "kind": "pip",
+      "package": "reportlab",
+      "module": "reportlab",
+      "distribution": "reportlab",
+      "purpose": "Create PDFs",
+      "depends": [
+        "python"
+      ],
+      "documentation": "https://pypi.org/project/reportlab/",
+      "required": false
+    },
+    {
+      "id": "poppler",
+      "command": "pdftoppm",
+      "kind": "brew",
+      "package": "poppler",
+      "purpose": "Render PDF pages",
+      "documentation": "https://formulae.brew.sh/formula/poppler",
+      "required": false
+    }
+  ],
+  "external_requirements": []
+}

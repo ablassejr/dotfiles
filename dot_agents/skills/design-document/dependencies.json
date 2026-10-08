@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "skill": "design-document",
+  "tools": [
+    {
+      "id": "specflow",
+      "kind": "bundle",
+      "path": "scripts/specflow",
+      "command": "specflow",
+      "depends": [
+        "python"
+      ],
+      "purpose": "Packaged planning, content, visual, and workflow validation client",
+      "documentation": "references/setup.md",
+      "required": false
+    },
+    {
+      "id": "asciinema",
+      "command": "asciinema",
+      "kind": "brew",
+      "package": "asciinema",
+      "purpose": "Record actual terminal demonstrations",
+      "documentation": "https://formulae.brew.sh/formula/asciinema",
+      "required": false
+    },
+    {
+      "id": "asciinema-player",
+      "kind": "npm",
+      "package": "asciinema-player",
+      "command": null,
+      "purpose": "Play terminal recordings in a document",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/asciinema-player",
+      "required": false
+    },
+    {
+      "id": "rrweb",
+      "kind": "npm",
+      "package": "@rrweb/record",
+      "command": null,
+      "purpose": "Record browser interaction events",
+      "depends": [
+        "node",
+        "rrweb-replay",
+        "rrweb-player"
+      ],
+      "documentation": "https://www.npmjs.com/package/@rrweb/record",
+      "required": false
+    },
+    {
+      "id": "python",
+      "command": "python3",
+      "kind": "brew",
+      "package": "python",
+      "purpose": "Run bundled Python helpers",
+      "documentation": "https://formulae.brew.sh/formula/python",
+      "min_version": "3.9.0",
+      "required": false
+    },
+    {
+      "id": "node",
+      "command": "node",
+      "kind": "brew",
+      "package": "node",
+      "purpose": "Run Node utilities and npm packages",
+      "documentation": "https://formulae.brew.sh/formula/node",
+      "min_version": "22.18.0",
+      "required": false
+    },
+    {
+      "id": "rrweb-replay",
+      "kind": "npm",
+      "package": "@rrweb/replay",
+      "command": null,
+      "purpose": "Replay rrweb events",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/@rrweb/replay",
+      "required": false
+    },
+    {
+      "id": "rrweb-player",
+      "kind": "npm",
+      "package": "rrweb-player",
+      "command": null,
+      "purpose": "Provide replay controls",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/rrweb-player",
+      "required": false
+    },
+    {
+      "id": "c8ctl",
+      "kind": "npm",
+      "package": "@camunda8/cli",
+      "command": "c8ctl",
+      "purpose": "Camunda linting, FEEL, templates, and selected cluster operations",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/@camunda8/cli",
+      "min_version": "3.2.0",
+      "required": false
+    },
+    {
+      "id": "java",
+      "command": "java",
+      "kind": "brew",
+      "package": "openjdk@21",
+      "purpose": "Java workers, connectors, tests, or local Camunda runtime",
+      "documentation": "https://formulae.brew.sh/formula/openjdk@21",
+      "min_version": "21.0.0",
+      "version_args": [
+        "-version"
+      ],
+      "required": false
+    },
+    {
+      "id": "cloc",
+      "command": "cloc",
+      "kind": "brew",
+      "package": "cloc",
+      "purpose": "Measure maintained code",
+      "documentation": "https://formulae.brew.sh/formula/cloc",
+      "required": false
+    },
+    {
+      "id": "archify",
+      "kind": "bundle",
+      "path": "scripts/archify",
+      "command": "archify",
+      "required": false,
+      "depends": [
+        "node",
+        "python"
+      ],
+      "purpose": "Bundled Archify renderer and schemas for a selected graph output",
+      "documentation": "https://github.com/tt-a1i/archify"
+    },
+    {
+      "id": "git",
+      "command": "git",
+      "kind": "brew",
+      "package": "git",
+      "purpose": "Read local source history and comparisons",
+      "documentation": "https://formulae.brew.sh/formula/git",
+      "required": false
+    }
+  ],
+  "external_requirements": [
+    "A running compatible Camunda cluster and its chosen profile/credentials are needed only for engine operations. Local linting and drafting do not need a cluster.",
+    "Agent connectors, authenticated accounts, provider permissions, and project configuration use the existing session. Package installation does not authenticate or grant write authority."
+  ]
+}

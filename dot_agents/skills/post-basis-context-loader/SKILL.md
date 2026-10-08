@@ -5,11 +5,16 @@ description: Load repository and organizational evidence only after a First-Prin
 
 # Post-basis context loader
 
-For human interactions and team outputs, follow [review and artifact design](../epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
+## Self-contained utility setup
 
-Accept an exact First-Principles Basis version and refuse implementation-context retrieval until `$first-principles-intake` has validated it with explicit human approval. The original approved record may cover an unchanged program or ticket when the runtime verifies [approval economy](../epic-spec-workflow/references/approval-economy.md) evidence. A missing, pending, malformed, or superseded basis keeps the gate closed. This skill never creates or approves a basis.
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
 
-After the gate passes, resolve repository identity, exact baseline, target branch, worktree state, scope references, approved specification revision, and available indexes. Follow [shared tool routing](../epic-spec-workflow/references/tool-routing.md): use CodeGraph before direct structural search when the repository owns an index, then `claude-context` for semantic retrieval, and verify decisive evidence in source. Follow stricter explicit session ordering when present. Do not initialize CodeGraph automatically.
+
+For human interactions and team outputs, follow [review and artifact design](references/bundled/epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
+
+Accept an exact First-Principles Basis version and refuse implementation-context retrieval until `$first-principles-intake` has validated it with explicit human approval. The original approved record may cover an unchanged program or ticket when the runtime verifies [approval economy](references/bundled/epic-spec-workflow/references/approval-economy.md) evidence. A missing, pending, malformed, or superseded basis keeps the gate closed. This skill never creates or approves a basis.
+
+After the gate passes, resolve repository identity, exact baseline, target branch, worktree state, scope references, approved specification revision, and available indexes. Follow [shared tool routing](references/bundled/epic-spec-workflow/references/tool-routing.md): use CodeGraph before direct structural search when the repository owns an index, then `claude-context` for semantic retrieval, and verify decisive evidence in source. Follow stricter explicit session ordering when present. Do not initialize CodeGraph automatically.
 
 Continue through Git lineage, the repository host's pull requests and reviews, project issues and supported relations or the governing dependency graph, approved specification records and ADRs, exact-version documentation through `docs-mcp-server`, and external primary-source research only for unresolved external facts. Maintain the shared version/environment capability record for nontrivial or version-sensitive CLI use, subject to stricter explicit session rules.
 

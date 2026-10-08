@@ -114,7 +114,7 @@ The binding also carries `verified_at` and an `evidence` reference. All issue ow
 
 When starting authorized ticket execution, pass `programBinding`, `programProcessInstanceKey`, `createdIssue`, and the matching `issueReviewReceipt` in the normal `specflow start ticket:EXAMPLE-204 --variables execution.json --json` input. The runtime verifies the completed review and recorded assignment before exposing implementation. A standalone ticket without a receipt follows the full ticket review path. Existing process instances remain on their deployed definitions; no migration is implicit.
 
-The [issue review schema](../../implementation-specification-compiler/scripts/specflow_runtime/issue-review.schema.json) describes the provider issue inventory, review receipt, and assignment binding. The Linear plan schema stays version 4. Declared provider receipts are not proof of actual Linear state unless the configured authenticated adapter performs the documented readback.
+The [issue review schema](bundled/implementation-specification-compiler/scripts/specflow_runtime/issue-review.schema.json) describes the provider issue inventory, review receipt, and assignment binding. The Linear plan schema stays version 4. Declared provider receipts are not proof of actual Linear state unless the configured authenticated adapter performs the documented readback.
 
 ## Engine references
 
@@ -122,4 +122,4 @@ The program uses a [sequential multi-instance activity](https://docs.camunda.io/
 
 ## Created issue content
 
-Each created issue also returns `content` with its fetched title, body, optional `design_proposal_url`, and explicit `comments` and `document_attachments` arrays under [the shared content contract](../../implementation-specification-compiler/references/issue-content.md). Validate the exact approved projection before starting its HITL review. Keep later grounding and decision source links inside the design proposal; preserve self-contained issue meaning after review edits.
+Each created issue also returns `content` with its fetched title, body, optional `design_proposal_url`, and explicit `comments` and `document_attachments` arrays under [the shared content contract](bundled/implementation-specification-compiler/references/issue-content.md). Validate the exact approved projection before starting its HITL review. Keep later grounding and decision source links inside the design proposal; preserve self-contained issue meaning after review edits.

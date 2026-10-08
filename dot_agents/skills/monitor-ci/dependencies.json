@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "skill": "monitor-ci",
+  "tools": [
+    {
+      "id": "node",
+      "command": "node",
+      "kind": "brew",
+      "package": "node",
+      "purpose": "Run Node utilities and npm packages",
+      "documentation": "https://formulae.brew.sh/formula/node",
+      "min_version": "18.0.0",
+      "required": true
+    },
+    {
+      "id": "gh",
+      "command": "gh",
+      "kind": "brew",
+      "package": "gh",
+      "purpose": "Selected GitHub CLI operations",
+      "documentation": "https://formulae.brew.sh/formula/gh",
+      "required": false
+    }
+  ],
+  "external_requirements": [
+    "Agent connectors, authenticated accounts, provider permissions, and project configuration use the existing session. Package installation does not authenticate or grant write authority."
+  ]
+}

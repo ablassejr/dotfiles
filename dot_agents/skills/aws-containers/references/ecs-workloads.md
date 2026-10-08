@@ -134,7 +134,7 @@ EBS volumes MAY be attached to tasks for high-performance block storage. EBS vol
 
 ### Ephemeral Storage
 
-Fargate tasks receive ephemeral storage by default, which may be expanded and will incur additional cost. See [ecs-managing-compute.md](./ecs-managing-compute.md) for more details.
+Fargate tasks receive ephemeral storage by default, which may be expanded and will incur additional cost. See [ecs-managing-compute.md](ecs-managing-compute.md) for more details.
 
 ```json
 "ephemeralStorage": {

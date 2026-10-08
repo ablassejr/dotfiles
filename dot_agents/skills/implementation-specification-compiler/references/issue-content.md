@@ -1,6 +1,6 @@
 # Self-contained issue content
 
-Every workflow uses [the shared writing skill](../../issue-writing/SKILL.md). Issues explain their approved work or decision without external context. The design proposal is their sole optional document reference. Supporting documents remain accessible inside that proposal and through project resources.
+Every workflow uses [the shared writing skill](bundled/issue-writing/SKILL.md). Issues explain their approved work or decision without external context. The design proposal is their sole optional document reference. Supporting documents remain accessible inside that proposal and through project resources.
 
 ## Public validation contract
 

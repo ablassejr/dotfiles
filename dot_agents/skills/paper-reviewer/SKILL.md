@@ -7,6 +7,11 @@ author: Aaron Storey
 
 # Paper Reviewer
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Comprehensive pre-submission review for journal manuscripts. Orchestrates multiple specialized skills from research-assistant to ensure publication readiness.
 
 ## When to Use

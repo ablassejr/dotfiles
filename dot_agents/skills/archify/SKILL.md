@@ -10,6 +10,11 @@ metadata:
 
 # Archify
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Create a self-contained, interactive HTML diagram from a small typed JSON specification. Static output is the default; enable motion only when the user asks for a demo or presentation.
 
 ## Fast authoring path
@@ -123,7 +128,7 @@ Read `references/viewer-runtime.md` only when the user explicitly asks for Share
 
 ## Setup and fallback
 
-No install is required inside the skill package. Verify with:
+The renderer and assets are bundled. Use the packaged setup for a compatible Node runtime; select Playwright and Chromium only when browser verification needs that fallback. Verify with:
 
 ```bash
 node bin/archify.mjs doctor

@@ -5,7 +5,12 @@ description: Attack an aligned implementation proposal from fresh context for co
 
 # Adversarial implementation review
 
-For human interactions and team outputs, follow [review and artifact design](../epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
+For human interactions and team outputs, follow [review and artifact design](references/bundled/epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
 
 Run after first-principles implementation alignment and the corresponding independent Code Mass Auditor pass. Before execution, attack the proposal and its `CODE_MASS_TARGETED` planning result. After implementation, attack the committed result and its measured audit before the final Net Addition Gate. Give a separate fresh-context reviewer the approved basis, reconciliation, Code Mass Opportunity Map, deletion Grounding Packets, Code Mass Contract and audit, recorded decisions, implementation proposal or committed result, affected public contracts, seams, failure and recovery behavior, security boundaries, observability, and planned or completed behavioral verification. Do not provide the drafting conversation or tell the reviewer what defect to find.
 

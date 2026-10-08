@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "skill": "session-resume",
+  "tools": [
+    {
+      "id": "python",
+      "command": "python3",
+      "kind": "brew",
+      "package": "python",
+      "purpose": "Run bundled Python helpers",
+      "documentation": "https://formulae.brew.sh/formula/python",
+      "min_version": "3.9.0",
+      "required": true
+    }
+  ],
+  "external_requirements": []
+}

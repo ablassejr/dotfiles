@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://specflow.local/schemas/design-proposal-v1.json",
+  "title": "Linear supervisor design proposal binding",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "scope",
+    "source",
+    "document",
+    "readback",
+    "visuals"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "scope": {
+      "enum": [
+        "semantic",
+        "program",
+        "ticket"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "ref",
+        "hash"
+      ],
+      "properties": {
+        "ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hash": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "document": {
+      "type": "object",
+      "required": [
+        "id",
+        "url",
+        "revision",
+        "hash"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^https://linear\\.app/[^\\s]+$"
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hash": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        }
+      }
+    },
+    "readback": {
+      "type": "object",
+      "required": [
+        "revision",
+        "hash"
+      ],
+      "properties": {
+        "revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hash": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        }
+      }
+    },
+    "visuals": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "visual.schema.json"
+      }
+    }
+  },
+  "$comment": "Runtime additionally compares scope, exact source binding, and document/readback revision and hash. Structure does not establish editorial quality or independently verify a provider write."
+}

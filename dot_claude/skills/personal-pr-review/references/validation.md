@@ -23,6 +23,7 @@ The tests create disposable local Git repositories and exercise the CLI as a con
 | Scoped output writes | Fresh explicit in-repository output allowed; existing input, Git storage, and symlink destinations rejected |
 | Prepared source/evidence binding | Rejected changed packet, artifact bytes, missing records, or mismatched identity |
 | Evidence coordinates and input shape | Invalid coordinates, partial coordinates, malformed JSON envelopes/entries, invalid numeric fields, and unknown properties fail visibly |
+| Model hosting and optional isolation do not gate completion | Complete receipt-backed reviews with current-session, hosted, local, and unverified metadata; invalid supplied isolation receipts rejected |
 | Preparation and missing verification cannot imply PASS | Public completeness and verdict values |
 | Supported findings and deterministic failures remain visible with gaps | HOLD and incomplete status coexist |
 | Debt remains nonblocking and separate | Dedicated debt report, root-problem deduplication, unrelated candidate removal |
@@ -32,16 +33,16 @@ The tests create disposable local Git repositories and exercise the CLI as a con
 | Repository executable integrations are not run | Configured fsmonitor/pager/diff/textconv/clean/smudge traps do not execute |
 | HTML treats evidence as text | Parsed rendered output contains literal evidence text without executable script elements |
 
-The synthetic native-check, model-host, and fresh-context receipts test the import and validation contract. They do not constitute execution of a real local model, proof of operating-system isolation, or a real project's test suite. No actual user repository was reviewed as part of framework validation.
+The synthetic native-check, model metadata, and challenge receipts test the import and validation contract. They do not constitute execution of a real local model, proof of operating-system isolation, or a real project's test suite. No actual user repository was reviewed as part of framework validation.
 
-An independent forward-testing pass uses only additional synthetic repositories. Its findings informed the contract coverage for immutable prepared inputs, coherent invalidation across all reports, malformed evidence, and nested dirty gitlinks. This is framework validation under the authoring request, not a claimed offline semantic review by a cloud model.
+An independent forward-testing pass uses only additional synthetic repositories. Its findings informed the contract coverage for immutable prepared inputs, coherent invalidation across all reports, malformed evidence, and nested dirty gitlinks. These fixtures validate framework behavior, not semantic conclusions about a user repository.
 
 ## Capability limits
 
-The helper does not implement inference, a sandbox, a language-server/graph service, a native-command runner, or a maintained-SLOC analyzer. The skill describes the local host and evidence contracts for these capabilities. Native commands may run only in a host enforcing the specified boundary, and their results are labeled as imported evidence.
+The helper does not implement inference, a sandbox, a language-server/graph service, a native-command runner, or a maintained-SLOC analyzer. The skill describes the agent-session and evidence contracts for these capabilities. Native commands use the existing agent session permissions, and their results are labeled as imported evidence. Hosted, current-session, local, and unverified model metadata support completion without an isolation receipt; supplied isolation evidence is still validated.
 
 Python changed-symbol overlap is automated; other language symbols and dependency relationships require local tools or direct source inspection. Working-tree rename recognition is exact-content only. Edited moves require additional interpretation. Changed gitlinks and dirty nested repositories are surfaced, but nested source needs a separate pinned review; the outer helper retains an explicit incomplete gap. The helper does not infer external consumers, remote CI, deployment state, or provider-ref freshness.
 
-Fingerprinting all source and Git storage includes ignored dependencies and object stores, so large repositories may take substantial local I/O. Fingerprints detect lasting byte/mode/kind changes, not a modification that another actor made and reverted between snapshots. There is no signed evidence journal or defense against a writer deliberately replacing both local artifacts and their digests. Host isolation prevents source/network effects, and the local reviewer still evaluates semantic truth.
+Fingerprinting all source and Git storage includes ignored dependencies and object stores, so large repositories may take substantial local I/O. Fingerprints detect lasting byte/mode/kind changes, not a modification that another actor made and reverted between snapshots. There is no signed evidence journal or defense against a writer deliberately replacing both local artifacts and their digests. Optional host isolation can constrain effects; the reviewer still evaluates semantic truth.
 
 The [validation receipt](validation-receipt.json) records the actual suite result and package checks, with the captured test output distributed beside it. Repeat tests when code changes or an uncovered public contract is identified; do not expand testing merely to increase test counts.

@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "skill": "nx-import",
+  "tools": [
+    {
+      "id": "nx",
+      "kind": "npm",
+      "package": "nx",
+      "command": "nx",
+      "purpose": "Selected Nx workspace tasks",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/nx",
+      "required": false
+    },
+    {
+      "id": "pnpm",
+      "kind": "npm",
+      "package": "pnpm",
+      "command": "pnpm",
+      "purpose": "Selected workspace package manager",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/pnpm",
+      "required": false
+    },
+    {
+      "id": "node",
+      "command": "node",
+      "kind": "brew",
+      "package": "node",
+      "purpose": "Run Node utilities and npm packages",
+      "documentation": "https://formulae.brew.sh/formula/node",
+      "min_version": "18.0.0",
+      "required": false
+    }
+  ],
+  "external_requirements": []
+}

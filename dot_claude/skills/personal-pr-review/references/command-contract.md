@@ -39,13 +39,13 @@ python3 -B scripts/review.py evidence --output /workspace/reports/review-418 --s
 
 The command prints the evidence record and stable EV identifier, verifies the content, and adds it to `context-manifest.json`. It refuses stale inputs. Source evidence is read from commit/index blob IDs or checked working-tree content; file-level records do not imply full semantic inspection.
 
-## Import local host evidence
+## Import captured check and review evidence
 
 ```sh
-python3 -B scripts/review.py receipt --output /workspace/reports/review-418 --kind tool_log --file /workspace/check-logs/typecheck.txt --reason 'Typecheck of the pinned snapshot in the isolated host'
+python3 -B scripts/review.py receipt --output /workspace/reports/review-418 --kind tool_log --file /workspace/check-logs/typecheck.txt --reason 'Typecheck of the pinned snapshot in the recorded execution environment'
 ```
 
-Kinds are tool_log, challenge, isolation, spec, history, graph, and code_mass. The helper copies the supplied artifact into its output and records a digest, origin, reason, and analysis binding. The receipt proves which artifact was supplied, not that a command or model actually ran. Preserve actual command, tool version, snapshot identity, host isolation configuration, outcome, and limitations in the artifact; do not manufacture a successful receipt. Repository-native command discovery and execution belong to the agent and its enforcing local host.
+Kinds are tool_log, challenge, isolation, spec, history, graph, and code_mass. The helper copies the supplied artifact into its output and records a digest, origin, reason, and analysis binding. The receipt proves which artifact was supplied, not that a command or model actually ran. Preserve actual command, tool version, snapshot identity, actual execution environment and any established isolation, outcome, and limitations in the artifact; do not manufacture a successful receipt. Repository-native command discovery and execution belong to the current agent session using its existing permissions. Isolation receipts are optional and do not require provisioning a sandbox.
 
 ## Finalize
 

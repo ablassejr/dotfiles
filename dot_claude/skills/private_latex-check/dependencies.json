@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "skill": "latex-check",
+  "tools": [
+    {
+      "id": "tex",
+      "command": "latexmk",
+      "kind": "brew",
+      "package": "mactex-no-gui",
+      "purpose": "Local TeX compilation when native compilation is unavailable",
+      "documentation": "https://formulae.brew.sh/cask/mactex-no-gui",
+      "cask": true,
+      "required": false
+    }
+  ],
+  "external_requirements": []
+}

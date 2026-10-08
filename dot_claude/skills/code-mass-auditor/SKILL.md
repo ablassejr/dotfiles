@@ -5,9 +5,14 @@ description: Audit planned code-mass budgets and independently verify committed 
 
 # Code mass auditor
 
-Use the project's selected source and work records under [workspace and destinations](../epic-spec-workflow/references/workspace-and-destinations.md). The code-mass and behavioral obligations apply to the approved scope. Commands that require a Linear/Notion manifest or fixed three-person plan apply only to that compatible profile. For other projects, perform and record the same independent normalized measurements, removal-credit checks, budgets, approved exceptions, and behavior verification against the actual source and dependency records using compatible repository tools. Do not fabricate provider fields, require three owners, or claim a packaged CLI result that was not obtained.
+## Self-contained utility setup
 
-For human interactions and team outputs, follow [review and artifact design](../epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
+Use the project's selected source and work records under [workspace and destinations](references/bundled/epic-spec-workflow/references/workspace-and-destinations.md). The code-mass and behavioral obligations apply to the approved scope. Commands that require a Linear/Notion manifest or fixed three-person plan apply only to that compatible profile. For other projects, perform and record the same independent normalized measurements, removal-credit checks, budgets, approved exceptions, and behavior verification against the actual source and dependency records using compatible repository tools. Do not fabricate provider fields, require three owners, or claim a packaged CLI result that was not obtained.
+
+For human interactions and team outputs, follow [review and artifact design](references/bundled/epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
 
 Run a planning pass after implementation alignment and before adversarial design review. Use the approved basis and lineage, Code Mass Opportunity Map, confirmed deletion Grounding Packets, proposed Code Mass Contract, dependency changes, planned behavioral verification, and milestone ledger. Verify the estimate, deletion provenance, locality, conceptual simplification, escrow, and any proposed exception without claiming that unbuilt code has been measured. Return `CODE_MASS_TARGETED` only when that planned contract is coherent.
 

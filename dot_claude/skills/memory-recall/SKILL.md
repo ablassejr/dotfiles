@@ -5,6 +5,11 @@ description: "Search and recall relevant memories from past sessions via Claude 
 
 # Memory Recall with Claude Mem
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Search Claude Mem's persistent cross-session observation database and return
 only context that materially helps with the current request.
 
@@ -30,10 +35,12 @@ Never fetch full observations before filtering the search index.
 If Claude Mem's MCP tools are not exposed, use the installed local worker rather
 than falling back to another memory backend.
 
-The installed plugin root is:
+When plugin registration is needed, run the bundled `bash scripts/install-claude-mem.sh` installer. It registers the plugin and worker with the host provider, without opting into hosted memory sign-in. Restart the host and confirm its native memory tools before use.
+
+Use the plugin root reported by the installer or the host’s plugin inventory. The standard Claude marketplace location is:
 
 ```bash
-CLAUDE_MEM_PLUGIN=/Users/Apple/.claude/plugins/marketplaces/thedotmack/plugin
+CLAUDE_MEM_PLUGIN="${CLAUDE_MEM_PLUGIN:-$HOME/.claude/plugins/marketplaces/thedotmack/plugin}"
 ```
 
 Start or reuse the worker:

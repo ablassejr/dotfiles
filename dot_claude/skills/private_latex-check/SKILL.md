@@ -5,6 +5,11 @@ description: Comprehensive LaTeX/TikZ/Beamer auditor. Validates document structu
 
 # LaTeX/TikZ/Beamer Auditor
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 ## Overview
 
 A comprehensive auditing skill for LaTeX documents, including article/report/book classes, TikZ/PGF graphics, pgfplots visualizations, and Beamer presentations. All recommendations are grounded in official CTAN documentation and TeX best practices.
@@ -751,4 +756,4 @@ Prioritize fast checks; only invoke compilation test if:
 
 **Version**: 1.0.0
 **License**: MIT
-**Maintained by**: Claude Skills Library
+**Maintained by**: Codex Skills Library

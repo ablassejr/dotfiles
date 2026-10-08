@@ -31,17 +31,17 @@ A native-check entry looks like this after real local execution:
   "command": ["python3", "-B", "-m", "unittest", "tests.test_contract"],
   "provenance": "pyproject.toml and checked-in CI task",
   "evidence_id": "EV-LOG_ID_FROM_RECEIPT",
-  "isolation_evidence_id": "EV-ISOLATION_ID_FROM_RECEIPT",
+  "isolation_evidence_id": null,
   "exit_code": 0,
   "explanation": "Executed against the captured source snapshot; relevant public contract passed."
 }
 ```
 
-This is an illustrative shape, not a receipt for an executed check. Check status is passed, failed, unavailable, or not_applicable. Passed/failed entries need the actual command/provenance, a tool-log receipt, an isolation receipt, and a consistent exit code. An unavailable entry explains the missing tool/environment. If no native check applies, record one not_applicable selection with its reason instead of inventing execution. The selected checks and applicable behaviors come from the user and repository; the framework adds no application acceptance criteria.
+This is an illustrative shape, not a receipt for an executed check. Check status is passed, failed, unavailable, or not_applicable. Passed/failed entries need the actual command/provenance, a tool-log receipt and a consistent exit code. Isolation evidence is optional; when supplied, its receipt must exist and have the correct kind. An unavailable entry explains the missing tool/environment. If no native check applies, record one not_applicable selection with its reason instead of inventing execution. The selected checks and applicable behaviors come from the user and repository; the framework adds no application acceptance criteria.
 
 Coverage entries address changed paths and cite pinned source evidence for those paths. Their explanations describe the responsibility domain inspected and any relevant consumer/provider/test relationships. Record unavailable or partial inspection as pending with a limitation. Read/parsed files and a successful graph query do not automatically mean reviewed behavior.
 
-The seven lenses may be reviewed, not_applicable with an explanation, or pending. A completed challenge includes a local artifact, reviewer/context identity, and serious/blocked finding IDs that it actually challenged; its artifact should also address the overall conclusion. No-findings reviews still need this conclusion challenge. The helper validates the receipt's binding/hash and required coverage. It does not certify model independence or infer that the artifact's author was local.
+The seven lenses may be reviewed, not_applicable with an explanation, or pending. A completed challenge includes a local artifact, reviewer/context identity, and serious/blocked finding IDs that it actually challenged; its artifact should also address the overall conclusion. No-findings reviews still need this conclusion challenge. The helper validates the receipt's binding/hash and required coverage. Record whether the challenge used a fresh context or a distinct counterevidence pass in the current session. The helper does not certify model independence or semantic truth.
 
 ## Finding shape
 
@@ -74,6 +74,6 @@ Deletion proposals include `safe`, `replacement_evidence_ids`, `consumer_evidenc
 
 ## Trust and completeness
 
-Captured source and imported bytes can be deterministically checked. The relevance of a context edge, authority of a specification, truth of a finding, actual command execution, and fresh local model context need host/agent evidence and judgment. The report preserves this distinction. Prepared hashes detect corruption or accidental editing; they are not signatures and do not defend against a writer deliberately replacing both artifacts and hashes.
+Captured source and imported bytes can be deterministically checked. The relevance of a context edge, authority of a specification, truth of a finding, actual command execution, and challenge context need agent evidence and judgment. The report preserves this distinction. Prepared hashes detect corruption or accidental editing; they are not signatures and do not defend against a writer deliberately replacing both artifacts and hashes.
 
-`complete: true` means the declared review work has evidence and no recorded gaps. It is independent of the verdict: a completely assessed defect can yield HOLD; a known defect with missing checks yields HOLD and `complete: false`. An unknown maintained-SLOC count is disclosed but does not itself block a review. An unknown specification permits a clearly labeled implementation-only review. Missing safety, scope, checks, or independent challenge does prevent a completed conclusion.
+`complete: true` means the declared review work has evidence and no recorded gaps. It is independent of the verdict: a completely assessed defect can yield HOLD; a known defect with missing checks yields HOLD and `complete: false`. An unknown maintained-SLOC count is disclosed but does not itself block a review. An unknown specification permits a clearly labeled implementation-only review. Missing required scope, checks, or a performed counterevidence challenge prevents a completed conclusion. Model location and optional isolation are not completion gates. The host.model field is informational: current_session, hosted, local, and unverified are supported, and host.isolation_evidence_id may be null.

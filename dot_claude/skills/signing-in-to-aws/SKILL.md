@@ -12,6 +12,11 @@ version: 1
 
 # Sign In — Get CLI/SDK Credentials
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Help developers get AWS credentials for local development using `aws login`. This provides short-term, auto-rotating credentials that refresh every 15 minutes and remain valid for up to 12 hours.
 
 **Important:**

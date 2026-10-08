@@ -10,7 +10,6 @@ import re
 import sys
 from typing import Any, Sequence
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "implementation-specification-compiler/scripts"))
 from specflow_runtime.visuals import validate_visuals
 from specflow_runtime.client import RuntimeFailure
 

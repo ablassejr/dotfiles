@@ -1,0 +1,347 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_decision-workflow" targetNamespace="https://specflow.local/workflows">
+  <bpmn:process id="decision-workflow" name="Sequential decisions with integrated Ground Me" isExecutable="true">
+    <bpmn:extensionElements>
+      <zeebe:versionTag value="v1" />
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="start" name="Start">
+      <bpmn:outgoing>flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="next_question" name="Next Question">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.next-question" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="decision-frontier-manager" />
+          <zeebe:header key="phase" value="next_question" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_1</bpmn:incoming>
+      <bpmn:incoming>flow_8</bpmn:incoming>
+      <bpmn:incoming>flow_12</bpmn:incoming>
+      <bpmn:outgoing>flow_2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="frontier" name="Frontier">
+      <bpmn:incoming>flow_2</bpmn:incoming>
+      <bpmn:outgoing>flow_3</bpmn:outgoing>
+      <bpmn:outgoing>flow_4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="answer_question" name="Describe your decision">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:taskHeaders>
+          <zeebe:header key="bindingVariable" value="decisionBinding" />
+          <zeebe:header key="responseVariable" value="decisionResponse" />
+          <zeebe:header key="actions" value="select_answer,ground_me" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+          <zeebe:header key="responseMode" value="open_ended" />
+          <zeebe:header key="decisionPolicy" value="open-decisions-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_4</bpmn:incoming>
+      <bpmn:incoming>combined_answer_needed</bpmn:incoming>
+      <bpmn:outgoing>flow_5</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="decision_action" name="Decision Action">
+      <bpmn:incoming>flow_5</bpmn:incoming>
+      <bpmn:outgoing>flow_6</bpmn:outgoing>
+      <bpmn:outgoing>flow_7</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="record_decision" name="Record Decision">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.record-decision" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="linear-hitl-decision-loop" />
+          <zeebe:header key="phase" value="record_decision" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+          <zeebe:header key="decisionPolicy" value="open-decisions-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>analysis_accept</bpmn:incoming>
+      <bpmn:incoming>consider_keep</bpmn:incoming>
+      <bpmn:outgoing>flow_8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:callActivity id="ground_me" name="Ground Me">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="ground-me-workflow" bindingType="deployment" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_7</bpmn:incoming>
+      <bpmn:incoming>consider_ground</bpmn:incoming>
+      <bpmn:outgoing>flow_9</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:exclusiveGateway id="grounding_outcome" name="Grounding Outcome">
+      <bpmn:incoming>flow_9</bpmn:incoming>
+      <bpmn:outgoing>flow_10</bpmn:outgoing>
+      <bpmn:outgoing>flow_11</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="recompute_frontier" name="Recompute Frontier">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.recompute-frontier" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="decision-frontier-manager" />
+          <zeebe:header key="phase" value="recompute_frontier" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_11</bpmn:incoming>
+      <bpmn:outgoing>flow_12</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="decisions_resolved" name="Decisions Resolved">
+      <bpmn:incoming>flow_3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="flow_1" sourceRef="start" targetRef="next_question" />
+    <bpmn:sequenceFlow id="flow_2" sourceRef="next_question" targetRef="frontier" />
+    <bpmn:sequenceFlow id="flow_3" sourceRef="frontier" targetRef="decisions_resolved">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= frontierOutcome = "RESOLVED"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_4" sourceRef="frontier" targetRef="answer_question">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= frontierOutcome = "QUESTION"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_5" sourceRef="answer_question" targetRef="decision_action" />
+    <bpmn:sequenceFlow id="flow_6" sourceRef="decision_action" targetRef="analyze_decision">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= decisionResponse.action = "select_answer"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_7" sourceRef="decision_action" targetRef="ground_me">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= decisionResponse.action = "ground_me"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_8" sourceRef="record_decision" targetRef="next_question" />
+    <bpmn:sequenceFlow id="flow_9" sourceRef="ground_me" targetRef="grounding_outcome" />
+    <bpmn:sequenceFlow id="flow_10" sourceRef="grounding_outcome" targetRef="resume_grounded_decision">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= groundingOutcome = "ALIGNED"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_11" sourceRef="grounding_outcome" targetRef="recompute_frontier">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= groundingOutcome = "QUESTION_INVALIDATED"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_12" sourceRef="recompute_frontier" targetRef="next_question" />
+    <bpmn:serviceTask id="resume_grounded_decision" name="Apply the human's bound Ground Me answer">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.resume-grounded-decision" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="decision-frontier-manager" />
+          <zeebe:header key="phase" value="resume_grounded_decision" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+          <zeebe:header key="approvalRoute" value="grounded-answer" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_10</bpmn:incoming>
+      <bpmn:outgoing>check_combined_answer</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="combined_answer_route" name="Use explicit current answer or present the question">
+      <bpmn:incoming>check_combined_answer</bpmn:incoming>
+      <bpmn:outgoing>combined_answer_applied</bpmn:outgoing>
+      <bpmn:outgoing>combined_answer_needed</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="check_combined_answer" sourceRef="resume_grounded_decision" targetRef="combined_answer_route" />
+    <bpmn:sequenceFlow id="combined_answer_applied" sourceRef="combined_answer_route" targetRef="analyze_decision">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= combinedAnswerOutcome = "APPLIED"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="combined_answer_needed" sourceRef="combined_answer_route" targetRef="answer_question">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= combinedAnswerOutcome = "ASK"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="analyze_decision" name="Assess the answer against intent and evidence">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.analyze-decision" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="linear-hitl-decision-loop" />
+          <zeebe:header key="phase" value="analyze_decision" />
+          <zeebe:header key="decisionPolicy" value="open-decisions-v1" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_6</bpmn:incoming>
+      <bpmn:incoming>combined_answer_applied</bpmn:incoming>
+      <bpmn:incoming>consider_revise</bpmn:incoming>
+      <bpmn:outgoing>analysis_done</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="analysis_outcome" name="Does the answer need discussion?">
+      <bpmn:incoming>analysis_done</bpmn:incoming>
+      <bpmn:outgoing>analysis_accept</bpmn:outgoing>
+      <bpmn:outgoing>analysis_discuss</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="consider_decision" name="Consider the concern and respond in your own words">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:taskHeaders>
+          <zeebe:header key="bindingVariable" value="decisionAnalysisBinding" />
+          <zeebe:header key="responseVariable" value="decisionReviewResponse" />
+          <zeebe:header key="actions" value="keep_answer,revise_answer,ground_me" />
+          <zeebe:header key="responseMode" value="open_ended" />
+          <zeebe:header key="decisionPolicy" value="open-decisions-v1" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>analysis_discuss</bpmn:incoming>
+      <bpmn:outgoing>consider_done</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="consider_action" name="Apply the human response">
+      <bpmn:incoming>consider_done</bpmn:incoming>
+      <bpmn:outgoing>consider_keep</bpmn:outgoing>
+      <bpmn:outgoing>consider_revise</bpmn:outgoing>
+      <bpmn:outgoing>consider_ground</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="analysis_done" sourceRef="analyze_decision" targetRef="analysis_outcome" />
+    <bpmn:sequenceFlow id="analysis_accept" sourceRef="analysis_outcome" targetRef="record_decision">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= decisionAnalysisOutcome = "ACCEPT"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="analysis_discuss" sourceRef="analysis_outcome" targetRef="consider_decision">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= decisionAnalysisOutcome = "DISCUSS"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="consider_done" sourceRef="consider_decision" targetRef="consider_action" />
+    <bpmn:sequenceFlow id="consider_keep" sourceRef="consider_action" targetRef="record_decision">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= decisionReviewResponse.action = "keep_answer"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="consider_revise" sourceRef="consider_action" targetRef="analyze_decision">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= decisionReviewResponse.action = "revise_answer"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="consider_ground" sourceRef="consider_action" targetRef="ground_me">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= decisionReviewResponse.action = "ground_me"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_decision-workflow">
+    <bpmndi:BPMNPlane id="BPMNPlane_decision-workflow" bpmnElement="decision-workflow">
+      <bpmndi:BPMNShape id="start_di" bpmnElement="start">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="next_question_di" bpmnElement="next_question">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="frontier_di" bpmnElement="frontier">
+        <dc:Bounds x="350" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="decisions_resolved_di" bpmnElement="decisions_resolved">
+        <dc:Bounds x="507" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="answer_question_di" bpmnElement="answer_question">
+        <dc:Bounds x="475" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="decision_action_di" bpmnElement="decision_action">
+        <dc:Bounds x="650" y="185" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="analyze_decision_di" bpmnElement="analyze_decision">
+        <dc:Bounds x="775" y="170" width="110" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="analysis_outcome_di" bpmnElement="analysis_outcome">
+        <dc:Bounds x="950" y="185" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="consider_decision_di" bpmnElement="consider_decision">
+        <dc:Bounds x="1125" y="170" width="110" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="consider_action_di" bpmnElement="consider_action">
+        <dc:Bounds x="1300" y="185" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="record_decision_di" bpmnElement="record_decision">
+        <dc:Bounds x="1475" y="170" width="110" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ground_me_di" bpmnElement="ground_me">
+        <dc:Bounds x="775" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="grounding_outcome_di" bpmnElement="grounding_outcome">
+        <dc:Bounds x="950" y="435" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="resume_grounded_decision_di" bpmnElement="resume_grounded_decision">
+        <dc:Bounds x="1075" y="420" width="110" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="combined_answer_route_di" bpmnElement="combined_answer_route">
+        <dc:Bounds x="1250" y="435" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="recompute_frontier_di" bpmnElement="recompute_frontier">
+        <dc:Bounds x="1475" y="420" width="110" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_1_di" bpmnElement="flow_1">
+        <di:waypoint x="75.0" y="70.0" />
+        <di:waypoint x="225.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_2_di" bpmnElement="flow_2">
+        <di:waypoint x="225.0" y="70.0" />
+        <di:waypoint x="375.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_3_di" bpmnElement="flow_3">
+        <di:waypoint x="375.0" y="70.0" />
+        <di:waypoint x="525.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_4_di" bpmnElement="flow_4">
+        <di:waypoint x="375.0" y="70.0" />
+        <di:waypoint x="525.0" y="210.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_5_di" bpmnElement="flow_5">
+        <di:waypoint x="525.0" y="210.0" />
+        <di:waypoint x="675.0" y="210.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_6_di" bpmnElement="flow_6">
+        <di:waypoint x="675.0" y="210.0" />
+        <di:waypoint x="830.0" y="210.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_7_di" bpmnElement="flow_7">
+        <di:waypoint x="675.0" y="210.0" />
+        <di:waypoint x="825.0" y="460.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_8_di" bpmnElement="flow_8">
+        <di:waypoint x="1530.0" y="210.0" />
+        <di:waypoint x="225.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_9_di" bpmnElement="flow_9">
+        <di:waypoint x="825.0" y="460.0" />
+        <di:waypoint x="975.0" y="460.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_10_di" bpmnElement="flow_10">
+        <di:waypoint x="975.0" y="460.0" />
+        <di:waypoint x="1130.0" y="460.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_11_di" bpmnElement="flow_11">
+        <di:waypoint x="975.0" y="460.0" />
+        <di:waypoint x="1530.0" y="460.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_12_di" bpmnElement="flow_12">
+        <di:waypoint x="1530.0" y="460.0" />
+        <di:waypoint x="225.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="check_combined_answer_di" bpmnElement="check_combined_answer">
+        <di:waypoint x="1130.0" y="460.0" />
+        <di:waypoint x="1275.0" y="460.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="combined_answer_applied_di" bpmnElement="combined_answer_applied">
+        <di:waypoint x="1275.0" y="460.0" />
+        <di:waypoint x="830.0" y="210.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="combined_answer_needed_di" bpmnElement="combined_answer_needed">
+        <di:waypoint x="1275.0" y="460.0" />
+        <di:waypoint x="525.0" y="210.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="analysis_done_di" bpmnElement="analysis_done">
+        <di:waypoint x="830.0" y="210.0" />
+        <di:waypoint x="975.0" y="210.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="analysis_accept_di" bpmnElement="analysis_accept">
+        <di:waypoint x="975.0" y="210.0" />
+        <di:waypoint x="1530.0" y="210.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="analysis_discuss_di" bpmnElement="analysis_discuss">
+        <di:waypoint x="975.0" y="210.0" />
+        <di:waypoint x="1180.0" y="210.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="consider_done_di" bpmnElement="consider_done">
+        <di:waypoint x="1180.0" y="210.0" />
+        <di:waypoint x="1325.0" y="210.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="consider_keep_di" bpmnElement="consider_keep">
+        <di:waypoint x="1325.0" y="210.0" />
+        <di:waypoint x="1530.0" y="210.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="consider_revise_di" bpmnElement="consider_revise">
+        <di:waypoint x="1325.0" y="210.0" />
+        <di:waypoint x="830.0" y="210.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="consider_ground_di" bpmnElement="consider_ground">
+        <di:waypoint x="1325.0" y="210.0" />
+        <di:waypoint x="825.0" y="460.0" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

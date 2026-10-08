@@ -18,6 +18,11 @@ version: 1
 
 # AWS Auth (Amazon Cognito)
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Application-level user authentication and authorization with Amazon Cognito and the Amplify
 client auth libraries. Verify specific limits, quotas, and exact API shapes against official AWS
 documentation when precision matters; trust the docs over memory when they conflict.

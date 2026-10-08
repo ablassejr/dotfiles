@@ -3,6 +3,11 @@ name: prompt-lookup
 description: Activates when the user asks about AI prompts, needs prompt templates, wants to search for prompts, or mentions prompts.chat. Use for discovering, retrieving, and improving prompts.
 ---
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 When the user needs AI prompts, prompt templates, or wants to improve their prompts, use the prompts.chat MCP server to help them.
 
 ## When to Use This Skill

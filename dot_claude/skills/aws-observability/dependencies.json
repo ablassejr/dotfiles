@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "skill": "aws-observability",
+  "tools": [
+    {
+      "id": "python",
+      "command": "python3",
+      "kind": "brew",
+      "package": "python",
+      "purpose": "Run bundled Python helpers",
+      "documentation": "https://formulae.brew.sh/formula/python",
+      "min_version": "3.9.0",
+      "required": true
+    },
+    {
+      "id": "playwright",
+      "kind": "npm",
+      "package": "playwright",
+      "command": "playwright",
+      "purpose": "Browser rendering when a native viewer is unavailable",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/playwright",
+      "required": false
+    },
+    {
+      "id": "browser-chromium",
+      "kind": "browser",
+      "browser": "chromium",
+      "depends": [
+        "playwright"
+      ],
+      "purpose": "Install Chromium for the isolated Playwright fallback",
+      "documentation": "https://playwright.dev/docs/browsers",
+      "required": false
+    },
+    {
+      "id": "aws",
+      "command": "aws",
+      "kind": "brew",
+      "package": "awscli",
+      "purpose": "Selected AWS operations",
+      "documentation": "https://formulae.brew.sh/formula/awscli",
+      "required": false
+    },
+    {
+      "id": "boto3",
+      "kind": "pip",
+      "package": "boto3",
+      "module": "boto3",
+      "distribution": "boto3",
+      "purpose": "Run selected AWS Python helpers",
+      "depends": [
+        "python"
+      ],
+      "documentation": "https://pypi.org/project/boto3/",
+      "required": true
+    },
+    {
+      "id": "botocore",
+      "kind": "pip",
+      "package": "botocore",
+      "module": "botocore",
+      "distribution": "botocore",
+      "purpose": "AWS helper protocol and error handling",
+      "depends": [
+        "python"
+      ],
+      "documentation": "https://pypi.org/project/botocore/",
+      "required": true
+    },
+    {
+      "id": "kubectl",
+      "command": "kubectl",
+      "kind": "brew",
+      "package": "kubernetes-cli",
+      "purpose": "Selected Kubernetes operations",
+      "documentation": "https://formulae.brew.sh/formula/kubernetes-cli",
+      "required": false
+    },
+    {
+      "id": "helm",
+      "command": "helm",
+      "kind": "brew",
+      "package": "helm",
+      "purpose": "Selected Helm operations",
+      "documentation": "https://formulae.brew.sh/formula/helm",
+      "required": false
+    },
+    {
+      "id": "terraform",
+      "command": "terraform",
+      "kind": "brew",
+      "package": "hashicorp/tap/terraform",
+      "purpose": "Selected Terraform operations",
+      "documentation": "https://formulae.brew.sh/formula/hashicorp/tap/terraform",
+      "required": false
+    },
+    {
+      "id": "node",
+      "command": "node",
+      "kind": "brew",
+      "package": "node",
+      "purpose": "Run Node utilities and npm packages",
+      "documentation": "https://formulae.brew.sh/formula/node",
+      "min_version": "18.0.0",
+      "required": false
+    }
+  ],
+  "external_requirements": [
+    "Agent connectors, authenticated accounts, provider permissions, and project configuration use the existing session. Package installation does not authenticate or grant write authority."
+  ]
+}

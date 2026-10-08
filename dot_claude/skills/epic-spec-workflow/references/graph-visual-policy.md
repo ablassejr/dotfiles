@@ -10,7 +10,7 @@ Screenshots of non-graph interfaces, photos, video, ordinary tables, code excerp
 
 Every presented visual appears in the owning step's complete `visuals` inventory. A non-graph record uses an explicit content kind, for example `{"ref":"issue-screen.png","kind":"screenshot"}`. `image`, `embed`, and `png` describe formats and cannot replace the content classification.
 
-A graph record binds its displayed reference to an allowed renderer, a completed render-operation receipt, and the exact rendered artifact. The [shared schema](../../implementation-specification-compiler/scripts/specflow_runtime/visual.schema.json) defines its shape. Schema consumers register this packaged resource under its `$id`, `https://specflow.local/schemas/visual.schema.json`, when validating Grounding Packets or design-proposal bindings; this identifier is not a network endpoint:
+A graph record binds its displayed reference to an allowed renderer, a completed render-operation receipt, and the exact rendered artifact. The [shared schema](bundled/implementation-specification-compiler/scripts/specflow_runtime/visual.schema.json) defines its shape. Schema consumers register this packaged resource under its `$id`, `https://specflow.local/schemas/visual.schema.json`, when validating Grounding Packets or design-proposal bindings; this identifier is not a network endpoint:
 
 ```json
 {

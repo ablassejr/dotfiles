@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "skill": "aws-sdk-js-v3-usage",
+  "tools": [
+    {
+      "id": "aws",
+      "command": "aws",
+      "kind": "brew",
+      "package": "awscli",
+      "purpose": "Selected AWS operations",
+      "documentation": "https://formulae.brew.sh/formula/awscli",
+      "required": false
+    },
+    {
+      "id": "npm-aws-sdk-signature-v4-crt",
+      "kind": "npm",
+      "package": "@aws-sdk/signature-v4-crt",
+      "command": null,
+      "required": false,
+      "depends": [
+        "node"
+      ],
+      "purpose": "Selected package used by the skill’s executable examples; integrate application dependencies through their project manifest",
+      "documentation": "https://www.npmjs.com/package/@aws-sdk/signature-v4-crt"
+    },
+    {
+      "id": "node",
+      "command": "node",
+      "kind": "brew",
+      "package": "node",
+      "purpose": "Run Node utilities and npm packages",
+      "documentation": "https://formulae.brew.sh/formula/node",
+      "min_version": "18.0.0",
+      "required": false
+    },
+    {
+      "id": "npm-aws-sdk-signature-v4a",
+      "kind": "npm",
+      "package": "@aws-sdk/signature-v4a",
+      "command": null,
+      "required": false,
+      "depends": [
+        "node"
+      ],
+      "purpose": "Selected package used by the skill’s executable examples; integrate application dependencies through their project manifest",
+      "documentation": "https://www.npmjs.com/package/@aws-sdk/signature-v4a"
+    }
+  ],
+  "external_requirements": []
+}

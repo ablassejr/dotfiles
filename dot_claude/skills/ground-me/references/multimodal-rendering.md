@@ -4,7 +4,7 @@ Always provide a concise textual model, an evidence timeline, a decision-lineage
 
 Use LikeC4 for formal system boundaries, component ownership, runtime communication, dependencies, data flow, or deployment structure. Produce current-state and historical-state views only when the evidence supports both.
 
-Use Archify for validated interactive architecture, workflow, sequence, data-flow, or lifecycle explanation when it serves the grounding question. Compile the normalized model through [ArchifyArtifactAdapter](../../epic-spec-workflow/references/archify-adapter.md), retaining source hashes, immutable generations, and operation receipts. Preserve existing required formal and curated views.
+Use Archify for validated interactive architecture, workflow, sequence, data-flow, or lifecycle explanation when it serves the grounding question. Compile the normalized model through [ArchifyArtifactAdapter](bundled/epic-spec-workflow/references/archify-adapter.md), retaining source hashes, immutable generations, and operation receipts. Preserve existing required formal and curated views.
 
 Use Figma Design, LikeC4, or Archify for connected chronology, contradiction maps, decision trees, and ticket-to-commit lineage. FigJam can hold non-graph workshop material. Use Figma when the explanation needs high-fidelity stakeholder communication, compares multiple architecture states, belongs in the canonical specification, or concerns user interaction.
 
@@ -33,4 +33,4 @@ After every visual write, read back its structure and inspect its rendered form.
 
 Do not generate every representation. Use the smallest set that makes the current question and its evidence understandable, preserving the packet's required evidence and applicable architecture/interaction views. Keep unsupported historical structure unknown instead of drawing it as fact.
 
-All graph-like representations in this table follow the [graph visual policy](../../epic-spec-workflow/references/graph-visual-policy.md). Graph JSON and source-system graphs are evidence inputs; the presented graph needs an allowed renderer and a validated receipt. Non-graph timelines and traceability tables remain ordinary data views.
+All graph-like representations in this table follow the [graph visual policy](bundled/epic-spec-workflow/references/graph-visual-policy.md). Graph JSON and source-system graphs are evidence inputs; the presented graph needs an allowed renderer and a validated receipt. Non-graph timelines and traceability tables remain ordinary data views.

@@ -295,8 +295,8 @@ class ReviewBehavior(unittest.TestCase):
         self.assertIn("twice that amount", (output / "review.md").read_text())
         self.assertEqual(self.read(output, "tool-results.json")["origin"], "supplied-local-evidence")
 
-    def test_independent_challenge_and_available_checks_are_completion_requirements(self):
-        for missing in ("challenge", "check", "host", "coverage", "lens"):
+    def test_performed_challenge_and_available_checks_are_completion_requirements(self):
+        for missing in ("challenge", "check", "coverage", "lens"):
             with self.subTest(missing=missing):
                 output = self.prepare()
                 assessment, _ = self.completed(output)
@@ -304,14 +304,26 @@ class ReviewBehavior(unittest.TestCase):
                     assessment["challenge"]["status"] = "unavailable"
                 elif missing == "check":
                     assessment["checks"][0]["status"] = "unavailable"
-                elif missing == "host":
-                    assessment["host"]["model"] = "unverified"
                 elif missing == "coverage":
                     assessment["coverage"] = []
                 else:
                     assessment["lenses"] = []
                 self.finish(output, assessment, expected=3)
                 self.assertEqual(self.read(output, "analysis-summary.json")["verdict"], "INCOMPLETE")
+
+    def test_current_session_and_hosted_reviews_complete_without_isolation(self):
+        for model in ("current_session", "hosted", "local", "unverified"):
+            with self.subTest(model=model):
+                output = self.prepare()
+                assessment, _ = self.completed(output)
+                assessment["host"] = {"model": model, "isolation_evidence_id": None}
+                assessment["checks"][0]["isolation_evidence_id"] = None
+                assessment["challenge"]["reviewer"] = "current-session-counterevidence-pass"
+                self.finish(output, assessment)
+                summary = self.read(output, "analysis-summary.json")
+                self.assertTrue(summary["complete"])
+                self.assertEqual(summary["verdict"], "PASS")
+                self.assertIn("twice that amount", (output / "review.md").read_text())
 
     def test_supported_defect_and_executed_failure_hold_even_with_gaps(self):
         output = self.prepare()
@@ -367,12 +379,14 @@ class ReviewBehavior(unittest.TestCase):
         self.assertIn("STALE", (output / "report.html").read_text())
 
     def test_local_artifact_integrity_coordinates_and_schema_are_checked(self):
-        for invalid in ("hash", "coordinate", "one-coordinate", "exit", "unknown", "fractional", "missing-evidence", "prepared-snapshot", "manifest-array", "manifest-entry"):
+        for invalid in ("isolation", "hash", "coordinate", "one-coordinate", "exit", "unknown", "fractional", "missing-evidence", "prepared-snapshot", "manifest-array", "manifest-entry"):
             with self.subTest(invalid=invalid):
                 output = self.prepare()
                 assessment, ev = self.completed(output)
                 self.finish(output, assessment)
-                if invalid == "hash":
+                if invalid == "isolation":
+                    assessment["checks"][0]["isolation_evidence_id"] = ev
+                elif invalid == "hash":
                     item = next(e for e in self.read(output, "context-manifest.json")["evidence"] if e["kind"] == "tool_log")
                     (output / item["artifact"]).write_text("tampered")
                 elif invalid == "coordinate":

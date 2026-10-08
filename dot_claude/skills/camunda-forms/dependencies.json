@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "skill": "camunda-forms",
+  "tools": [
+    {
+      "id": "ajv",
+      "kind": "npm",
+      "package": "ajv",
+      "command": null,
+      "purpose": "Validate JSON against schema",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/ajv",
+      "required": true
+    },
+    {
+      "id": "ajv-errors",
+      "kind": "npm",
+      "package": "ajv-errors",
+      "command": null,
+      "purpose": "Support Camunda form schema errorMessage fields",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/ajv-errors",
+      "required": true
+    },
+    {
+      "id": "form-schema",
+      "kind": "npm",
+      "package": "@bpmn-io/form-json-schema",
+      "command": null,
+      "purpose": "Official Camunda form schema",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/@bpmn-io/form-json-schema",
+      "required": true
+    },
+    {
+      "id": "node",
+      "command": "node",
+      "kind": "brew",
+      "package": "node",
+      "purpose": "Run Node utilities and npm packages",
+      "documentation": "https://formulae.brew.sh/formula/node",
+      "min_version": "18.0.0",
+      "required": false
+    }
+  ],
+  "external_requirements": [
+    "A running compatible Camunda cluster and its chosen profile/credentials are needed only for engine operations. Local linting and drafting do not need a cluster."
+  ]
+}

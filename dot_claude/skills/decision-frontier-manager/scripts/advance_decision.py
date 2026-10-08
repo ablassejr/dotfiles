@@ -12,7 +12,6 @@ from typing import Any, Sequence
 
 from validate_decision_question import _load, _nonempty, _validate
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "implementation-specification-compiler/scripts"))
 from specflow_runtime.decisions import validate_analysis, analysis_binding
 from specflow_runtime.client import RuntimeFailure
 

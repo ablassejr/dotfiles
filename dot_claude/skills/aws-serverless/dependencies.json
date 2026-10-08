@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "skill": "aws-serverless",
+  "tools": [
+    {
+      "id": "aws",
+      "command": "aws",
+      "kind": "brew",
+      "package": "awscli",
+      "purpose": "Selected AWS operations",
+      "documentation": "https://formulae.brew.sh/formula/awscli",
+      "required": false
+    },
+    {
+      "id": "powertools",
+      "kind": "pip",
+      "package": "aws-lambda-powertools",
+      "module": "aws_lambda_powertools",
+      "distribution": "aws-lambda-powertools",
+      "purpose": "Selected Lambda helper examples",
+      "depends": [
+        "python"
+      ],
+      "documentation": "https://pypi.org/project/aws-lambda-powertools/",
+      "required": false
+    },
+    {
+      "id": "python",
+      "command": "python3",
+      "kind": "brew",
+      "package": "python",
+      "purpose": "Run bundled Python helpers",
+      "documentation": "https://formulae.brew.sh/formula/python",
+      "min_version": "3.9.0",
+      "required": false
+    }
+  ],
+  "external_requirements": [
+    "Agent connectors, authenticated accounts, provider permissions, and project configuration use the existing session. Package installation does not authenticate or grant write authority."
+  ]
+}

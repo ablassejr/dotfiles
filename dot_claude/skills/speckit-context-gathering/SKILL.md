@@ -5,9 +5,14 @@ description: Gather project, organizational, repository, architecture, and sourc
 
 # Spec Kit context gathering
 
-For human interactions and team outputs, follow [review and artifact design](../epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
+## Self-contained utility setup
 
-Run `$post-basis-context-loader` at epic scope. Require the exact First-Principles Basis version and validate explicit human approval before resolving or searching implementation context. After the gate passes, follow [shared tool routing](../epic-spec-workflow/references/tool-routing.md) to pin identity, baseline, worktree state, and source revisions, use structural and semantic retrieval, and maintain applicable CLI capability records. Use external research only for unresolved external facts.
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
+For human interactions and team outputs, follow [review and artifact design](references/bundled/epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
+
+Run `$post-basis-context-loader` at epic scope. Require the exact First-Principles Basis version and validate explicit human approval before resolving or searching implementation context. After the gate passes, follow [shared tool routing](references/bundled/epic-spec-workflow/references/tool-routing.md) to pin identity, baseline, worktree state, and source revisions, use structural and semantic retrieval, and maintain applicable CLI capability records. Use external research only for unresolved external facts.
 
 Maintain context and evidence once in their owning records. Generate a context map, source view, claim ledger, or gap matrix only when it answers a distinct current question; no separate file is required for each. Keep these views internal and add created temporary files to provenance. Record source owner, applicable version or date, retrieval time, scope, confidence, contradictions, and affected semantic IDs.
 

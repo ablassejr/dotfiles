@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "skill": "subtractive-codebase-consolidator",
+  "tools": [
+    {
+      "id": "python",
+      "command": "python3",
+      "kind": "brew",
+      "package": "python",
+      "purpose": "Run bundled Python helpers",
+      "documentation": "https://formulae.brew.sh/formula/python",
+      "min_version": "3.9.0",
+      "required": true
+    },
+    {
+      "id": "pydantic",
+      "kind": "pip",
+      "package": "pydantic==2.13.5",
+      "module": "pydantic",
+      "distribution": "pydantic",
+      "purpose": "Validate consolidation contracts",
+      "depends": [
+        "python"
+      ],
+      "documentation": "https://pypi.org/project/pydantic/",
+      "required": true
+    },
+    {
+      "id": "docker",
+      "command": "docker",
+      "kind": "brew",
+      "package": "docker-desktop",
+      "purpose": "Container-backed test or analysis workflow",
+      "documentation": "https://formulae.brew.sh/cask/docker-desktop",
+      "cask": true,
+      "required": false
+    },
+    {
+      "id": "cloc",
+      "command": "cloc",
+      "kind": "brew",
+      "package": "cloc",
+      "purpose": "Measure maintained code",
+      "documentation": "https://formulae.brew.sh/formula/cloc",
+      "required": false
+    },
+    {
+      "id": "git",
+      "command": "git",
+      "kind": "brew",
+      "package": "git",
+      "purpose": "Read local source history and comparisons",
+      "documentation": "https://formulae.brew.sh/formula/git",
+      "required": true
+    }
+  ],
+  "external_requirements": [
+    "Agent connectors, authenticated accounts, provider permissions, and project configuration use the existing session. Package installation does not authenticate or grant write authority.",
+    "Docker Desktop must be running for container workflows. Tool installation does not start the daemon or prepare project-specific images."
+  ]
+}

@@ -1,0 +1,534 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_epic-spec-workflow" targetNamespace="https://specflow.local/workflows">
+  <bpmn:process id="epic-spec-workflow" name="Epic specification and semantic handoff" isExecutable="true">
+    <bpmn:extensionElements>
+      <zeebe:versionTag value="v1" />
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="start" name="Start">
+      <bpmn:outgoing>flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="draft_basis" name="Draft Basis">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.draft-basis" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="first-principles-intake" />
+          <zeebe:header key="phase" value="draft_basis" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_1</bpmn:incoming>
+      <bpmn:incoming>flow_4</bpmn:incoming>
+      <bpmn:incoming>flow_9</bpmn:incoming>
+      <bpmn:incoming>flow_15</bpmn:incoming>
+      <bpmn:incoming>flow_30</bpmn:incoming>
+      <bpmn:incoming>flow_31</bpmn:incoming>
+      <bpmn:incoming>flow_32</bpmn:incoming>
+      <bpmn:incoming>flow_33</bpmn:incoming>
+      <bpmn:incoming>flow_34</bpmn:incoming>
+      <bpmn:incoming>flow_35</bpmn:incoming>
+      <bpmn:outgoing>flow_2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="approve_basis" name="Approve Basis">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:taskHeaders>
+          <zeebe:header key="bindingVariable" value="basisBinding" />
+          <zeebe:header key="responseVariable" value="basisResponse" />
+          <zeebe:header key="actions" value="approved,changes_requested" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_2</bpmn:incoming>
+      <bpmn:outgoing>flow_3</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="basis_outcome" name="Basis Outcome">
+      <bpmn:incoming>flow_3</bpmn:incoming>
+      <bpmn:outgoing>flow_4</bpmn:outgoing>
+      <bpmn:outgoing>flow_5</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="gather_context" name="Gather Context">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.gather-context" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="post-basis-context-loader" />
+          <zeebe:header key="phase" value="gather_context" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_5</bpmn:incoming>
+      <bpmn:outgoing>flow_6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="reconcile_basis" name="Reconcile Basis">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.reconcile-basis" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="basis-context-reconciler" />
+          <zeebe:header key="phase" value="reconcile_basis" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_6</bpmn:incoming>
+      <bpmn:outgoing>flow_7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:callActivity id="research" name="Research">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="multimodal-research-workflow" bindingType="deployment" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_7</bpmn:incoming>
+      <bpmn:incoming>flow_16</bpmn:incoming>
+      <bpmn:outgoing>flow_8</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:exclusiveGateway id="research_outcome" name="Research Outcome">
+      <bpmn:incoming>flow_8</bpmn:incoming>
+      <bpmn:outgoing>flow_9</bpmn:outgoing>
+      <bpmn:outgoing>flow_10</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:callActivity id="decisions" name="Decisions">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="decision-workflow" bindingType="deployment" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_10</bpmn:incoming>
+      <bpmn:incoming>flow_17</bpmn:incoming>
+      <bpmn:outgoing>flow_11</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:serviceTask id="draft_semantics" name="Draft Semantics">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.draft-semantics" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="first-principles-specification" />
+          <zeebe:header key="phase" value="draft_semantics" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_11</bpmn:incoming>
+      <bpmn:incoming>flow_18</bpmn:incoming>
+      <bpmn:incoming>flow_27</bpmn:incoming>
+      <bpmn:outgoing>flow_12</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:callActivity id="adversarial_review" name="Adversarial Review">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="adversarial-review-workflow" bindingType="deployment" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_12</bpmn:incoming>
+      <bpmn:outgoing>flow_13</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:exclusiveGateway id="review_outcome" name="Review Outcome">
+      <bpmn:incoming>flow_13</bpmn:incoming>
+      <bpmn:outgoing>flow_14</bpmn:outgoing>
+      <bpmn:outgoing>flow_15</bpmn:outgoing>
+      <bpmn:outgoing>flow_16</bpmn:outgoing>
+      <bpmn:outgoing>flow_17</bpmn:outgoing>
+      <bpmn:outgoing>flow_18</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="compile_visuals" name="Compile Visuals">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.compile-visuals" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="visual-language-compiler" />
+          <zeebe:header key="phase" value="compile_visuals" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="visualBindingVariable" value="visualBinding" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_14</bpmn:incoming>
+      <bpmn:incoming>presentation_revision</bpmn:incoming>
+      <bpmn:outgoing>compiled_visuals_to_draft</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="publish_notion_draft" name="Publish Notion Draft">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.publish-notion-draft" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="notion-canonicalizer" />
+          <zeebe:header key="phase" value="publish_notion_draft" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="visualInventory" value="required" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>compiled_visuals_to_draft</bpmn:incoming>
+      <bpmn:outgoing>flow_24</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="publish_design_proposal" name="Publish Supervisor Design in Linear">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.publish-design-proposal" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="visual-language-compiler" />
+          <zeebe:header key="phase" value="publish_design_proposal" />
+          <zeebe:header key="resultContract" value="linear-design-proposal-v1" />
+          <zeebe:header key="planningScope" value="semantic" />
+          <zeebe:header key="sourceBindingVariable" value="releaseBinding" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="visualBindingVariable" value="designProposalBinding" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+          <zeebe:header key="combinedVisualReview" value="true" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_24</bpmn:incoming>
+      <bpmn:outgoing>flow_design_proposal_review</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="approve_release" name="Approve Release">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:taskHeaders>
+          <zeebe:header key="bindingVariable" value="designProposalBinding" />
+          <zeebe:header key="responseVariable" value="releaseResponse" />
+          <zeebe:header key="actions" value="approved,changes_requested,presentation_change,semantic_change" />
+          <zeebe:header key="resultContract" value="linear-design-proposal-v1" />
+          <zeebe:header key="planningScope" value="semantic" />
+          <zeebe:header key="sourceBindingVariable" value="releaseBinding" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="visualBindingVariable" value="designProposalBinding" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+          <zeebe:header key="combinedVisualReview" value="true" />
+          <zeebe:header key="revisionSources" value="basisBinding,semanticBinding,releaseBinding" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_design_proposal_review</bpmn:incoming>
+      <bpmn:outgoing>flow_25</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="release_outcome" name="Release Outcome">
+      <bpmn:incoming>flow_25</bpmn:incoming>
+      <bpmn:outgoing>flow_26</bpmn:outgoing>
+      <bpmn:outgoing>flow_27</bpmn:outgoing>
+      <bpmn:outgoing>presentation_revision</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="finalize_release" name="Finalize Release">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.finalize-release" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="notion-canonicalizer" />
+          <zeebe:header key="phase" value="finalize_release" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="visualInventory" value="required" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_26</bpmn:incoming>
+      <bpmn:outgoing>flow_28</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="verify_handoff" name="Verify Handoff">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="specflow.verify-handoff" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="skill" value="epic-spec-workflow" />
+          <zeebe:header key="phase" value="verify_handoff" />
+          <zeebe:header key="visualPolicy" value="graph-renderers-v1" />
+          <zeebe:header key="visualInventory" value="required" />
+          <zeebe:header key="approvalPolicy" value="approval-economy-v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_28</bpmn:incoming>
+      <bpmn:outgoing>flow_29</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="handoff_ready" name="HANDOFF_READY">
+      <bpmn:incoming>flow_29</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="flow_1" sourceRef="start" targetRef="draft_basis" />
+    <bpmn:sequenceFlow id="flow_2" sourceRef="draft_basis" targetRef="approve_basis" />
+    <bpmn:sequenceFlow id="flow_3" sourceRef="approve_basis" targetRef="basis_outcome" />
+    <bpmn:sequenceFlow id="flow_4" sourceRef="basis_outcome" targetRef="draft_basis">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= basisResponse.action = "changes_requested"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_5" sourceRef="basis_outcome" targetRef="gather_context">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= basisResponse.action = "approved"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_6" sourceRef="gather_context" targetRef="reconcile_basis" />
+    <bpmn:sequenceFlow id="flow_7" sourceRef="reconcile_basis" targetRef="research" />
+    <bpmn:sequenceFlow id="flow_8" sourceRef="research" targetRef="research_outcome" />
+    <bpmn:sequenceFlow id="flow_9" sourceRef="research_outcome" targetRef="draft_basis">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= researchOutcome = "REVISE_FIRST_PRINCIPLES"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_10" sourceRef="research_outcome" targetRef="decisions">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= researchOutcome = "PROCEED" or researchOutcome = "REQUEST_HITL"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_11" sourceRef="decisions" targetRef="draft_semantics" />
+    <bpmn:sequenceFlow id="flow_12" sourceRef="draft_semantics" targetRef="adversarial_review" />
+    <bpmn:sequenceFlow id="flow_13" sourceRef="adversarial_review" targetRef="review_outcome" />
+    <bpmn:sequenceFlow id="flow_14" sourceRef="review_outcome" targetRef="compile_visuals">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= reviewDisposition = "approved"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_15" sourceRef="review_outcome" targetRef="draft_basis">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= reviewDisposition = "revise_basis"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_16" sourceRef="review_outcome" targetRef="research">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= reviewDisposition = "research"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_17" sourceRef="review_outcome" targetRef="decisions">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= reviewDisposition = "decision"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_18" sourceRef="review_outcome" targetRef="draft_semantics">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= reviewDisposition = "repair"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_24" sourceRef="publish_notion_draft" targetRef="publish_design_proposal" />
+    <bpmn:sequenceFlow id="flow_25" sourceRef="approve_release" targetRef="release_outcome" />
+    <bpmn:sequenceFlow id="flow_26" sourceRef="release_outcome" targetRef="finalize_release">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= releaseResponse.action = "approved"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_27" sourceRef="release_outcome" targetRef="draft_semantics">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= releaseResponse.action = "changes_requested" or releaseResponse.action = "semantic_change"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_28" sourceRef="finalize_release" targetRef="verify_handoff" />
+    <bpmn:sequenceFlow id="flow_29" sourceRef="verify_handoff" targetRef="handoff_ready" />
+    <bpmn:boundaryEvent id="reconcile_basis_error" name="Reconcile Basis Error" attachedToRef="reconcile_basis">
+      <bpmn:outgoing>flow_30</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="reconcile_basis_error_definition" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="flow_30" sourceRef="reconcile_basis_error" targetRef="draft_basis" />
+    <bpmn:boundaryEvent id="draft_semantics_error" name="Draft Semantics Error" attachedToRef="draft_semantics">
+      <bpmn:outgoing>flow_31</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="draft_semantics_error_definition" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="flow_31" sourceRef="draft_semantics_error" targetRef="draft_basis" />
+    <bpmn:boundaryEvent id="compile_visuals_error" name="Compile Visuals Error" attachedToRef="compile_visuals">
+      <bpmn:outgoing>flow_32</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="compile_visuals_error_definition" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="flow_32" sourceRef="compile_visuals_error" targetRef="draft_basis" />
+    <bpmn:boundaryEvent id="publish_notion_draft_error" name="Publish Notion Draft Error" attachedToRef="publish_notion_draft">
+      <bpmn:outgoing>flow_33</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="publish_notion_draft_error_definition" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="flow_33" sourceRef="publish_notion_draft_error" targetRef="draft_basis" />
+    <bpmn:boundaryEvent id="finalize_release_error" name="Finalize Release Error" attachedToRef="finalize_release">
+      <bpmn:outgoing>flow_34</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="finalize_release_error_definition" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="flow_34" sourceRef="finalize_release_error" targetRef="draft_basis" />
+    <bpmn:boundaryEvent id="verify_handoff_error" name="Verify Handoff Error" attachedToRef="verify_handoff">
+      <bpmn:outgoing>flow_35</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="verify_handoff_error_definition" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="flow_35" sourceRef="verify_handoff_error" targetRef="draft_basis" />
+    <bpmn:sequenceFlow id="flow_design_proposal_review" sourceRef="publish_design_proposal" targetRef="approve_release" />
+    <bpmn:sequenceFlow id="compiled_visuals_to_draft" sourceRef="compile_visuals" targetRef="publish_notion_draft" />
+    <bpmn:sequenceFlow id="presentation_revision" sourceRef="release_outcome" targetRef="compile_visuals">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= releaseResponse.action = "presentation_change"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmn:error id="reconcile_basis_error_definition" errorCode="REVISE_FIRST_PRINCIPLES" />
+  <bpmn:error id="draft_semantics_error_definition" errorCode="REVISE_FIRST_PRINCIPLES" />
+  <bpmn:error id="compile_visuals_error_definition" errorCode="REVISE_FIRST_PRINCIPLES" />
+  <bpmn:error id="publish_notion_draft_error_definition" errorCode="REVISE_FIRST_PRINCIPLES" />
+  <bpmn:error id="finalize_release_error_definition" errorCode="REVISE_FIRST_PRINCIPLES" />
+  <bpmn:error id="verify_handoff_error_definition" errorCode="REVISE_FIRST_PRINCIPLES" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_epic-spec-workflow">
+    <bpmndi:BPMNPlane id="BPMNPlane_epic-spec-workflow" bpmnElement="epic-spec-workflow">
+      <bpmndi:BPMNShape id="start_di" bpmnElement="start">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="draft_basis_di" bpmnElement="draft_basis">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="approve_basis_di" bpmnElement="approve_basis">
+        <dc:Bounds x="325" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="basis_outcome_di" bpmnElement="basis_outcome" isMarkerVisible="true">
+        <dc:Bounds x="500" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="gather_context_di" bpmnElement="gather_context">
+        <dc:Bounds x="625" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="reconcile_basis_di" bpmnElement="reconcile_basis">
+        <dc:Bounds x="775" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="reconcile_basis_error_di" bpmnElement="reconcile_basis_error">
+        <dc:Bounds x="807" y="92" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="research_di" bpmnElement="research">
+        <dc:Bounds x="925" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="research_outcome_di" bpmnElement="research_outcome" isMarkerVisible="true">
+        <dc:Bounds x="1100" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="decisions_di" bpmnElement="decisions">
+        <dc:Bounds x="1225" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="draft_semantics_di" bpmnElement="draft_semantics">
+        <dc:Bounds x="1375" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="draft_semantics_error_di" bpmnElement="draft_semantics_error">
+        <dc:Bounds x="1407" y="92" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="adversarial_review_di" bpmnElement="adversarial_review">
+        <dc:Bounds x="1525" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="review_outcome_di" bpmnElement="review_outcome" isMarkerVisible="true">
+        <dc:Bounds x="1700" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="compile_visuals_di" bpmnElement="compile_visuals">
+        <dc:Bounds x="1825" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="compile_visuals_error_di" bpmnElement="compile_visuals_error">
+        <dc:Bounds x="1857" y="92" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="publish_notion_draft_di" bpmnElement="publish_notion_draft">
+        <dc:Bounds x="2275" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="publish_notion_draft_error_di" bpmnElement="publish_notion_draft_error">
+        <dc:Bounds x="2307" y="92" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="approve_release_di" bpmnElement="approve_release">
+        <dc:Bounds x="2595.0" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="release_outcome_di" bpmnElement="release_outcome" isMarkerVisible="true">
+        <dc:Bounds x="2770.0" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="finalize_release_di" bpmnElement="finalize_release">
+        <dc:Bounds x="2895.0" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="finalize_release_error_di" bpmnElement="finalize_release_error">
+        <dc:Bounds x="2927.0" y="92" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="verify_handoff_di" bpmnElement="verify_handoff">
+        <dc:Bounds x="3045.0" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="verify_handoff_error_di" bpmnElement="verify_handoff_error">
+        <dc:Bounds x="3077.0" y="92" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="handoff_ready_di" bpmnElement="handoff_ready">
+        <dc:Bounds x="3227.0" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="publish_design_proposal_di" bpmnElement="publish_design_proposal">
+        <dc:Bounds x="2425.0" y="30.0" width="100.0" height="80.0" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_1_di" bpmnElement="flow_1">
+        <di:waypoint x="75.0" y="70.0" />
+        <di:waypoint x="225.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_2_di" bpmnElement="flow_2">
+        <di:waypoint x="225.0" y="70.0" />
+        <di:waypoint x="375.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_3_di" bpmnElement="flow_3">
+        <di:waypoint x="375.0" y="70.0" />
+        <di:waypoint x="525.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_4_di" bpmnElement="flow_4">
+        <di:waypoint x="525.0" y="70.0" />
+        <di:waypoint x="225.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_5_di" bpmnElement="flow_5">
+        <di:waypoint x="525.0" y="70.0" />
+        <di:waypoint x="675.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_6_di" bpmnElement="flow_6">
+        <di:waypoint x="675.0" y="70.0" />
+        <di:waypoint x="825.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_7_di" bpmnElement="flow_7">
+        <di:waypoint x="825.0" y="70.0" />
+        <di:waypoint x="975.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_8_di" bpmnElement="flow_8">
+        <di:waypoint x="975.0" y="70.0" />
+        <di:waypoint x="1125.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_9_di" bpmnElement="flow_9">
+        <di:waypoint x="1125.0" y="70.0" />
+        <di:waypoint x="225.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_10_di" bpmnElement="flow_10">
+        <di:waypoint x="1125.0" y="70.0" />
+        <di:waypoint x="1275.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_11_di" bpmnElement="flow_11">
+        <di:waypoint x="1275.0" y="70.0" />
+        <di:waypoint x="1425.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_12_di" bpmnElement="flow_12">
+        <di:waypoint x="1425.0" y="70.0" />
+        <di:waypoint x="1575.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_13_di" bpmnElement="flow_13">
+        <di:waypoint x="1575.0" y="70.0" />
+        <di:waypoint x="1725.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_14_di" bpmnElement="flow_14">
+        <di:waypoint x="1725.0" y="70.0" />
+        <di:waypoint x="1875.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_15_di" bpmnElement="flow_15">
+        <di:waypoint x="1725.0" y="70.0" />
+        <di:waypoint x="225.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_16_di" bpmnElement="flow_16">
+        <di:waypoint x="1725.0" y="70.0" />
+        <di:waypoint x="975.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_17_di" bpmnElement="flow_17">
+        <di:waypoint x="1725.0" y="70.0" />
+        <di:waypoint x="1275.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_18_di" bpmnElement="flow_18">
+        <di:waypoint x="1725.0" y="70.0" />
+        <di:waypoint x="1425.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_24_di" bpmnElement="flow_24">
+        <di:waypoint x="2325.0" y="70.0" />
+        <di:waypoint x="2475.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_25_di" bpmnElement="flow_25">
+        <di:waypoint x="2645.0" y="70.0" />
+        <di:waypoint x="2795.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_26_di" bpmnElement="flow_26">
+        <di:waypoint x="2795.0" y="70.0" />
+        <di:waypoint x="2945.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_27_di" bpmnElement="flow_27">
+        <di:waypoint x="2795.0" y="70.0" />
+        <di:waypoint x="1425.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_28_di" bpmnElement="flow_28">
+        <di:waypoint x="2945.0" y="70.0" />
+        <di:waypoint x="3095.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_29_di" bpmnElement="flow_29">
+        <di:waypoint x="3095.0" y="70.0" />
+        <di:waypoint x="3245.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_30_di" bpmnElement="flow_30">
+        <di:waypoint x="825.0" y="110.0" />
+        <di:waypoint x="225.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_31_di" bpmnElement="flow_31">
+        <di:waypoint x="1425.0" y="110.0" />
+        <di:waypoint x="225.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_32_di" bpmnElement="flow_32">
+        <di:waypoint x="1875.0" y="110.0" />
+        <di:waypoint x="225.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_33_di" bpmnElement="flow_33">
+        <di:waypoint x="2325.0" y="110.0" />
+        <di:waypoint x="225.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_34_di" bpmnElement="flow_34">
+        <di:waypoint x="2945.0" y="110.0" />
+        <di:waypoint x="225.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_35_di" bpmnElement="flow_35">
+        <di:waypoint x="3095.0" y="110.0" />
+        <di:waypoint x="225.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_design_proposal_review_di" bpmnElement="flow_design_proposal_review">
+        <di:waypoint x="2475.0" y="70.0" />
+        <di:waypoint x="2645.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="compiled_visuals_to_draft_di" bpmnElement="compiled_visuals_to_draft">
+        <di:waypoint x="1875.0" y="70.0" />
+        <di:waypoint x="2325.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="presentation_revision_di" bpmnElement="presentation_revision">
+        <di:waypoint x="2795.0" y="70.0" />
+        <di:waypoint x="1875.0" y="70.0" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

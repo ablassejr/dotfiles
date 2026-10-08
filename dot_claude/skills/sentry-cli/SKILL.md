@@ -9,6 +9,11 @@ requires:
 
 # Sentry CLI Usage Guide
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Help users interact with Sentry from the command line using the `sentry` CLI.
 
 ## Agent Guidance
@@ -60,7 +65,7 @@ The CLI uses semantic exit codes. Key ranges for agents:
 | 50–59 | Operation error | Report to user |
 | 60–69 | Command-specific | Check stderr for details |
 
-See [Exit Codes](/exit-codes/) for the complete reference.
+See [Exit Codes](https://cli.sentry.dev/exit-codes/) for the complete reference.
 
 ### Workflow Patterns
 

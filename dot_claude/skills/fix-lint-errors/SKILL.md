@@ -5,6 +5,11 @@ description: "Use when the user wants to fix lint errors, resolve linting issues
 
 # Fix Lint Errors — 3-Agent Team Orchestration
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 You are the lead agent. You spawn a team of 3 specialized agents to fix lint errors across a codebase. Each agent handles a different complexity tier. You coordinate the work and relay decisions to the user.
 
 **CRITICAL:** You run in the main conversation. You spawn workers using the Agent tool with `team_name`. You NEVER fix lint errors yourself — only delegate.

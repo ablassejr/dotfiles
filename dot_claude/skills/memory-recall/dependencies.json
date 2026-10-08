@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "skill": "memory-recall",
+  "tools": [
+    {
+      "id": "claude-mem",
+      "kind": "npm",
+      "package": "claude-mem",
+      "command": "claude-mem",
+      "purpose": "Claude Mem plugin distribution; registration is a separate selected step",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/claude-mem",
+      "required": false
+    },
+    {
+      "id": "curl",
+      "command": "curl",
+      "kind": "brew",
+      "package": "curl",
+      "purpose": "Retrieve documented HTTP resources",
+      "documentation": "https://formulae.brew.sh/formula/curl",
+      "required": false
+    },
+    {
+      "id": "jq",
+      "command": "jq",
+      "kind": "brew",
+      "package": "jq",
+      "purpose": "Process API JSON",
+      "documentation": "https://formulae.brew.sh/formula/jq",
+      "required": false
+    },
+    {
+      "id": "node",
+      "command": "node",
+      "kind": "brew",
+      "package": "node",
+      "purpose": "Run Node utilities and npm packages",
+      "documentation": "https://formulae.brew.sh/formula/node",
+      "min_version": "20.0.0",
+      "required": false
+    }
+  ],
+  "external_requirements": [
+    "Agent connectors, authenticated accounts, provider permissions, and project configuration use the existing session. Package installation does not authenticate or grant write authority.",
+    "Claude Mem plugin registration and worker setup use scripts/install-claude-mem.sh only when selected; registration modifies the host plugin configuration and is separate from package availability."
+  ]
+}

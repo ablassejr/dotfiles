@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "skill": "aws-blocks",
+  "tools": [
+    {
+      "id": "aws",
+      "command": "aws",
+      "kind": "brew",
+      "package": "awscli",
+      "purpose": "Selected AWS operations",
+      "documentation": "https://formulae.brew.sh/formula/awscli",
+      "required": false
+    },
+    {
+      "id": "aws-blocks",
+      "kind": "npm",
+      "package": "@aws-blocks/create-blocks-app",
+      "command": null,
+      "purpose": "Selected AWS Blocks scaffolding",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/@aws-blocks/create-blocks-app",
+      "required": false
+    },
+    {
+      "id": "node",
+      "command": "node",
+      "kind": "brew",
+      "package": "node",
+      "purpose": "Run Node utilities and npm packages",
+      "documentation": "https://formulae.brew.sh/formula/node",
+      "min_version": "18.0.0",
+      "required": false
+    }
+  ],
+  "external_requirements": []
+}

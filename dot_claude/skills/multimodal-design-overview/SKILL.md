@@ -5,6 +5,11 @@ description: Autonomously explain an already implemented system in a concise vis
 
 # Multimodal design overview
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Explain how an already implemented system works, why its observable structure matters, and what its important limits are. Start from the implementation and applicable evidence. Prior planning, specifications, approvals, and documentation are optional historical sources; their presence, absence, or quality does not determine whether this skill can run. Let purposeful visuals and recordings carry the explanation of structure and behavior, supported by short context, consequences, and limits. Produce the shortest coherent explanation that gives the team an accurate understanding.
 
 ## Establish the document's job

@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "skill": "fetch-url",
+  "tools": [
+    {
+      "id": "playwright",
+      "kind": "npm",
+      "package": "playwright",
+      "command": "playwright",
+      "purpose": "Browser rendering when a native viewer is unavailable",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/playwright",
+      "required": false
+    },
+    {
+      "id": "browser-chromium",
+      "kind": "browser",
+      "browser": "chromium",
+      "depends": [
+        "playwright"
+      ],
+      "purpose": "Install Chromium for the isolated Playwright fallback",
+      "documentation": "https://playwright.dev/docs/browsers",
+      "required": false
+    },
+    {
+      "id": "docs-mcp",
+      "kind": "npm",
+      "package": "@arabold/docs-mcp-server",
+      "command": "docs-mcp-server",
+      "purpose": "Documentation CLI fallback",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/@arabold/docs-mcp-server",
+      "required": true
+    },
+    {
+      "id": "node",
+      "command": "node",
+      "kind": "brew",
+      "package": "node",
+      "purpose": "Run Node utilities and npm packages",
+      "documentation": "https://formulae.brew.sh/formula/node",
+      "min_version": "22.18.0",
+      "required": false
+    }
+  ],
+  "external_requirements": []
+}

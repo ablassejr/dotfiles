@@ -1,11 +1,16 @@
 ---
 name: orchestrating-swarms
-description: Master multi-agent orchestration using Claude Code's TeammateTool and Task system. Use when coordinating multiple agents, running parallel code reviews, creating pipeline workflows with dependencies, building self-organizing task queues, or any task benefiting from divide-and-conquer patterns.
+description: Master multi-agent orchestration using Codex's TeammateTool and Task system. Use when coordinating multiple agents, running parallel code reviews, creating pipeline workflows with dependencies, building self-organizing task queues, or any task benefiting from divide-and-conquer patterns.
 ---
 
-# Claude Code Swarm Orchestration
+# Codex Swarm Orchestration
 
-Master multi-agent orchestration using Claude Code's TeammateTool and Task system.
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
+Master multi-agent orchestration using Codex's TeammateTool and Task system.
 
 ---
 
@@ -13,12 +18,12 @@ Master multi-agent orchestration using Claude Code's TeammateTool and Task syste
 
 | Primitive | What It Is | File Location |
 |-----------|-----------|---------------|
-| **Agent** | A Claude instance that can use tools. You are an agent. Subagents are agents you spawn. | N/A (process) |
-| **Team** | A named group of agents working together. One leader, multiple teammates. | `~/.claude/teams/{name}/config.json` |
+| **Agent** | A Codex instance that can use tools. You are an agent. Subagents are agents you spawn. | N/A (process) |
+| **Team** | A named group of agents working together. One leader, multiple teammates. | `~/.Codex/teams/{name}/config.json` |
 | **Teammate** | An agent that joined a team. Has a name, color, inbox. Spawned via Task with `team_name` + `name`. | Listed in team config |
 | **Leader** | The agent that created the team. Receives teammate messages, approves plans/shutdowns. | First member in config |
-| **Task** | A work item with subject, description, status, owner, and dependencies. | `~/.claude/tasks/{team}/N.json` |
-| **Inbox** | JSON file where an agent receives messages from teammates. | `~/.claude/teams/{name}/inboxes/{agent}.json` |
+| **Task** | A work item with subject, description, status, owner, and dependencies. | `~/.Codex/tasks/{team}/N.json` |
+| **Inbox** | JSON file where an agent receives messages from teammates. | `~/.Codex/teams/{name}/inboxes/{agent}.json` |
 | **Message** | A JSON object sent between agents. Can be text or structured (shutdown_request, idle_notification, etc). | Stored in inbox files |
 | **Backend** | How teammates run. Auto-detected: `in-process` (same Node.js, invisible), `tmux` (separate panes, visible), `iterm2` (split panes in iTerm2). See [Spawn Backends](#spawn-backends). | Auto-detected based on environment |
 
@@ -123,14 +128,14 @@ A swarm consists of:
 ### File Structure
 
 ```
-~/.claude/teams/{team-name}/
+~/.Codex/teams/{team-name}/
 ├── config.json              # Team metadata and member list
 └── inboxes/
     ├── team-lead.json       # Leader's inbox
     ├── worker-1.json        # Worker 1's inbox
     └── worker-2.json        # Worker 2's inbox
 
-~/.claude/tasks/{team-name}/
+~/.Codex/tasks/{team-name}/
 ├── 1.json                   # Task #1
 ├── 2.json                   # Task #2
 └── 3.json                   # Task #3
@@ -284,16 +289,16 @@ Task({
 - **Model:** Inherits from parent
 - **Best for:** Multi-step tasks, research + action combinations
 
-### claude-code-guide
+### Codex-guide
 ```javascript
 Task({
-  subagent_type: "claude-code-guide",
-  description: "Help with Claude Code",
+  subagent_type: "Codex-guide",
+  description: "Help with Codex",
   prompt: "How do I configure MCP servers?"
 })
 ```
 - **Tools:** Read-only + WebFetch + WebSearch
-- **Best for:** Questions about Claude Code, Agent SDK, Anthropic API
+- **Best for:** Questions about Codex, Agent SDK, Anthropic API
 
 ### statusline-setup
 ```javascript
@@ -305,7 +310,7 @@ Task({
 ```
 - **Tools:** Read, Edit only
 - **Model:** Sonnet
-- **Best for:** Configuring Claude Code status line
+- **Best for:** Configuring Codex status line
 
 ---
 
@@ -431,8 +436,8 @@ Teammate({
 ```
 
 **Creates:**
-- `~/.claude/teams/feature-auth/config.json`
-- `~/.claude/tasks/feature-auth/` directory
+- `~/.Codex/teams/feature-auth/config.json`
+- `~/.Codex/tasks/feature-auth/` directory
 - You become the team leader
 
 ### 2. discoverTeams - List Available Teams
@@ -585,8 +590,8 @@ Teammate({ operation: "cleanup" })
 ```
 
 **Removes:**
-- `~/.claude/teams/{team-name}/` directory
-- `~/.claude/tasks/{team-name}/` directory
+- `~/.Codex/teams/{team-name}/` directory
+- `~/.Codex/tasks/{team-name}/` directory
 
 **IMPORTANT:** Will fail if teammates are still active. Use `requestShutdown` first.
 
@@ -664,7 +669,7 @@ TaskUpdate({ taskId: "4", addBlockedBy: ["3"] })   // #4 waits for #3
 
 ### Task File Structure
 
-`~/.claude/tasks/{team-name}/1.json`:
+`~/.Codex/tasks/{team-name}/1.json`:
 ```json
 {
   "id": "1",
@@ -819,7 +824,7 @@ Task({
 })
 
 // 3. Wait for results (check inbox)
-// cat ~/.claude/teams/code-review/inboxes/team-lead.json
+// cat ~/.Codex/teams/code-review/inboxes/team-lead.json
 
 // 4. Synthesize findings and cleanup
 Teammate({ operation: "requestShutdown", target_agent_id: "security" })
@@ -1069,7 +1074,7 @@ Task({
 
 ## Spawn Backends
 
-A **backend** determines how teammate Claude instances actually run. Claude Code supports three backends, and **auto-detects** the best one based on your environment.
+A **backend** determines how teammate Codex instances actually run. Codex supports three backends, and **auto-detects** the best one based on your environment.
 
 ### Backend Comparison
 
@@ -1081,7 +1086,7 @@ A **backend** determines how teammate Claude instances actually run. Claude Code
 
 ### Auto-Detection Logic
 
-Claude Code automatically selects a backend using this decision tree:
+Codex automatically selects a backend using this decision tree:
 
 ```mermaid
 flowchart TD
@@ -1156,7 +1161,7 @@ Task({
 
 ### tmux
 
-Teammates run as separate Claude instances in tmux panes/windows.
+Teammates run as separate Codex instances in tmux panes/windows.
 
 **How it works:**
 - Each teammate gets its own tmux pane
@@ -1182,13 +1187,13 @@ Teammates run as separate Claude instances in tmux panes/windows.
 └─────────────────┴─────────────────┘
 ```
 
-2. **Outside tmux (external session):** Creates a new tmux session called `claude-swarm`
+2. **Outside tmux (external session):** Creates a new tmux session called `Codex-swarm`
 ```bash
 # Your terminal stays as-is
 # Workers run in separate tmux session
 
 # View workers:
-tmux attach -t claude-swarm
+tmux attach -t Codex-swarm
 ```
 
 **Pros:**
@@ -1204,7 +1209,7 @@ tmux attach -t claude-swarm
 
 ```bash
 # Start tmux session first
-tmux new-session -s claude
+tmux new-session -s Codex
 
 # Or force tmux backend
 export CLAUDE_CODE_SPAWN_BACKEND=tmux
@@ -1222,7 +1227,7 @@ tmux select-pane -t 1
 tmux kill-pane -t %5
 
 # View swarm session (if external)
-tmux attach -t claude-swarm
+tmux attach -t Codex-swarm
 
 # Rebalance pane layout
 tmux select-layout tiled
@@ -1285,7 +1290,7 @@ it2 session list
 ```
 
 **If setup fails:**
-Claude Code will prompt you to set up it2 when you first spawn a teammate. You can choose to:
+Codex will prompt you to set up it2 when you first spawn a teammate. You can choose to:
 1. Install it2 now (guided setup)
 2. Use tmux instead
 3. Cancel
@@ -1338,7 +1343,7 @@ The backend type is recorded per-teammate in `config.json`:
 
 ```bash
 # See what backend was detected
-cat ~/.claude/teams/{team}/config.json | jq '.members[].backendType'
+cat ~/.Codex/teams/{team}/config.json | jq '.members[].backendType'
 
 # Check if inside tmux
 echo $TMUX
@@ -1381,7 +1386,7 @@ Teammate({ operation: "requestShutdown", target_agent_id: "worker-2" })
 // Check for {"type": "shutdown_approved", ...} messages
 
 // 3. Verify no active members
-// Read ~/.claude/teams/{team}/config.json
+// Read ~/.Codex/teams/{team}/config.json
 
 // 4. Only then cleanup
 Teammate({ operation: "cleanup" })
@@ -1400,19 +1405,19 @@ Teammates have a 5-minute heartbeat timeout. If a teammate crashes:
 
 ```bash
 # Check team config
-cat ~/.claude/teams/{team}/config.json | jq '.members[] | {name, agentType, backendType}'
+cat ~/.Codex/teams/{team}/config.json | jq '.members[] | {name, agentType, backendType}'
 
 # Check teammate inboxes
-cat ~/.claude/teams/{team}/inboxes/{agent}.json | jq '.'
+cat ~/.Codex/teams/{team}/inboxes/{agent}.json | jq '.'
 
 # List all teams
-ls ~/.claude/teams/
+ls ~/.Codex/teams/
 
 # Check task states
-cat ~/.claude/tasks/{team}/*.json | jq '{id, subject, status, owner, blockedBy}'
+cat ~/.Codex/tasks/{team}/*.json | jq '{id, subject, status, owner, blockedBy}'
 
 # Watch for new messages
-tail -f ~/.claude/teams/{team}/inboxes/team-lead.json
+tail -f ~/.Codex/teams/{team}/inboxes/team-lead.json
 ```
 
 ---
@@ -1478,7 +1483,7 @@ Task({
 
 // === STEP 3: Monitor and collect results ===
 // Poll inbox or wait for idle notifications
-// cat ~/.claude/teams/pr-review-123/inboxes/team-lead.json
+// cat ~/.Codex/teams/pr-review-123/inboxes/team-lead.json
 
 // === STEP 4: Synthesize findings ===
 // Combine all reviewer findings into a cohesive report
@@ -1661,7 +1666,7 @@ TaskUpdate({ taskId: "2", addBlockedBy: ["1"] })
 ### 5. Check Inboxes for Results
 Workers send results to your inbox. Check it:
 ```bash
-cat ~/.claude/teams/{team}/inboxes/team-lead.json | jq '.'
+cat ~/.Codex/teams/{team}/inboxes/team-lead.json | jq '.'
 ```
 
 ### 6. Handle Worker Failures
@@ -1714,4 +1719,4 @@ Teammate({ operation: "cleanup" })
 
 ---
 
-*Based on Claude Code v2.1.19 - Tested and verified 2026-01-25*
+*Based on Codex v2.1.19 - Tested and verified 2026-01-25*

@@ -6,6 +6,11 @@ allowed-tools: Read, Write, Edit, Grep, Glob, Bash
 version: 1.0.0
 ---
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 ## Overview
 
 This skill empowers Claude to generate realistic and diverse test data, streamlining software testing and development workflows. It leverages the test-data-generator plugin to produce data sets tailored to your specific needs, from user profiles to complex business transactions.

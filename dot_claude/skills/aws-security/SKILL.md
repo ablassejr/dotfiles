@@ -15,6 +15,11 @@ version: 1
 
 # AWS Security
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 **STOP — Do not answer from general knowledge.** Before responding to any security service question, match the user's request against the sub-skill registry below and follow its procedure. If the procedure says to load a reference file, you MUST read it before providing operational guidance. Never skip the routing step.
 
 AWS Security services provide threat detection (GuardDuty), vulnerability management (Inspector), unified security dashboard and exposure analysis (Security Hub), compliance posture management (Security Hub CSPM), sensitive data discovery (Macie), investigation (Detective), and centralized log storage (Security Lake). Each service has dedicated reference procedures for configuration review and findings/investigation summarization.

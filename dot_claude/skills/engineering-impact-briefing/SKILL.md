@@ -5,6 +5,11 @@ description: Autonomously turn engineering work and evidence into concise visual
 
 # Engineering impact briefing
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Create one briefing that lets colleagues understand the meaningful result, why it matters, and how it affects their work without opening another document or knowing the conversation. A list of completed activities, tickets, or artifacts does not establish an outcome. Let useful visuals and recordings carry the explanation, supported by short context, captions, consequences, and actions.
 
 ## Establish what the audience needs

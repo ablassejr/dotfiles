@@ -5,6 +5,11 @@ description: Require a complete, version-aware Grounded Docs MCP (`docs-mcp-serv
 
 # Docs-Driven Execution
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Treat docs-MCP as a hard prerequisite, not an optional research aid. Inventory every task-relevant technology, index its complete official documentation at the applicable version, query that index, and derive an execution-ready plan from the retrieved evidence. Continue into execution only when the user's request authorizes it.
 
 ## Non-negotiable invariants

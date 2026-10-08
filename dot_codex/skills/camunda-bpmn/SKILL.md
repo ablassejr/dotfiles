@@ -12,13 +12,18 @@ description: |
 
 # Camunda BPMN Modeling
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Create and edit executable BPMN 2.0 processes for Camunda 8.8+. Generates valid XML with Zeebe extensions and diagram coordinates.
 
 ## Prerequisites
 
-- Camunda 8.8+ cluster (local via c8run, SaaS, or Self-Managed)
-- c8ctl CLI installed and configured (`c8ctl add profile`) — provides `c8ctl bpmn lint`
-- **c8ctl ≥ 3.2.0** for `bpmn format`. If the command is unavailable, ask the user to upgrade: `npm install -g @camunda8/cli`
+- The bundled setup provisions c8ctl for local BPMN linting and formatting. Local authoring does not require a cluster or configured profile.
+- **c8ctl ≥ 3.2.0** provides `bpmn format`; select `c8ctl` in the bundled installer when a compatible version is missing.
+- Deployment and runtime execution require the selected Camunda 8.8+ cluster and its configured profile.
 
 ## Cross-References
 

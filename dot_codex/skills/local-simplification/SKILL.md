@@ -7,6 +7,11 @@ metadata:
 
 # Local simplification
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Answer which implementation surface can disappear while required behavior remains. Start with a local diff, commit, module, symbol, or named responsibility. Keep the investigation centered on that responsibility and expand only to its consumers, dependencies, tests, configuration, parallel implementations, and relevant local history.
 
 The repository is input. Reports and disposable execution workspaces are outputs. Never alter source, Git refs, or the index, install packages, or publish a finding during an analysis run. This package's creation and maintenance are separate from running its analysis. The reviewing agent may use hosted or local models and configured context, documentation, and research services according to the user's authorization and host instructions. The helper invokes no model.

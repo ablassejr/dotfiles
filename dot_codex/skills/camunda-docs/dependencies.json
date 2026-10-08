@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "skill": "camunda-docs",
+  "tools": [
+    {
+      "id": "curl",
+      "command": "curl",
+      "kind": "brew",
+      "package": "curl",
+      "purpose": "Retrieve documented HTTP resources",
+      "documentation": "https://formulae.brew.sh/formula/curl",
+      "required": true
+    },
+    {
+      "id": "jq",
+      "command": "jq",
+      "kind": "brew",
+      "package": "jq",
+      "purpose": "Process API JSON",
+      "documentation": "https://formulae.brew.sh/formula/jq",
+      "required": true
+    }
+  ],
+  "external_requirements": [
+    "A running compatible Camunda cluster and its chosen profile/credentials are needed only for engine operations. Local linting and drafting do not need a cluster.",
+    "Agent connectors, authenticated accounts, provider permissions, and project configuration use the existing session. Package installation does not authenticate or grant write authority."
+  ]
+}

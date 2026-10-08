@@ -12,6 +12,11 @@ description: |
 
 # Camunda Job Workers
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Implement job workers for Camunda 8.8+ in Java, Camunda Spring Boot, or TypeScript. A job worker is the handler that the Zeebe engine hands an activated job to — it runs business logic, then signals success, failure, or a BPMN error back to the engine.
 
 ## Prerequisites

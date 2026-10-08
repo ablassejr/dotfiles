@@ -5,7 +5,12 @@ description: Write or update a self-explanatory pull request in any workflow. Ex
 
 # Pull request writing
 
-For human interactions and team outputs, follow [review and artifact design](../epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
+For human interactions and team outputs, follow [review and artifact design](references/bundled/epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
 
 Apply this skill whenever a workflow prepares, creates, or updates a PR description or authors a PR comment or document attachment. It governs presentation within the task's existing authorization; it does not authorize pushing, publication, review submission, or merge.
 
@@ -17,6 +22,6 @@ Native issue, PR, commit, diff, and CI associations retain their operational pur
 
 Follow the repository's required PR sections and applicable checklists. Write their useful context and actual task or verification status inline. When a template requires a documentation reference, link the appropriate section of the design proposal. Supporting reference documentation remains reachable inside that proposal. If applicable instructions require a document and none exists, prepare the actual design proposal for the PR's scope through the authorized documentation workflow; do not fabricate a URL or silently ignore the requirement.
 
-Before an authorized PR write, read the description as an unfamiliar reviewer and repair missing context, unsupported claims, and unnecessary prose. Run [the PR content validator](../implementation-specification-compiler/references/pr-content.md) on the exact title, body, authored comments, and document attachments. Publish through the configured provider path with the task's existing authorization. Fetch the saved content, compare it with the prepared version, run the same validator, and inspect the rendered description. Reconcile partial or concurrent writes before retrying. A material change to the diff, design, or verification updates the explanation and repeats these checks.
+Before an authorized PR write, read the description as an unfamiliar reviewer and repair missing context, unsupported claims, and unnecessary prose. Run [the PR content validator](references/bundled/implementation-specification-compiler/references/pr-content.md) on the exact title, body, authored comments, and document attachments. Publish through the configured provider path with the task's existing authorization. Fetch the saved content, compare it with the prepared version, run the same validator, and inspect the rendered description. Reconcile partial or concurrent writes before retrying. A material change to the diff, design, or verification updates the explanation and repeats these checks.
 
 These are automatic authoring and readback steps within the current stage. They add no human approval. Missing publication authority or a required provider leaves only its dependent work pending; the policy does not turn preparation into permission to publish. A passing validator checks common references and nonempty text, not human comprehension, all unlinked document mentions, or whether the designated URL is truly a proposal. The authoring and readback review establishes those facts.

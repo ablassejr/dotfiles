@@ -1,9 +1,7 @@
 {
-  "validated_at": "2026-09-09T20:50:27.865629+00:00",
-  "framework_version": "1.0.0",
-  "python": "3.14.6",
-  "git": "git version 2.54.0",
-  "behavioral_tests": 20,
+  "validated_at": "2026-10-05T20:47:03.957Z",
+  "framework_version": "1.1.0",
+  "behavioral_tests": 21,
   "all_passed": true,
   "package_checks": [
     {
@@ -14,18 +12,19 @@
         "unittest",
         "discover",
         "-s",
-        "/Users/Apple/Documents/Codex/2026-09-09/cr/outputs/personal-pr-review/tests",
+        "tests",
         "-v"
       ],
+      "cwd": "/Users/Apple/Documents/Codex/2026-09-12/edi/work/personal-pr-review-current-session-2026-10-05/package",
       "exit_code": 0,
       "log": "references/behavioral-test-results.txt"
     },
     {
       "command": [
-        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/Users/Apple/work/platform/.venv/bin/python",
         "-B",
-        "/Users/Apple/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
-        "/Users/Apple/Documents/Codex/2026-09-09/cr/outputs/personal-pr-review"
+        "/Users/Apple/Documents/Codex/2026-09-12/edi/work/personal-pr-review-current-session-2026-10-05/quick_validate.py",
+        "/Users/Apple/Documents/Codex/2026-09-12/edi/work/personal-pr-review-current-session-2026-10-05/package"
       ],
       "exit_code": 0,
       "log": "references/package-validation.txt"
@@ -33,23 +32,17 @@
   ],
   "local_links_checked": 15,
   "broken_links": [],
-  "review_script_sha256": "9c8494eb2654e16a9225961473e1b6dc78150f27233eb3296fa91591208b5101",
-  "independent_evaluation": {
-    "synthetic_repositories_only": true,
-    "observed_problems_fixed_and_retested": 5,
-    "unresolved_observed_findings": 0,
-    "fixed_contracts": [
-      "Prepared input identity and artifact integrity",
-      "Consistent stale and invalid verdicts across JSON, Markdown, and HTML",
-      "Malformed evidence envelopes produce incomplete results",
-      "Dirty nested Git dependencies remain visible and incomplete",
-      "External nested Git metadata participates in integrity checks"
-    ]
-  },
+  "review_script_sha256": "b3cebd3637be06e69ad5f583faa652f6b4ce14ab1e4e66f9d707147c99a724d2",
+  "verified_contracts": [
+    "Receipt-backed reviews complete with current_session, hosted, local, and unverified model metadata without isolation evidence",
+    "Provided isolation receipts are validated",
+    "Missing performed challenge, checks, coverage, or lenses remains incomplete",
+    "Existing pinned-source integrity and report contracts pass"
+  ],
   "unverified": [
-    "Actual local-model inference and independent model contexts",
-    "Operating-system sandbox enforcement",
+    "Semantic conclusions on a real user repository",
     "Real-project native checks",
+    "Operating-system isolation enforcement when explicitly required",
     "Maintained-SLOC analyzer integration"
   ]
 }

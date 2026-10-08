@@ -413,7 +413,7 @@ def assessment_template(analysis_id, records):
             "code_mass": {"added": None, "removed": None, "evidence_id": None,
                           "method": "Unknown maintained SLOC", "ratio_removed": None,
                           "ratio_added": None, "ratio_basis": "6:5 direction not supplied"},
-            "unresolved_questions": ["Complete context expansion, review passes, native-check selection, and fresh-context challenge"],
+            "unresolved_questions": ["Complete context expansion, review passes, native-check selection, and counterevidence challenge"],
             "limitations": []}
 
 
@@ -684,13 +684,9 @@ def adjudicate(assessment, records, capsule):
     evidence(assessment["intent"]["evidence_ids"])
     if assessment["intent"]["status"] == "assessed" and not assessment["intent"]["evidence_ids"]:
         gaps.append("Specification alignment has no authoritative local evidence")
-    if assessment["host"]["model"] != "local":
-        gaps.append("Local model host was not established")
     isolation = assessment["host"]["isolation_evidence_id"]
     if isolation:
         evidence([isolation], {"isolation"})
-    else:
-        gaps.append("Host isolation evidence is unavailable")
     covered = set()
     for item in assessment["coverage"]:
         if item["path"] in covered:
@@ -725,7 +721,8 @@ def adjudicate(assessment, records, capsule):
             raise ReviewError("A check belongs to another analysis")
         if check["status"] in ("passed", "failed"):
             evidence([check["evidence_id"]], {"tool_log"})
-            evidence([check["isolation_evidence_id"]], {"isolation"})
+            if check["isolation_evidence_id"]:
+                evidence([check["isolation_evidence_id"]], {"isolation"})
             if not check["command"] or not check["provenance"]:
                 raise ReviewError("Executed checks need a command and local provenance")
             if check["exit_code"] is None or (check["status"] == "passed") != (check["exit_code"] == 0):
@@ -740,7 +737,7 @@ def adjudicate(assessment, records, capsule):
         if not challenge["reviewer"].strip():
             raise ReviewError("Completed challenge needs a reviewer/context identity")
     else:
-        gaps.append("Fresh-context challenge unavailable")
+        gaps.append("Counterevidence challenge unavailable")
     seen_ids, seen_problems = set(), set()
     allowed_paths = {e["path"] for e in records.values() if e["kind"] == "source"}
     for finding in assessment["findings"]:

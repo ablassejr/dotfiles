@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "skill": "camunda-job-workers",
+  "tools": [
+    {
+      "id": "c8ctl",
+      "kind": "npm",
+      "package": "@camunda8/cli",
+      "command": "c8ctl",
+      "purpose": "Camunda linting, FEEL, templates, and selected cluster operations",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/@camunda8/cli",
+      "min_version": "3.2.0",
+      "required": false
+    },
+    {
+      "id": "java",
+      "command": "java",
+      "kind": "brew",
+      "package": "openjdk@21",
+      "purpose": "Java workers, connectors, tests, or local Camunda runtime",
+      "documentation": "https://formulae.brew.sh/formula/openjdk@21",
+      "min_version": "21.0.0",
+      "version_args": [
+        "-version"
+      ],
+      "required": false
+    },
+    {
+      "id": "maven",
+      "command": "mvn",
+      "kind": "brew",
+      "package": "maven",
+      "purpose": "Build selected Java projects",
+      "documentation": "https://formulae.brew.sh/formula/maven",
+      "required": false
+    },
+    {
+      "id": "docker",
+      "command": "docker",
+      "kind": "brew",
+      "package": "docker-desktop",
+      "purpose": "Container-backed test or analysis workflow",
+      "documentation": "https://formulae.brew.sh/cask/docker-desktop",
+      "cask": true,
+      "required": false
+    },
+    {
+      "id": "camunda-api",
+      "kind": "npm",
+      "package": "@camunda8/orchestration-cluster-api",
+      "command": null,
+      "purpose": "Selected TypeScript Camunda API integration",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/@camunda8/orchestration-cluster-api",
+      "required": false
+    },
+    {
+      "id": "camunda-sdk",
+      "kind": "npm",
+      "package": "@camunda8/sdk",
+      "command": null,
+      "purpose": "Selected legacy-compatible Camunda SDK integration",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/@camunda8/sdk",
+      "required": false
+    },
+    {
+      "id": "node",
+      "command": "node",
+      "kind": "brew",
+      "package": "node",
+      "purpose": "Run Node utilities and npm packages",
+      "documentation": "https://formulae.brew.sh/formula/node",
+      "min_version": "22.18.0",
+      "required": false
+    }
+  ],
+  "external_requirements": [
+    "A running compatible Camunda cluster and its chosen profile/credentials are needed only for engine operations. Local linting and drafting do not need a cluster.",
+    "Agent connectors, authenticated accounts, provider permissions, and project configuration use the existing session. Package installation does not authenticate or grant write authority.",
+    "Docker Desktop must be running for container workflows. Tool installation does not start the daemon or prepare project-specific images."
+  ]
+}

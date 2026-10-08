@@ -23,6 +23,11 @@ Frame the document as a **discovery questionnaire**: the user lacks context, the
 
 # <Questionnaire title>
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 **Purpose:** why this questionnaire exists and the decision riding on it.
 
 **From:** <the user>, **To:** <the recipient>, **How your answers will be used:** <where they go>

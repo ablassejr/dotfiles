@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "skill": "personal-pr-review",
+  "tools": [
+    {
+      "id": "python",
+      "command": "python3",
+      "kind": "brew",
+      "package": "python",
+      "purpose": "Run bundled Python helpers",
+      "documentation": "https://formulae.brew.sh/formula/python",
+      "min_version": "3.9.0",
+      "required": true
+    },
+    {
+      "id": "git",
+      "command": "git",
+      "kind": "brew",
+      "package": "git",
+      "purpose": "Read local source history and comparisons",
+      "documentation": "https://formulae.brew.sh/formula/git",
+      "required": true
+    }
+  ],
+  "external_requirements": [
+    "Agent connectors, authenticated accounts, provider permissions, and project configuration use the existing session. Package installation does not authenticate or grant write authority."
+  ]
+}

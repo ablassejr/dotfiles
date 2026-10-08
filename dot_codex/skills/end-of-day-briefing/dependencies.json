@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "skill": "end-of-day-briefing",
+  "tools": [
+    {
+      "id": "asciinema",
+      "command": "asciinema",
+      "kind": "brew",
+      "package": "asciinema",
+      "purpose": "Record actual terminal demonstrations",
+      "documentation": "https://formulae.brew.sh/formula/asciinema",
+      "required": false
+    },
+    {
+      "id": "asciinema-player",
+      "kind": "npm",
+      "package": "asciinema-player",
+      "command": null,
+      "purpose": "Play terminal recordings in a document",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/asciinema-player",
+      "required": false
+    },
+    {
+      "id": "rrweb",
+      "kind": "npm",
+      "package": "@rrweb/record",
+      "command": null,
+      "purpose": "Record browser interaction events",
+      "depends": [
+        "node",
+        "rrweb-replay",
+        "rrweb-player"
+      ],
+      "documentation": "https://www.npmjs.com/package/@rrweb/record",
+      "required": false
+    },
+    {
+      "id": "node",
+      "command": "node",
+      "kind": "brew",
+      "package": "node",
+      "purpose": "Run Node utilities and npm packages",
+      "documentation": "https://formulae.brew.sh/formula/node",
+      "min_version": "18.0.0",
+      "required": false
+    },
+    {
+      "id": "rrweb-replay",
+      "kind": "npm",
+      "package": "@rrweb/replay",
+      "command": null,
+      "purpose": "Replay rrweb events",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/@rrweb/replay",
+      "required": false
+    },
+    {
+      "id": "rrweb-player",
+      "kind": "npm",
+      "package": "rrweb-player",
+      "command": null,
+      "purpose": "Provide replay controls",
+      "depends": [
+        "node"
+      ],
+      "documentation": "https://www.npmjs.com/package/rrweb-player",
+      "required": false
+    }
+  ],
+  "external_requirements": []
+}

@@ -5,9 +5,14 @@ description: Reconcile an epic after its dependency-ordered pull requests merge,
 
 # Specification reconciliation
 
-Use the project's selected source and work records under [workspace and destinations](../epic-spec-workflow/references/workspace-and-destinations.md). The code-mass and behavioral obligations apply to the approved scope. Commands that require a Linear/Notion manifest or fixed three-person plan apply only to that compatible profile. For other projects, perform and record the same independent normalized measurements, removal-credit checks, budgets, approved exceptions, and behavior verification against the actual source and dependency records using compatible repository tools. Do not fabricate provider fields, require three owners, or claim a packaged CLI result that was not obtained.
+## Self-contained utility setup
 
-For human interactions and team outputs, follow [review and artifact design](../epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
+Use the project's selected source and work records under [workspace and destinations](references/bundled/epic-spec-workflow/references/workspace-and-destinations.md). The code-mass and behavioral obligations apply to the approved scope. Commands that require a Linear/Notion manifest or fixed three-person plan apply only to that compatible profile. For other projects, perform and record the same independent normalized measurements, removal-credit checks, budgets, approved exceptions, and behavior verification against the actual source and dependency records using compatible repository tools. Do not fabricate provider fields, require three owners, or claim a packaged CLI result that was not obtained.
+
+For human interactions and team outputs, follow [review and artifact design](references/bundled/epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
 
 Read [references/reconciliation-and-cleanup.md](references/reconciliation-and-cleanup.md). Resolve the approved specification revision, delivery program, merged pull requests, repository baseline and final revision, Code Mass Opportunity Maps, Grounding Packets, audit reports, issue contracts, milestone ledgers, view registry, ADRs, and the epic provenance manifest.
 
@@ -21,4 +26,4 @@ Report final production, test, and combined SLOC; milestone ratio, deficit, or e
 
 ## Graph visual gate
 
-Apply the shared [graph visual policy](../epic-spec-workflow/references/graph-visual-policy.md) to every graph-like output. Use Figma Design, LikeC4, or Archify and retain matching render-operation and artifact evidence. Include all produced or published visuals in the current step’s inventory and run `specflow validate-visuals <manifest.json> --json` before presentation. A missing renderer or invalid receipt blocks the visual output. Non-graph media keep their own communication purpose.
+Apply the shared [graph visual policy](references/bundled/epic-spec-workflow/references/graph-visual-policy.md) to every graph-like output. Use Figma Design, LikeC4, or Archify and retain matching render-operation and artifact evidence. Include all produced or published visuals in the current step’s inventory and run `specflow validate-visuals <manifest.json> --json` before presentation. A missing renderer or invalid receipt blocks the visual output. Non-graph media keep their own communication purpose.

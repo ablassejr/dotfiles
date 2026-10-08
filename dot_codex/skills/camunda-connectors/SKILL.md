@@ -12,6 +12,11 @@ description: |
 
 # Camunda Connectors
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Browse and configure pre-built Camunda connectors using element templates. Apply connector configurations to BPMN service tasks and event elements for integrations with external systems (REST APIs, Slack, Kafka, AWS, email, databases, etc.).
 
 ## Prerequisites

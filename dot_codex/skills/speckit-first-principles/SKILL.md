@@ -5,7 +5,12 @@ description: Expand or audit an approved First-Principles Basis into the first-p
 
 # Spec Kit first principles
 
-For human interactions and team outputs, follow [review and artifact design](../epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
+For human interactions and team outputs, follow [review and artifact design](references/bundled/epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
 
 Invoke `$first-principles-specification` only after `$first-principles-intake` has produced an explicitly approved basis and `$basis-context-reconciler` has classified the gathered context. Keep the semantic expansion in the active Spec Kit feature workspace. This adapter does not establish the pre-context basis and must not expose repository or historical context to that intake gate.
 

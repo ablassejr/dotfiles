@@ -1,0 +1,1176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://specflow.local/schemas/linear-plan.schema.json",
+  "title": "Specflow milestone-first Linear plan",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "kind",
+    "spec_slug",
+    "repository_baseline",
+    "semantic_release",
+    "carrier_project",
+    "milestones",
+    "issues",
+    "relations"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 4
+    },
+    "kind": {
+      "const": "specflow.linear-plan"
+    },
+    "spec_slug": {
+      "$ref": "#/$defs/string"
+    },
+    "repository_baseline": {
+      "$ref": "#/$defs/string"
+    },
+    "semantic_release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "notion_page_id",
+        "revision",
+        "content_hash",
+        "basis_id",
+        "basis_version"
+      ],
+      "properties": {
+        "notion_page_id": {
+          "$ref": "#/$defs/string"
+        },
+        "revision": {
+          "$ref": "#/$defs/string"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/string"
+        },
+        "basis_id": {
+          "$ref": "#/$defs/string"
+        },
+        "basis_version": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "carrier_project": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "id"
+          ],
+          "properties": {
+            "mode": {
+              "const": "existing"
+            },
+            "id": {
+              "$ref": "#/$defs/string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "name",
+            "minimal",
+            "approval"
+          ],
+          "properties": {
+            "mode": {
+              "const": "create"
+            },
+            "name": {
+              "$ref": "#/$defs/string"
+            },
+            "minimal": {
+              "const": true
+            },
+            "approval": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "status",
+                "approved_by",
+                "approved_at"
+              ],
+              "properties": {
+                "status": {
+                  "const": "approved"
+                },
+                "approved_by": {
+                  "$ref": "#/$defs/string"
+                },
+                "approved_at": {
+                  "$ref": "#/$defs/string"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "milestones": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "name",
+          "owner",
+          "responsibility_domain",
+          "semantic_ids",
+          "code_mass_ledger"
+        ],
+        "properties": {
+          "key": {
+            "$ref": "#/$defs/string"
+          },
+          "name": {
+            "$ref": "#/$defs/string"
+          },
+          "owner": {
+            "$ref": "#/$defs/string"
+          },
+          "responsibility_domain": {
+            "$ref": "#/$defs/string"
+          },
+          "semantic_ids": {
+            "$ref": "#/$defs/nonemptyStringList"
+          },
+          "code_mass_ledger": {
+            "$ref": "#/$defs/codeMassLedger"
+          }
+        },
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "project"
+              ]
+            },
+            {
+              "required": [
+                "project_id"
+              ]
+            },
+            {
+              "required": [
+                "projectId"
+              ]
+            },
+            {
+              "required": [
+                "projects"
+              ]
+            }
+          ]
+        }
+      },
+      "maxItems": 3
+    },
+    "issues": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "title",
+          "body",
+          "milestone",
+          "owner",
+          "semantic_ids",
+          "code_mass_contract",
+          "pull_request",
+          "work_unit"
+        ],
+        "properties": {
+          "key": {
+            "$ref": "#/$defs/string"
+          },
+          "title": {
+            "$ref": "#/$defs/string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "milestone": {
+            "$ref": "#/$defs/string"
+          },
+          "owner": {
+            "$ref": "#/$defs/string"
+          },
+          "semantic_ids": {
+            "$ref": "#/$defs/nonemptyStringList"
+          },
+          "code_mass_contract": {
+            "$ref": "#/$defs/codeMassContract"
+          },
+          "pull_request": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "count"
+            ],
+            "properties": {
+              "count": {
+                "const": 1
+              }
+            }
+          },
+          "work_unit": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "outcome",
+              "verification",
+              "size"
+            ],
+            "properties": {
+              "outcome": {
+                "$ref": "#/$defs/string"
+              },
+              "verification": {
+                "$ref": "#/$defs/string"
+              },
+              "size": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "assessment",
+                  "rationale"
+                ],
+                "properties": {
+                  "assessment": {
+                    "enum": [
+                      "bite_sized",
+                      "needs_split",
+                      "unknown"
+                    ]
+                  },
+                  "rationale": {
+                    "$ref": "#/$defs/string"
+                  }
+                }
+              }
+            }
+          },
+          "design_proposal_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "comments": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "document_attachments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "title",
+                "url"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "native_associations": {
+            "type": "array",
+            "description": "Actual native provider associations, verified from the selected provider records. Documents do not belong here.",
+            "items": {
+              "type": "object",
+              "required": [
+                "kind",
+                "url"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "issue",
+                    "pull_request",
+                    "commit",
+                    "diff",
+                    "ci"
+                  ]
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^https://"
+                }
+              }
+            }
+          }
+        },
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "project"
+              ]
+            },
+            {
+              "required": [
+                "project_id"
+              ]
+            },
+            {
+              "required": [
+                "projectId"
+              ]
+            },
+            {
+              "required": [
+                "projects"
+              ]
+            },
+            {
+              "required": [
+                "dependencies"
+              ]
+            },
+            {
+              "required": [
+                "blocked_by"
+              ]
+            },
+            {
+              "required": [
+                "blocks"
+              ]
+            },
+            {
+              "required": [
+                "related_to"
+              ]
+            },
+            {
+              "required": [
+                "duplicate_of"
+              ]
+            },
+            {
+              "required": [
+                "relations"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "source",
+          "target"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "blocks",
+              "duplicate",
+              "related",
+              "similar"
+            ]
+          },
+          "source": {
+            "$ref": "#/$defs/string"
+          },
+          "target": {
+            "$ref": "#/$defs/string"
+          }
+        }
+      }
+    },
+    "existing_issue_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "id",
+          "operation"
+        ],
+        "properties": {
+          "key": {
+            "$ref": "#/$defs/string"
+          },
+          "id": {
+            "$ref": "#/$defs/string"
+          },
+          "operation": {
+            "const": "reference_only"
+          },
+          "scope": {
+            "$ref": "#/$defs/string"
+          }
+        }
+      }
+    }
+  },
+  "not": {
+    "required": [
+      "projects"
+    ]
+  },
+  "$defs": {
+    "string": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "stringList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/string"
+      }
+    },
+    "nonemptyStringList": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/stringList"
+        },
+        {
+          "minItems": 1
+        }
+      ]
+    },
+    "massPair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "added",
+        "removed"
+      ],
+      "properties": {
+        "added": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "removed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "net": {
+          "type": "integer"
+        }
+      }
+    },
+    "massMeasurements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "production",
+        "tests",
+        "combined"
+      ],
+      "properties": {
+        "production": {
+          "$ref": "#/$defs/massPair"
+        },
+        "tests": {
+          "$ref": "#/$defs/massPair"
+        },
+        "combined": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "added",
+            "removed",
+            "ratio",
+            "net"
+          ],
+          "properties": {
+            "added": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "removed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ratio": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "net": {
+              "type": "integer"
+            },
+            "base_sloc": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "head_sloc": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "deficit": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "required_removals": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "netAdditionException": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "exception_id",
+        "category",
+        "reason",
+        "why_no_safe_deletion_exists",
+        "why_the_addition_is_minimal",
+        "temporary",
+        "expiration_condition",
+        "compensating_work",
+        "human_approver",
+        "review_date"
+      ],
+      "properties": {
+        "kind": {
+          "const": "NET_ADDITION_EXCEPTION"
+        },
+        "exception_id": {
+          "$ref": "#/$defs/string"
+        },
+        "category": {
+          "enum": [
+            "New externally required behavior",
+            "Security or compliance requirements",
+            "Compatibility shims that cannot yet replace an old path",
+            "Test additions needed to expose previously unverified behavior",
+            "Migration scaffolding",
+            "New protocol or platform obligations",
+            "Emergency correctness fixes"
+          ]
+        },
+        "reason": {
+          "$ref": "#/$defs/string"
+        },
+        "why_no_safe_deletion_exists": {
+          "$ref": "#/$defs/string"
+        },
+        "why_the_addition_is_minimal": {
+          "$ref": "#/$defs/string"
+        },
+        "temporary": {
+          "type": "boolean"
+        },
+        "expiration_condition": {
+          "$ref": "#/$defs/stringList"
+        },
+        "compensating_work": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "linear_issue",
+                "milestone"
+              ],
+              "properties": {
+                "linear_issue": {
+                  "$ref": "#/$defs/string"
+                },
+                "milestone": {
+                  "$ref": "#/$defs/string"
+                }
+              }
+            }
+          ]
+        },
+        "human_approver": {
+          "$ref": "#/$defs/string"
+        },
+        "review_date": {
+          "$ref": "#/$defs/string"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "temporary": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "expiration_condition": {
+                "minItems": 1
+              },
+              "compensating_work": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "netAdditionGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "validation",
+        "verification",
+        "approvals",
+        "exception"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "NOT_REQUIRED",
+            "REQUIRED",
+            "APPROVED",
+            "REJECTED"
+          ]
+        },
+        "validation": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "verification": {
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "approvals": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "exception": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/netAdditionException"
+            }
+          ]
+        }
+      }
+    },
+    "milestoneEscrow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "compensating_issue",
+        "milestone",
+        "responsibility_domain"
+      ],
+      "properties": {
+        "status": {
+          "const": "ACTIVE"
+        },
+        "compensating_issue": {
+          "$ref": "#/$defs/string"
+        },
+        "milestone": {
+          "$ref": "#/$defs/string"
+        },
+        "responsibility_domain": {
+          "$ref": "#/$defs/string"
+        }
+      }
+    },
+    "codeMassContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "irreducible_new_behavior",
+        "existing_mechanisms",
+        "estimated",
+        "reported",
+        "removal_locality",
+        "alternatives_considered",
+        "net_addition_gate",
+        "milestone_escrow",
+        "lifecycle_state"
+      ],
+      "properties": {
+        "irreducible_new_behavior": {
+          "$ref": "#/$defs/nonemptyStringList"
+        },
+        "existing_mechanisms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "target",
+              "responsibility",
+              "why_unnecessary",
+              "grounding_record",
+              "deletion_safety"
+            ],
+            "properties": {
+              "target": {
+                "$ref": "#/$defs/string"
+              },
+              "responsibility": {
+                "$ref": "#/$defs/string"
+              },
+              "why_unnecessary": {
+                "$ref": "#/$defs/string"
+              },
+              "grounding_record": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "deletion_safety": {
+                "enum": [
+                  "SAFE",
+                  "SAFE_WITH_REPLACEMENT",
+                  "REQUIRES_GROUNDING",
+                  "BLOCKED_BY_CURRENT_CONSTRAINT",
+                  "BEHAVIOR_STILL_REQUIRED",
+                  "UNKNOWN"
+                ]
+              }
+            }
+          }
+        },
+        "estimated": {
+          "$ref": "#/$defs/estimatedMeasurements"
+        },
+        "reported": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/massMeasurements"
+            }
+          ]
+        },
+        "removal_locality": {
+          "$ref": "#/$defs/string"
+        },
+        "alternatives_considered": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "delete_or_configuration",
+            "reuse_existing",
+            "additive"
+          ],
+          "properties": {
+            "delete_or_configuration": {
+              "$ref": "#/$defs/string"
+            },
+            "reuse_existing": {
+              "$ref": "#/$defs/string"
+            },
+            "additive": {
+              "$ref": "#/$defs/string"
+            }
+          }
+        },
+        "net_addition_gate": {
+          "$ref": "#/$defs/netAdditionGate"
+        },
+        "milestone_escrow": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/milestoneEscrow"
+            }
+          ]
+        },
+        "lifecycle_state": {
+          "enum": [
+            "code-mass:unassessed",
+            "code-mass:targeted",
+            "code-mass:pass",
+            "code-mass:deficit",
+            "net-addition:review-required",
+            "net-addition:approved-exception",
+            "deletion:grounding-required"
+          ]
+        }
+      }
+    },
+    "codeMassLedger": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "baseline_commit",
+        "issues",
+        "totals"
+      ],
+      "properties": {
+        "baseline_commit": {
+          "$ref": "#/$defs/string"
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "issue",
+              "added",
+              "removed",
+              "ratio",
+              "deficit",
+              "surplus"
+            ],
+            "properties": {
+              "issue": {
+                "$ref": "#/$defs/string"
+              },
+              "added": {
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "UNKNOWN"
+                  }
+                ]
+              },
+              "removed": {
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "UNKNOWN"
+                  }
+                ]
+              },
+              "ratio": {
+                "oneOf": [
+                  {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "minimum": 0
+                  },
+                  {
+                    "const": "UNKNOWN"
+                  }
+                ]
+              },
+              "deficit": {
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "UNKNOWN"
+                  }
+                ]
+              },
+              "surplus": {
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "UNKNOWN"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "totals": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "added",
+            "removed",
+            "ratio",
+            "net",
+            "status",
+            "project_exception"
+          ],
+          "properties": {
+            "added": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "const": "UNKNOWN"
+                }
+              ]
+            },
+            "removed": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "const": "UNKNOWN"
+                }
+              ]
+            },
+            "ratio": {
+              "oneOf": [
+                {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0
+                },
+                {
+                  "const": "UNKNOWN"
+                }
+              ]
+            },
+            "net": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "const": "UNKNOWN"
+                }
+              ]
+            },
+            "status": {
+              "enum": [
+                "PASS",
+                "DEFICIT",
+                "UNKNOWN"
+              ]
+            },
+            "project_exception": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          }
+        }
+      }
+    },
+    "estimatedPair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "added",
+        "removed"
+      ],
+      "properties": {
+        "added": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "const": "UNKNOWN"
+            }
+          ]
+        },
+        "removed": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "const": "UNKNOWN"
+            }
+          ]
+        },
+        "net": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "const": "UNKNOWN"
+            }
+          ]
+        }
+      }
+    },
+    "estimatedMeasurements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "production",
+        "tests",
+        "combined"
+      ],
+      "properties": {
+        "production": {
+          "$ref": "#/$defs/estimatedPair"
+        },
+        "tests": {
+          "$ref": "#/$defs/estimatedPair"
+        },
+        "combined": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "added",
+            "removed",
+            "ratio",
+            "net"
+          ],
+          "properties": {
+            "added": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "const": "UNKNOWN"
+                }
+              ]
+            },
+            "removed": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "const": "UNKNOWN"
+                }
+              ]
+            },
+            "ratio": {
+              "oneOf": [
+                {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0
+                },
+                {
+                  "const": "UNKNOWN"
+                }
+              ]
+            },
+            "net": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "const": "UNKNOWN"
+                }
+              ]
+            },
+            "base_sloc": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "const": "UNKNOWN"
+                }
+              ]
+            },
+            "head_sloc": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "const": "UNKNOWN"
+                }
+              ]
+            },
+            "deficit": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "const": "UNKNOWN"
+                }
+              ]
+            },
+            "required_removals": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "const": "UNKNOWN"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

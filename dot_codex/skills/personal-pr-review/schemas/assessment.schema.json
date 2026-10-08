@@ -19,15 +19,19 @@
         "model": {
           "type": "string",
           "enum": [
+            "current_session",
+            "hosted",
             "local",
             "unverified"
-          ]
+          ],
+          "description": "Informational model context; model location is not a completion requirement."
         },
         "isolation_evidence_id": {
           "type": [
             "string",
             "null"
-          ]
+          ],
+          "description": "Optional receipt for isolation actually established; null is supported."
         }
       },
       "required": [

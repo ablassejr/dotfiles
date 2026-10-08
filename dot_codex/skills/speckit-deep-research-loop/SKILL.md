@@ -5,7 +5,12 @@ description: Run the deep-research loop for a Spec Kit epic by coordinating Code
 
 # Spec Kit deep research loop
 
-For human interactions and team outputs, follow [review and artifact design](../epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
+For human interactions and team outputs, follow [review and artifact design](references/bundled/epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
 
 Invoke `$specification-research-loop`. When implementation structure is in scope and the repository owns a CodeGraph index, locate the structural surface there first. Continue with `claude-context`, retrieve exact-version behavior through `docs-mcp-server`, and use Exa for unresolved external facts or alternatives.
 

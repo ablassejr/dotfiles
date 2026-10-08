@@ -1,1 +1,3 @@
 Skill is valid!
+JSON parsing: 6 files valid.
+Internal Markdown links: 15 checked, 0 broken.

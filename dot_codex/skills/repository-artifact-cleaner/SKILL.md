@@ -5,7 +5,12 @@ description: Remove only provenance-owned temporary framework artifacts after su
 
 # Repository artifact cleaner
 
-For human interactions and team outputs, follow [review and artifact design](../epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
+For human interactions and team outputs, follow [review and artifact design](references/bundled/epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
 
 Resume `$specification-reconciliation` at its cleanup stage only after as-built publication and required approvals succeed. Read the epic provenance manifest, current repository status, shared Spec Kit usage, preserved-artifact decisions, and repository allowlist.
 

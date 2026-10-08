@@ -12,6 +12,11 @@ description: |
 
 # Camunda DMN
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Author executable DMN 1.3 decisions for Camunda 8.8+. A `.dmn` file holds one Decision Requirements Diagram with one or more decisions; each decision is either a decision table or a literal expression. A BPMN business rule task references a decision by ID and gets the result back as a process variable.
 
 ## Cross-References

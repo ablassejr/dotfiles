@@ -5,6 +5,11 @@ description: Use when starting non-trivial agent work that needs codebase contex
 
 # General Workflow
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Use this as the outer workflow for substantial Codex or Claude Code tasks. It
 coordinates local documentation context, direct codebase retrieval, external
 documentation, visual review, and first-principles alignment before
@@ -145,8 +150,8 @@ answer is clearly no, proceed and keep momentum.
 
 ## Issue writing
 
-Whenever this workflow creates or edits issue prose, apply [the shared issue-writing contract](../issue-writing/SKILL.md). Each issue must stand on its own; its only optional document reference is its actual design proposal. Put supporting source documents and technical records in the proposal or internal workflow evidence. Validate the prepared content and provider readback, and repeat the automatic readability review after material edits. This rule creates no new issue, publication authority, or human approval.
+Whenever this workflow creates or edits issue prose, apply [the shared issue-writing contract](references/bundled/issue-writing/SKILL.md). Each issue must stand on its own; its only optional document reference is its actual design proposal. Put supporting source documents and technical records in the proposal or internal workflow evidence. Validate the prepared content and provider readback, and repeat the automatic readability review after material edits. This rule creates no new issue, publication authority, or human approval.
 
 ## Pull request writing
 
-When this workflow authors PR content, apply [the shared PR-writing contract](../pull-request-writing/SKILL.md). The description explains the change and verification on its own, and its sole optional document reference is the design proposal. Validate prepared content and provider readback automatically within existing publication authority.
+When this workflow authors PR content, apply [the shared PR-writing contract](references/bundled/pull-request-writing/SKILL.md). The description explains the change and verification on its own, and its sole optional document reference is the design proposal. Validate prepared content and provider readback automatically within existing publication authority.

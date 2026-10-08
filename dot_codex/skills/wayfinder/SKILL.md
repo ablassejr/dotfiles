@@ -6,6 +6,11 @@ disable-model-invocation: true
 
 A loose idea has arrived, too big for one agent session, and wrapped in fog: the way from here to the **destination** isn't visible yet. Wayfinding is about finding that way, not charging at the destination. This skill charts the way as a **shared map** on the repo's issue tracker, then works its **decision tickets** (questions whose resolution is a decision, not slices of a build to execute) one at a time until the route is clear.
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 The destination varies per effort, and naming it is the first act of charting: it shapes every ticket. It might be a spec to hand off and iterate on, a decision to lock before planning starts, or a change made in place like a data-structure migration. The map is domain-agnostic: engineering work, course content, whatever fits the shape.
 
 ## Plan, don't do
@@ -129,8 +134,8 @@ The user may run unblocked tickets in parallel, so expect other sessions to be e
 
 ## Issue writing
 
-Whenever this workflow creates or edits issue prose, apply [the shared issue-writing contract](../issue-writing/SKILL.md). Each issue must stand on its own; its only optional document reference is its actual design proposal. Put supporting source documents and technical records in the proposal or internal workflow evidence. Validate the prepared content and provider readback, and repeat the automatic readability review after material edits. This rule creates no new issue, publication authority, or human approval.
+Whenever this workflow creates or edits issue prose, apply [the shared issue-writing contract](references/bundled/issue-writing/SKILL.md). Each issue must stand on its own; its only optional document reference is its actual design proposal. Put supporting source documents and technical records in the proposal or internal workflow evidence. Validate the prepared content and provider readback, and repeat the automatic readability review after material edits. This rule creates no new issue, publication authority, or human approval.
 
 ## Pull request writing
 
-When this workflow authors PR content, apply [the shared PR-writing contract](../pull-request-writing/SKILL.md). The description explains the change and verification on its own, and its sole optional document reference is the design proposal. Validate prepared content and provider readback automatically within existing publication authority.
+When this workflow authors PR content, apply [the shared PR-writing contract](references/bundled/pull-request-writing/SKILL.md). The description explains the change and verification on its own, and its sole optional document reference is the design proposal. Validate prepared content and provider readback automatically within existing publication authority.

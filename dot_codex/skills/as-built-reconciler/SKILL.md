@@ -5,7 +5,12 @@ description: Reconcile dependency-ordered merged behavior into the approved spec
 
 # As-built reconciler
 
-For human interactions and team outputs, follow [review and artifact design](../epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
+For human interactions and team outputs, follow [review and artifact design](references/bundled/epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
 
 Invoke `$specification-reconciliation` and stop before artifact deletion. Resolve the approved specification revision, delivery program, merged pull requests, repository baseline and final revision, Code Mass Opportunity Maps, deletion Grounding Packets, issue contracts and audit reports, milestone ledgers, view registry, ADRs, and provenance manifest.
 
@@ -17,4 +22,4 @@ Update the selected authoritative documentation and affected LikeC4, Archify, or
 
 ## Graph visual gate
 
-Apply the shared [graph visual policy](../epic-spec-workflow/references/graph-visual-policy.md) to every graph-like output. Use Figma Design, LikeC4, or Archify and retain matching render-operation and artifact evidence. Include all produced or published visuals in the current step’s inventory and run `specflow validate-visuals <manifest.json> --json` before presentation. A missing renderer or invalid receipt blocks the visual output. Non-graph media keep their own communication purpose.
+Apply the shared [graph visual policy](references/bundled/epic-spec-workflow/references/graph-visual-policy.md) to every graph-like output. Use Figma Design, LikeC4, or Archify and retain matching render-operation and artifact evidence. Include all produced or published visuals in the current step’s inventory and run `specflow validate-visuals <manifest.json> --json` before presentation. A missing renderer or invalid receipt blocks the visual output. Non-graph media keep their own communication purpose.

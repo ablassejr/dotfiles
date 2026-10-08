@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "skill": "tldraw-offline",
+  "tools": [
+    {
+      "id": "curl",
+      "command": "curl",
+      "kind": "brew",
+      "package": "curl",
+      "purpose": "Retrieve documented HTTP resources",
+      "documentation": "https://formulae.brew.sh/formula/curl",
+      "required": true
+    },
+    {
+      "id": "jq",
+      "command": "jq",
+      "kind": "brew",
+      "package": "jq",
+      "purpose": "Process API JSON",
+      "documentation": "https://formulae.brew.sh/formula/jq",
+      "required": true
+    },
+    {
+      "id": "tldraw-desktop",
+      "kind": "application",
+      "app_name": "tldraw.app",
+      "purpose": "User-supplied tldraw desktop application serving the local canvas API",
+      "documentation": "https://www.tldraw.com/",
+      "required": true
+    }
+  ],
+  "external_requirements": []
+}

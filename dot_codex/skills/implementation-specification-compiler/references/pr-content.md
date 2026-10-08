@@ -1,6 +1,6 @@
 # Self-contained pull request content
 
-Every workflow uses [pull-request-writing](../../pull-request-writing/SKILL.md). A PR explains its problem, resulting behavior, review-relevant implementation, and actual verification in its own description. The design proposal is its sole optional document reference. The issue-content command retains its separate contract.
+Every workflow uses [pull-request-writing](bundled/pull-request-writing/SKILL.md). A PR explains its problem, resulting behavior, review-relevant implementation, and actual verification in its own description. The design proposal is its sole optional document reference. The issue-content command retains its separate contract.
 
 ## Validation
 

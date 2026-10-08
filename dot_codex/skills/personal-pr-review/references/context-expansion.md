@@ -10,11 +10,11 @@ The helper extracts Python function/class boundaries through the Python AST and 
 
 ## History as an answer to a question
 
-When the reviewer needs to understand why a mechanism exists, begin with a specific claim. Inspect local blame for surviving lines, local log and pickaxe searches for additions/removals, and the relevant commit's message and diff. Follow locally available ADRs, tests, comments, and supplied specifications. Missing remote discussions remain missing.
+When the reviewer needs to understand why a mechanism exists, begin with a specific claim. Inspect local blame for surviving lines, local log and pickaxe searches for additions/removals, and the relevant commit's message and diff. Follow locally available ADRs, tests, comments, and supplied specifications. Read-only remote discussion or documentation may supplement local history when relevant and permitted by the current session. Record its source and distinguish it from pinned local evidence. Information not retrieved remains unknown.
 
 Use EXPLICIT when a local source directly states the reason; CORROBORATED when independent local evidence supports it; INFERRED when the explanation follows from chronology or structure; CONFLICTED when sources disagree; and UNKNOWN when the reason cannot be established. These labels describe rationale provenance separately from finding confidence. A comment can explain an implementation but cannot approve a requirement or decide a tradeoff.
 
-Use a documented, sandboxed local Git command for history when needed. Do not retrieve all historical commits merely to make the packet look complete. Check whether a cached remote-tracking ref or shallow history is enough to answer the question. Local refs carry no claim about the provider's current state.
+Use a documented, permitted local Git command for history when needed. Do not retrieve all historical commits merely to make the packet look complete. Check whether a cached remote-tracking ref or shallow history is enough to answer the question. Local refs carry no claim about the provider's current state.
 
 ## Intent and depth
 

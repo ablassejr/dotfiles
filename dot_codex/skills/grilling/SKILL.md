@@ -3,7 +3,12 @@ name: grilling
 description: Stress-test a plan or idea when the user requests an interview; within the epic framework, resolve only remaining material human choices after first principles.
 ---
 
-For human interactions and team outputs, follow [review and artifact design](../epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
+For human interactions and team outputs, follow [review and artifact design](references/bundled/epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
+
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
 
 When the user explicitly requests a broad stress-test, explore the material assumptions within that request. Within the epic framework after first principles, use a focused decision conversation and stop when the current consequential choice is settled. Do not treat the skill name as permission for relentless questioning or a fresh interview at every stage. Map this as a **design tree**: every material decision branches into the decisions that hang off it. When the skill runs inside the epic framework, begin from the approved First-Principles Basis, reconciled current state, provisional frame, and supported requirements rather than treating every imaginable design branch as relevant.
 

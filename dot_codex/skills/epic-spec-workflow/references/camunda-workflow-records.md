@@ -105,7 +105,7 @@ After writing the package, read it back, verify its contents and hash, and publi
 
 ## Supervisor proposal evidence
 
-Retain the scope’s Linear supervisor design document reference, source binding, published revision/hash, matching readback, visual references, and existing final approval response with the durable workflow evidence. The runtime shape is [design proposal schema v1](../../implementation-specification-compiler/scripts/specflow_runtime/design-proposal.schema.json). The document explains its source; it does not become a second semantic or dependency authority.
+Retain the scope’s Linear supervisor design document reference, source binding, published revision/hash, matching readback, visual references, and existing final approval response with the durable workflow evidence. The runtime shape is [design proposal schema v1](bundled/implementation-specification-compiler/scripts/specflow_runtime/design-proposal.schema.json). The document explains its source; it does not become a second semantic or dependency authority.
 
 ## Graph renderer enforcement
 

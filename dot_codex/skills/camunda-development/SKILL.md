@@ -8,6 +8,11 @@ description: |
 
 # Camunda Development
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Decide between out-of-the-box connectors, custom connector templates, custom Java connectors via the Connectors SDK, and job workers before writing any integration code for Camunda 8.8+. This skill is a thin orientation layer — every path it identifies has its own focused build skill.
 
 ## Cross-References

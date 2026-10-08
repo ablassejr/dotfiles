@@ -12,6 +12,11 @@ description: |
 
 # Camunda AI Agent
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Build agentic AI processes in Camunda 8.8+: an LLM driver (the AI Agent connector, **Sub-process variant**) applied to an ad-hoc subprocess with tools modeled as BPMN activities. Covers shape, prompts, tool modeling with `fromAi()`, sub-flow tools, and multi-turn agent context.
 
 The older **Task variant** (AI Agent connector on a service task paired with an external multi-instance ad-hoc subprocess and explicit feedback loop) is documented in [references/ai-agent-task.md](references/ai-agent-task.md) for the niche cases where you need to audit or intercept every tool call. The Sub-process variant is the recommended choice for everything else, and is what the rest of this skill teaches.

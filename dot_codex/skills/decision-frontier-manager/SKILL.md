@@ -5,11 +5,16 @@ description: Maintain the dependency graph of unresolved implementation decision
 
 # Decision frontier manager
 
-For human interactions and team outputs, follow [review and artifact design](../epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
+For human interactions and team outputs, follow [review and artifact design](references/bundled/epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
 
 Build a dependency graph from the approved basis, current-state map, reconciled constraint ledger, Code Mass Opportunity Map, and unresolved implementation choices. A decision is unblocked only when all of its prerequisite decisions and factual questions are resolved.
 
-Bind the selected decision and understanding response to the actual question revision and reviewed content under [workflow records](../epic-spec-workflow/references/workflow-records.md). If an existing engine governs the scope, also use its real user-task identity and accepted completion contract. Otherwise record the assessed explicit answer in the current scope's records without requiring a provider or fabricating process state. Helpers validate evidence; they do not create authority or approve an answer.
+Bind the selected decision and understanding response to the actual question revision and reviewed content under [workflow records](references/bundled/epic-spec-workflow/references/workflow-records.md). If an existing engine governs the scope, also use its real user-task identity and accepted completion contract. Otherwise record the assessed explicit answer in the current scope's records without requiring a provider or fabricating process state. Helpers validate evidence; they do not create authority or approve an answer.
 
 Before selecting a question, remove choices already settled by the approved basis or accepted decisions, resolve accessible facts, and handle routine design details within that authority. Keep candidates only when a human answer can materially change intended behavior, scope, priorities, or accepted risk. When none remain, return the completed frontier without prompting. Otherwise select one material question from the unblocked frontier. Prefer a question with greater downstream impact, lower reversibility, higher uncertainty, and more dependent decisions after honoring prerequisite order. Remove branches that cannot change the approved outcome. Do not batch the frontier and do not ask a question whose answer depends on another unresolved question.
 
@@ -23,6 +28,6 @@ python3 scripts/validate_decision_question.py <decision-question.json> --json
 
 After the named human acts, pass the question and action record through `scripts/advance_decision.py`. An answer first requires assessment. A clean assessment or explicit disposition of its concerns records one decision and requires frontier recomputation. `ground_me` suspends the same decision without resolving it or recomputing the frontier. `question_invalidated` removes the false premise and requires recomputation.
 
-An answer does not enter the graph until `$human-decision-loop` assesses it against the approved basis, evidence, and accepted decisions, and resolves any material follow-up. After a recorded answer, recompute the whole affected frontier. After Ground Me, apply an explicit combined answer only through the verified [approval economy](../epic-spec-workflow/references/approval-economy.md) contract. Without a matching answer, keep the decision unresolved and replace only its evidence, wording, or options. If Ground Me proves the premise invalid, mark `QUESTION_INVALIDATED`, update the context model, remove the invalid node and dependent assumptions, and recompute the graph before choosing a new root question.
+An answer does not enter the graph until `$human-decision-loop` assesses it against the approved basis, evidence, and accepted decisions, and resolves any material follow-up. After a recorded answer, recompute the whole affected frontier. After Ground Me, apply an explicit combined answer only through the verified [approval economy](references/bundled/epic-spec-workflow/references/approval-economy.md) contract. Without a matching answer, keep the decision unresolved and replace only its evidence, wording, or options. If Ground Me proves the premise invalid, mark `QUESTION_INVALIDATED`, update the context model, remove the invalid node and dependent assumptions, and recompute the graph before choosing a new root question.
 
 The frontier is complete only when every material decision is resolved or explicitly deferred by the named human and no consequential branch remains silently assumed.

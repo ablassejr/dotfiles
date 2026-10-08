@@ -13,6 +13,11 @@ metadata:
 
 # Docs Search
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Search the local Grounded Docs index for library documentation. These commands
 return structured data (JSON by default in non-interactive sessions) and never
 modify the index.

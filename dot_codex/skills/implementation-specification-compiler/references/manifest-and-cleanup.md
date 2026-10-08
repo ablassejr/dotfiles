@@ -1,6 +1,6 @@
 # Manifest and cleanup contract
 
-This reference describes the explicitly selected Linear/Notion/Camunda automation profile. Apply its provider-specific schemas, fixed staffing policy, and runtime gates only when that setup governs the current project. It does not select a destination for another workspace. See [workspace and destinations](../../epic-spec-workflow/references/workspace-and-destinations.md) for the portable workflow and actual adapter limits.
+This reference describes the explicitly selected Linear/Notion/Camunda automation profile. Apply its provider-specific schemas, fixed staffing policy, and runtime gates only when that setup governs the current project. It does not select a destination for another workspace. See [workspace and destinations](bundled/epic-spec-workflow/references/workspace-and-destinations.md) for the portable workflow and actual adapter limits.
 
 ## Local workspace
 
@@ -98,6 +98,6 @@ When cleanup is approved, resolve every candidate against the repository before 
 
 ## Semantic orchestration and handoff
 
-The epic skill uses this semantic envelope with the Camunda-derived evidence snapshot defined in [workflow records](../../epic-spec-workflow/references/workflow-records.md). Camunda owns durable process position; the manifest retains references and recovery evidence. `validate-spec` validates its published local envelope and does not verify live engine position, adapter guarantees, approval, or freshness. `ready_for_compilation` is a local result and does not replace the compiler's live-source and immutable handoff checks.
+The epic skill uses this semantic envelope with the Camunda-derived evidence snapshot defined in [workflow records](bundled/epic-spec-workflow/references/workflow-records.md). Camunda owns durable process position; the manifest retains references and recovery evidence. `validate-spec` validates its published local envelope and does not verify live engine position, adapter guarantees, approval, or freshness. `ready_for_compilation` is a local result and does not replace the compiler's live-source and immutable handoff checks.
 
 Use `specflow init` only for a new workspace. An existing workflow resumes from its Camunda process instance and verifies the referenced manifest and receipts; it does not regenerate files or infer approval from a stage label. The durable manifest stays outside the product repository. Its external orchestration record is retained even when provenance-owned product-repository scratch files are removed.

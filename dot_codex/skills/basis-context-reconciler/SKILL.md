@@ -5,7 +5,12 @@ description: Compare an approved First-Principles Basis with a post-basis curren
 
 # Basis-to-current-state reconciler
 
-For human interactions and team outputs, follow [review and artifact design](../epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
+For human interactions and team outputs, follow [review and artifact design](references/bundled/epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
 
 Require the exact approved First-Principles Basis and a source-linked current-state map from `$post-basis-context-loader`. Compare them before forming implementation questions. Do not treat current behavior, a test, or an abstraction as a constraint merely because it exists.
 

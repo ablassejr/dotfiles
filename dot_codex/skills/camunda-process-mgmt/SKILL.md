@@ -12,6 +12,11 @@ description: |
 
 # Camunda Process Management
 
+## Self-contained utility setup
+
+Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
+
+
 Runtime operations for Camunda 8.8+ clusters via c8ctl: deploy resources, start instances, inspect state, resolve incidents, complete tasks, publish messages, cancel instances. Single skill for everything that happens *after* the model is written.
 
 ## Prerequisites

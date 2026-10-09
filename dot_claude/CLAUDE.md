@@ -16,6 +16,10 @@ Avoid confirmation bias at all costs. Challenge ideas when they are not supporte
 
 - Make a best effort to let the user see the output of long-running commands in real time, using whichever approach fits the command.
 
+## Repository Tooling
+
+- Run tests, linters, git hooks, and task runners through the repository's own tooling, such as pytest-testmon, lefthook, just, or the repo's task runner. Do not bypass that tooling by invoking the underlying tools directly, skipping hooks (for example with `--no-verify`), or disabling test selection.
+
 ## Repository Analysis and Search
 
 - For any repository or codebase task, invoke `claude-context` first to load relevant project context before taking investigative or implementation actions. Treat its output as context to verify, not as authoritative evidence.

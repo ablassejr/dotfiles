@@ -15,9 +15,17 @@ alias ce="chezmoi edit"
 alias ca="chezmoi apply"
 alias clr="clear"
 alias nvimp="NVIM_APPNAME=nvim-personal nvim"
+alias nvidep="NVIM_APPNAME=nvim-personal neovide"
 alias oc="opencode"
 alias tm="task-master"
 alias taskmaster="task-master"
 
 command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init bash)"
 command -v mise >/dev/null 2>&1 && eval "$(mise activate bash)"
+
+
+# Added by Antigravity CLI installer
+export PATH="/Users/Apple/.local/bin:$PATH"
+
+# added by Snowflake SnowflakeCLI installer v1.0
+export PATH=/Applications/SnowflakeCLI.app/Contents/MacOS/:$PATH

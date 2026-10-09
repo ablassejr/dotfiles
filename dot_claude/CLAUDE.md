@@ -12,6 +12,10 @@ Avoid confirmation bias at all costs. Challenge ideas when they are not supporte
 
 - When a dedicated tool can perform an action, prefer it over invoking Bash or Python for the same work. For example, use the Read tool to inspect files and the Edit tool to make targeted changes. This is guidance, not a prohibition; use Bash or Python when they are the clearer, safer, or more capable choice.
 
+## Long-Running Commands
+
+- Make a best effort to let the user see the output of long-running commands in real time, using whichever approach fits the command.
+
 ## Repository Analysis and Search
 
 - For any repository or codebase task, invoke `claude-context` first to load relevant project context before taking investigative or implementation actions. Treat its output as context to verify, not as authoritative evidence.

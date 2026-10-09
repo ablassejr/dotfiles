@@ -6,3 +6,79 @@ fi
 path() {
   realpath "$1" | pbcopy
 }
+
+if [[ -o interactive ]] && command -v ccswitch >/dev/null 2>&1; then
+  eval "$(ccswitch shell-init)"
+fi
+
+# Pants shell completion is expensive (boots the Pants daemon). Run on demand
+# from inside a Pants repo: `pants-init`.
+pants-init() {
+  emulate -L zsh
+  if ! command -v pants >/dev/null 2>&1; then
+    print -u2 "pants-init: pants not in PATH"
+    return 1
+  fi
+  local dir="$PWD"
+  while [[ "$dir" != "/" && ! -f "$dir/pants.toml" ]]; do
+    dir="${dir:h}"
+  done
+  if [[ ! -f "$dir/pants.toml" ]]; then
+    print -u2 "pants-init: no pants.toml above $PWD"
+    return 1
+  fi
+  local completion
+  completion="$(pants complete zsh </dev/null 2>/dev/null)" || {
+    print -u2 "pants-init: 'pants complete zsh' failed"
+    return 1
+  }
+  [[ -z "$completion" ]] && { print -u2 "pants-init: empty completion output"; return 1; }
+  autoload -Uz +X bashcompinit && bashcompinit
+  eval "$completion"
+}
+
+# pnpm
+export PNPM_HOME="/Users/Apple/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+# pnpm end
+export PATH="/Users/Apple/.local/share/mise/installs/node/20/bin:$PATH"
+
+
+# Added by Antigravity CLI installer
+export PATH="/Users/Apple/.local/bin:$PATH"
+
+# sentry
+fpath=("/Users/Apple/.local/share/zsh/site-functions" $fpath)
+#compdef just
+source <(JUST_COMPLETE=zsh just)
+if [ "$funcstack[1]" = "_just" ]; then
+  _clap_dynamic_completer_just "$@"
+fi
+
+# direnv — per-directory env (e.g. per-repo gh account). Keep last.
+if command -v direnv >/dev/null 2>&1; then
+  eval "$(direnv hook zsh)"
+fi
+
+# added by Snowflake SnowflakeCLI installer v1.0
+export PATH=/Applications/SnowflakeCLI.app/Contents/MacOS/:$PATH
+# CF CLI completions
+[[ -f "/Users/Apple/.config/cf/completions/_cf.zsh" ]] && source "/Users/Apple/.config/cf/completions/_cf.zsh"
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/Apple/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/Apple/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/Apple/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/Apple/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<

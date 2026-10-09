@@ -1,18 +1,22 @@
+# The following lines were added by Docker Desktop to add commands to your PATH.
+export PATH="$PATH:/Users/Apple/.docker/bin"
+# End of Docker Desktop section.
+
 # Shared POSIX-ish environment for shells that read ~/.profile.
 
 path_prepend() {
   [ -d "$1" ] || return 0
   case ":$PATH:" in
-    *":$1:"*) ;;
-    *) PATH="$1:$PATH" ;;
+  *":$1:"*) ;;
+  *) PATH="$1:$PATH" ;;
   esac
 }
 
 path_append() {
   [ -d "$1" ] || return 0
   case ":$PATH:" in
-    *":$1:"*) ;;
-    *) PATH="$PATH:$1" ;;
+  *":$1:"*) ;;
+  *) PATH="$PATH:$1" ;;
   esac
 }
 
@@ -22,10 +26,6 @@ path_prepend "$HOME/.cargo/bin"
 path_prepend "$HOME/.bun/bin"
 path_prepend "$HOME/.opencode/bin"
 path_prepend "$HOME/.local/share/mise/shims"
-# Intel Macs install Homebrew under /usr/local. Prepending it before the
-# Apple Silicon prefix leaves /opt/homebrew ahead of it when both exist.
-path_prepend "/usr/local/bin"
-path_prepend "/usr/local/sbin"
 path_prepend "/opt/homebrew/bin"
 path_prepend "/opt/homebrew/sbin"
 path_prepend "/opt/local/bin"
@@ -43,8 +43,10 @@ export PATH
 export EDITOR="${EDITOR:-nvim}"
 export VISUAL="${VISUAL:-$EDITOR}"
 
-if [ -d "/Volumes/Ventoy/docs-mcp-server" ]; then
-  export DOCS_MCP_STORE_PATH="/Volumes/Ventoy/docs-mcp-server"
-fi
-
 unset -f path_prepend path_append
+
+# Added by Antigravity CLI installer
+export PATH="/Users/Apple/.local/bin:$PATH"
+
+# added by Snowflake SnowflakeCLI installer v1.0
+export PATH=/Applications/SnowflakeCLI.app/Contents/MacOS/:$PATH

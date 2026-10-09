@@ -1,2 +1,13 @@
+# The following lines were added by Docker Desktop to add commands to your PATH.
+export PATH="$PATH:/Users/Apple/.docker/bin"
+# End of Docker Desktop section.
+
 [[ -r "$HOME/.profile" ]] && source "$HOME/.profile"
 [[ -r "$HOME/.bashrc" ]] && source "$HOME/.bashrc"
+
+
+# Added by Antigravity CLI installer
+export PATH="/Users/Apple/.local/bin:$PATH"
+
+# added by Snowflake SnowflakeCLI installer v1.0
+export PATH=/Applications/SnowflakeCLI.app/Contents/MacOS/:$PATH

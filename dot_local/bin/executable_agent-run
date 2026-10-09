@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+log="${AGENT_LOG:-/tmp/agent.log}"
+touch "$log"
+# One Ghostty window follows each log; later runs reuse it. AGENT_RUN_NO_WINDOW=1 skips it.
+if [ -z "${AGENT_RUN_NO_WINDOW:-}" ] && ! pgrep -f "tail -n 20 -F $log" > /dev/null; then
+  open -n -g -a Ghostty --args -e tail -n 20 -F "$log"
+fi
+printf '[%s] $%s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$(printf ' %q' "$@")" | tee -a "$log"
+script -q /dev/null "$@" < /dev/null | sed -u '1s/^\^D\x08\x08//; s/\r$//' | tee -a "$log"
+code=${PIPESTATUS[0]}
+printf '[exit %d]\n' "$code" | tee -a "$log"
+exit "$code"

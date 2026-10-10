@@ -82,7 +82,7 @@ When the human asks for grounding, suspend the affected choice and follow the fu
 
 Write the chosen behavior in complete, plain-English paragraphs from the initiating action through the observable outcome. Explain material alternatives, concurrency, failures, and recovery where they occur. Distinguish verified current behavior, the proposed design, assumptions, and unresolved choices throughout.
 
-Trace each requirement to an authorized goal or constraint and to observable verification. Preserve user wording where its exact meaning matters. Do not invent acceptance criteria, quality thresholds, rollout gates, retention periods, performance targets, mandatory roles, or exclusions because they are common in similar designs.
+Trace each requirement to an authorized goal or constraint and to observable verification. Preserve user wording where its exact meaning matters. Derive minimal behavioral acceptance criteria from those authorized goals and constraints. Do not invent additional requirements, quality thresholds, rollout gates, retention periods, performance targets, mandatory roles, or exclusions because they are common in similar designs.
 
 Describe affected public interfaces with realistic consumer-facing examples. For changed interfaces show before and after, defaults, compatibility, and meaningful failure behavior. Include data, lifecycle, permissions, migrations, deployment ordering, rollback, and observability to the extent the affected behavior requires them. Use the [applicability lens](references/design-and-verification.md#design-coverage) to find omissions, not to add scope.
 

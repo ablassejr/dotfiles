@@ -5,6 +5,8 @@ description: Compatibility entry point for issue-writing. Use the current projec
 
 # Issue writing compatibility entry point
 
+Use the bundled issue-writing contract to include minimal first-principles, behavior-driven acceptance criteria while keeping internal implementation choices out of issue prose.
+
 ## Self-contained utility setup
 
 Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.

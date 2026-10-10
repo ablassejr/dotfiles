@@ -11,7 +11,9 @@ Don't mock:
 
 - Your own classes/modules
 - Internal collaborators
-- Anything you control
+- Real affected components whose behavior the acceptance scenario must prove
+
+An external service may be operated by the same organization; ownership alone does not decide whether a fake is appropriate. Keep the real affected components in the tested path. When a fake replaces a true external provider, report the application contract it exercises and the live provider behavior it leaves unverified. For persistence acceptance, use a real disposable store when available and retrieve results through the public read interface.
 
 ## Designing for Mockability
 

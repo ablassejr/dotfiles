@@ -4,7 +4,7 @@ After a query with an unambiguous next step(Did you analyze the whole directory?
 
 ## User-Approved Requirements
 
-- Do not introduce acceptance criteria or restrictions that haven't been explicitly approved or stated by the user.
+- Derive minimal, behavior-driven acceptance criteria from the user's stated intent, first principles, and established contracts. Do not introduce new requirements, restrictions, or arbitrary thresholds that the user has not stated or approved.
 
 ## Repository Analysis and Search
 
@@ -48,8 +48,7 @@ When proposing, comparing, or explaining an idea, design, workflow, algorithm, a
 
 Test observable behavior and declared contracts only. Never test implementation details, including in regression tests. This applies to unit, regression, integration, contract, end-to-end, and every other kind of test.
 
-- Every feature must have at least one end-to-end test that exercises its observable behavior at the user or system boundary.
-- Every seam between components, services, or external systems must have at least one integration test that exercises the declared contract across that seam.
+- Use the smallest nonredundant suite of behavior-driven acceptance tests that verifies the stated functionality, fix, or other change. Map the minimal acceptance criteria to observable outcomes and reuse or adapt existing coverage before adding tests. Prefer end-to-end tests through the real user or system entry point when a usable environment can exercise the path. When end-to-end execution is unavailable or impractical, use integration tests through the closest stable public boundary with the real affected components; state the concrete limitation, the boundary exercised, and what remains unverified. Do not silently substitute unit tests or count mocked provider behavior as end-to-end proof. Add separate integration checks only for material contract gaps the selected suite does not exercise, not automatically for every seam. Cover intended success and meaningful in-scope failure or recovery cases without multiplying tests for internal paths or arbitrary coverage quotas.
 
 - Assert positive outcomes at the closest stable public or user-visible boundary, such as returned values, emitted events, rendered output, persisted state, external protocol behavior, or documented errors.
 - Do not assert private helpers or state, internal call order or counts, specific internal collaborators, incidental data structures, source text or code patterns, or any other mechanism that can change without changing behavior.

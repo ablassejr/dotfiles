@@ -1,111 +1,34 @@
-# Coverage strategy — set-cover, 100% target
+# Minimal behavioral coverage strategy
 
-A test segment is a slice of process execution between two points. The goal: pick the smallest set of segments whose combined coverage is every element and sequence flow in the BPMN. Plan first, author second. The CPT coverage report at `target/coverage-report/report.html` is the exit gate.
+Start with the business behavior the request requires and what a user or caller can observe. Existing BPMN nodes, branches, and decision rules help locate relevant paths; they do not independently create acceptance requirements.
 
-Two ideas drive the strategy:
+## Select acceptance scenarios
 
-1. **Predict each candidate's coverage statically** by walking the BPMN forward from the segment's root through its targeted branch to its rejoin or end event. Set membership is known before any test runs.
-2. **Greedy set-cover** picks the smallest non-redundant subset. No "author then dedupe" — redundancy never gets authored.
+Read the affected contract and existing tests. Map each minimal acceptance criterion to its triggering situation, action, expected result, and the E2E or integration boundary that can exercise it. Prefer the actual entry point and real affected components. If E2E cannot run, record why and select the closest integration path that still proves the intended outcome.
 
-## Step 1 — parse the BPMN
+Reuse a scenario when it already proves the criterion. Add or adapt a scenario only when a distinct required outcome or meaningful failure, recovery, or preservation case remains unverified. Several assertions can establish one coherent result. Do not split scenarios because they cross multiple services or nodes, and do not add a parallel integration suite for seams already exercised adequately.
 
-Extract:
+For example, if a request concerns approval routing, assert the publicly meaningful approval task and final decision for the required business situations. If it concerns sending a notification, process completion alone is insufficient: exercise the real worker and assert the notification contract at the receiving boundary. A manually completed notification job cannot establish that result.
 
-- `processId` from `<bpmn:process id="…">`.
-- All element IDs and types.
-- Every gateway's outgoing flows with their `conditionExpression`, plus the `default` flow.
-- Every `<bpmn:boundaryEvent>` (error, timer, escalation, message), the element it attaches to, and the error code / timer / message it catches.
-- Every `<zeebe:calledDecision decisionId="…">` and the rules inside the DMN file.
-- All end events — distinct ends produce distinct outcomes.
+A compact plan can state the criterion, scenario and expected outcome, existing or missing coverage, E2E/integration boundary, and environment limitation. Keep the plan in the existing verification record; do not duplicate the issue criteria in another standalone document.
 
-## Step 2 — enumerate candidate segments
+## Use structural coverage as diagnosis
 
-Build a candidate list. Walk the model:
+When available, inspect the CPT report at target/coverage-report/report.html. Check whether a missed branch or boundary suggests a missing required business scenario. Add a test only when that analysis identifies a meaningful gap. A 100% element or flow score does not establish correct outputs, worker execution, or external effects.
 
-| Candidate type | Root | End | Notes |
-|----------------|------|-----|-------|
-| Each gateway branch (incl. `default`) | The gateway | First rejoin or end event | One candidate per outgoing flow |
-| Each DMN rule (incl. `default`) | The business-rule task **or** a standalone `EVALUATE_DECISION` | First rejoin or end event (process-driven) / decision response (standalone) | Process-driven for rules whose inputs map 1:1 to a BPMN gateway; standalone (`EVALUATE_DECISION` + `ASSERT_DECISION`) when the input partition doesn't — isolates the failure cause. See **camunda-dmn** § testing-decisions. |
-| Each error boundary event | The activity it attaches to (use `THROW_BPMN_ERROR_FROM_JOB` with matching `errorCode`) | The boundary's outgoing path end event | |
-| Each timer / escalation / message boundary | The activity it attaches to | The boundary's outgoing path end event | Timer uses `INCREASE_TIME` past the cycle |
-| Each alternate end event | A gateway / branch combination that reaches it | The end event | |
-| Multi-instance loop | `CREATE_PROCESS_INSTANCE` with a collection input | First post-loop join | |
-| Each inner activity of an `<bpmn:adHocSubProcess>` | The AHSP itself | The activity completing | Inner activities have no inbound sequence flow — they look like dead code to a naive walker but are reachable via dynamic activation. See § Ad-hoc subprocess and tool activation below. |
-| Happy path (baseline) | Start event | Most common end event | Choose the most common branch at every gateway and DMN |
+When a user explicitly requests a structural coverage target, report it separately from behavioral acceptance. A short segment starting at an internal element may help isolate a routing defect, but leaves the skipped entry path unverified. Static path predictions are planning evidence; only executed results support runtime claims.
 
-For each candidate, **statically predict the visited set**: walk the BPMN forward from root through the chosen branch to the end condition, collecting every element id and sequence flow id along the way. Store as `(name, root, predicted_ids)`.
+Two scenarios that visit the same nodes may establish different output values or failure behavior. Remove a scenario only when the remaining suite still observes all its required outcomes, not merely when visited-element sets overlap. A passing scenario without an assertion of the intended outcome is not acceptance evidence.
 
-## Step 3 — greedy set-cover
+## Process harness mechanics
 
-```text
-universe   = {every element id} ∪ {every sequence flow id}
-chosen     = []
-covered    = ∅
-
-while covered != universe:
-    pick candidate c that maximizes |predicted_ids(c) − covered|
-    tie-break: shortest path (fewest predicted ids — cheapest to author)
-    chosen.append(c)
-    covered |= predicted_ids(c)
-```
-
-The happy-path candidate usually wins round 1 because it covers the spine. Subsequent rounds pick segments that uniquely add boundary events, alternate branches, or alternate rules.
-
-When two candidates share a root but exercise different failure modes (e.g. boundary fires vs. user task completes normally), greedy set-cover may pick only one. If diagnostic isolation matters more than minimality (you want failures to point at one cause), keep both — flag this as an explicit opt-out, not the default.
-
-## Step 4 — print the plan
-
-```text
-Segment plan — expense-approval
-
-  Selected by greedy set-cover (predicted 100% coverage):
-
-  1. MANAGER path — manager approves
-     root: Gateway_ApprovalLevel (MANAGER branch via amount=750)
-     covers (13): Start, Task_DetermineApproval, Gateway_ApprovalLevel,
-                  Flow_Manager, Task_ManagerReview, Gateway_ManagerDecision,
-                  Flow_ManagerApproved, Gateway_MergeBeforeNotify, Flow_ToNotify,
-                  Task_SendNotification, Flow_ToEnd, EndEvent_1, …
-  2. MANAGER path — manager rejects
-     root: Gateway_ManagerDecision (reject)
-     covers (+1): Flow_ManagerRejected
-  3. FINANCE path — manager and finance approve
-     root: Gateway_ApprovalLevel (FINANCE branch via amount=1500)
-     covers (+3): Task_ManagerReview_Finance, Flow_FinanceManagerApproved,
-                  Task_FinanceReview, Flow_FinanceReviewDone, …
-  4. FINANCE path — manager rejects
-     root: Gateway_FinanceManagerDecision (reject)
-     covers (+1): Flow_FinanceManagerRejected
-  5. AUTO path — notification fails, error boundary fires
-     root: Task_SendNotification (throw NOTIFICATION_FAILED), routes via amount=200
-     covers (+4): Flow_Auto, BoundaryEvent_NotifyError, Flow_ErrorEnd, EndEvent_Error
-  6. MANAGER path — reminder fires after 24h
-     root: Task_ManagerReview + INCREASE_TIME PT25H
-     covers (+5): BoundaryEvent_Reminder, Flow_Reminder, Task_SendReminder,
-                  Flow_ReminderEnd, EndEvent_Reminder
-  7. FINANCE path — reminder2 fires after 24h
-     root: Task_ManagerReview_Finance + INCREASE_TIME PT25H
-     covers (+5): BoundaryEvent_Reminder2, Flow_Reminder2, Task_SendReminder2,
-                  Flow_ReminderEnd2, EndEvent_Reminder2
-
-  Total: 7 segments. Predicted coverage: 38/38 = 100%.
-```
-
-Author exactly this list.
-
-## Step 5 — verify against the CPT report
-
-Run `mvn test`. Parse `target/coverage-report/report.html` (the page embeds the full dataset as a `window.COVERAGE_DATA` JSON literal — see SKILL.md for the extractor).
-
-If aggregate runtime coverage equals predicted coverage, done. If it does not, the gap is a **prediction miss** — the static walk for one of the chosen candidates did not match the engine's actual path. Common causes: gateway condition the parser couldn't evaluate, FEEL expression depending on a variable the planner did not set, non-interrupting boundary that creates a parallel branch the walker missed.
-
-Treat misses as planner bugs, not just gaps to patch. Add the missing candidates to chosen, but also fix the prediction rule so the next BPMN does not hit the same miss.
+The following patterns drive process routing in the harness. When they replace worker execution, treat them as focused engine diagnostics and state that limit. They are not examples of E2E verification of the worker or external service.
 
 ## Ad-hoc subprocess and tool activation
 
-Inner activities of an `<bpmn:adHocSubProcess>` have **no inbound sequence flow** — they are activated dynamically, either declaratively (internal mode, via `activeElementsCollection`) or programmatically (job-worker mode, via the worker's `activateElements` result). A static walker treats them as dead code and drops them from coverage. They are not dead code: the AHSP itself is the entry point, and each inner activity must show up in the segment plan.
+Inner activities of an `<bpmn:adHocSubProcess>` have **no inbound sequence flow** — they are activated dynamically, either declaratively (internal mode, via `activeElementsCollection`) or programmatically (job-worker mode, via the worker's `activateElements` result). A static walker treats them as dead code and drops them from coverage. They are not dead code: the AHSP itself is the entry point, and activities relevant to required outcomes belong in the scenario analysis.
 
-**Planner rule.** For every inner activity of an AHSP, add one candidate segment rooted at the AHSP and ending when that inner activity completes. The candidate's predicted set includes the inner activity, its outgoing internal flow (if any), and the AHSP itself.
+**Planner rule.** For an inner activity needed to exercise a required outcome, consider one candidate segment rooted at the AHSP and ending when that inner activity completes. The candidate's predicted set includes the inner activity, its outgoing internal flow (if any), and the AHSP itself.
 
 **Authoring** depends on the AHSP mode (the internal-mode vs. job-worker-mode distinction is covered in **camunda-bpmn**):
 
@@ -128,10 +51,3 @@ context
 ```
 
 Cross-links: **camunda-ai-agents** for the BPMN shape and tool-modelling rules; [authoring.md § COMPLETE_JOB_AD_HOC_SUB_PROCESS](authoring.md#complete_job_ad_hoc_sub_process) for the JSON instruction; [test-context.md § Conditional behavior](test-context.md#conditional-behavior-89) for `when().then()` semantics.
-
-## Anti-patterns
-
-- **Author-then-dedupe.** Authoring one segment per uncovered element and pruning after the loop wastes Maven cycles and adds reviewer noise. Set-cover planning eliminates redundancy at the planning step.
-- **Happy-path tail in every segment.** A secondary segment that runs through the entire happy path after rejoining doubles up coverage. End the segment at the first rejoin.
-- **Variable-value assertions instead of routing assertions.** A segment that asserts `amount == 750` after the gateway tests Jackson, not the gateway. Assert the element the gateway routed to.
-- **One scenario per DMN rule when the rule is on the chosen happy path.** Set-cover already credits the chosen rule. Add scenarios only for other rules.

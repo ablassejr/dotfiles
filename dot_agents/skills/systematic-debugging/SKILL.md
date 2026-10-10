@@ -59,11 +59,15 @@ Apply the scientific method:
 
 ### Phase 4: Implementation
 
-1. **Create failing test case** - Captures the bug behavior
+1. **Identify the missing behavioral contract** - Reuse or improve existing acceptance coverage, or add the smallest scenario that would have caught the gap. Exercise the unfixed baseline when feasible; state when it cannot be reproduced.
 2. **Implement single fix** - Address root cause, not symptoms
 3. **Verify test passes** - Confirms fix works
-4. **Run full test suite** - Ensure no regressions
+4. **Run the selected acceptance suite and required repository checks** - Broaden only for affected risk or new failures.
 5. **If fix fails, STOP** - Re-evaluate hypothesis
+
+Use the smallest nonredundant suite of behavior-driven acceptance tests that verifies the stated functionality, fix, or other change. Map the minimal acceptance criteria to observable outcomes and reuse or adapt existing coverage before adding tests. Prefer end-to-end tests through the real user or system entry point when a usable environment can exercise the path. When end-to-end execution is unavailable or impractical, use integration tests through the closest stable public boundary with the real affected components; state the concrete limitation, the boundary exercised, and what remains unverified. Do not silently substitute unit tests or count mocked provider behavior as end-to-end proof. Add separate integration checks only for material contract gaps the selected suite does not exercise, not automatically for every seam. Cover intended success and meaningful in-scope failure or recovery cases without multiplying tests for internal paths or arbitrary coverage quotas.
+
+Do not add a one-off test of the incident's internal repair mechanism. Verify the intended positive outcome and meaningful preservation, failure, or recovery behavior. Report the actual boundary and any unverified path.
 
 **Critical rule:** If THREE or more fixes fail consecutively, STOP. This signals architectural problems requiring discussion, not more patches.
 
@@ -134,9 +138,9 @@ Before claiming a bug is fixed:
 - [ ] Root cause identified and documented
 - [ ] Hypothesis formed and tested
 - [ ] Fix addresses root cause, not symptoms
-- [ ] Failing test created that reproduces bug
+- [ ] Minimal acceptance coverage exercises the missing behavior; failing baseline observed or limitation stated
 - [ ] Test now passes with fix
-- [ ] Full test suite passes
+- [ ] Selected acceptance suite and required repository checks pass; remaining gaps stated
 - [ ] No "quick fix" rationalization used
 - [ ] Fix is minimal and focused
 
@@ -152,4 +156,4 @@ Signs you're doing it right:
 
 ## Integration with Other Skills
 
-- **testing-patterns**: Create test that reproduces the bug before fixing
+- Use the minimal behavioral acceptance strategy above to verify the fix through E2E tests when possible, otherwise integration tests with explicit limits.

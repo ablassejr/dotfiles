@@ -1,35 +1,9 @@
-# Evaluate coverage gaps in an existing suite
+# Evaluate behavioral acceptance gaps
 
-Use this before adding more scenarios to avoid random test growth.
+Read the stated goal, minimal acceptance criteria, affected process and worker contracts, and existing scenarios. Map each criterion to the actual observation that proves it, including relevant success, failure, preservation, or recovery conditions.
 
-## Inputs
+Prefer existing E2E coverage through the real entry point. Where E2E cannot run, explain the concrete constraint and assess integration coverage across the real affected components. Identify what a fake or manually completed job leaves unverified. Recommend the smallest set of scenario changes needed to close material behavioral gaps; do not assign a structural coverage tier or require every node to be visited.
 
-- Target BPMN file(s)
-- Existing `.test.json` scenarios and/or Java CPT tests
+For each useful scenario, state its business outcome, triggering conditions, public boundary, existing coverage to reuse, and actual execution result or pending status. Use BPMN branch, boundary, and DMN coverage to investigate possible omissions. Do not equate process completion or rule selection alone with correct produced data or external effects.
 
-## Evaluation steps
-
-1. Parse BPMN decisions: gateways, boundary events, end events, called DMN decisions.
-2. Map each existing scenario to the path it covers.
-3. Explain current coverage in plain business language (what situations are tested, what are not).
-4. Classify gaps:
-   - Missing gateway branches
-   - Missing boundary-event/error paths
-   - Missing alternate end states
-   - Missing DMN rule paths that affect routing
-5. Recommend the **smallest additional scenario set** that closes the biggest gaps first.
-
-## Recommendation format
-
-For each proposed scenario:
-
-- **Name** (`<who/what> — <outcome>`)
-- **Business description**
-- **Type** (JSON process test or Java fallback)
-- **Gap covered** (specific branch/boundary/rule)
-
-Then suggest a coverage level target:
-
-- **Quick**: happy path + one critical exception path
-- **Standard**: all gateway branches and key boundaries
-- **Thorough**: full branch/boundary/rule coverage + stability-focused integration checks
+Review redundancy by required observations. Retain scenarios with distinct outcomes even when their paths overlap. Summarize uncovered behavior and why it remains uncovered in the existing review record. No new document or approval is required for routine test selection.

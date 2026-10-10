@@ -302,7 +302,7 @@ Resolves a matching incident; if the incident is on a job, retries are increased
 
 Optional `elementSelector` (local scope), `variableNames` (existence-only check).
 
-> Only assert variables that feed a downstream gateway or DMN — see [§ What not to write](#what-not-to-write).
+> Assert variable values when they express a required public output or business decision. Do not assert private intermediate values merely to mirror the model. See [§ What not to write](#what-not-to-write).
 
 ### `ASSERT_USER_TASK`
 
@@ -370,8 +370,8 @@ A segment that rejoins the happy path does **not** need to assert every downstre
 
 ## What not to write
 
-- `ASSERT_VARIABLE` on a service-task output variable. Out of scope — CPT covers routing, not data correctness.
-- Repeated complete-the-final-task tail across every segment. If a segment rejoins the happy path before the tail, end the segment there.
+- Assertions on private intermediate values without a required observable outcome. Service-task outputs are appropriate assertions when they are part of the public contract.
+- Duplicated diagnostic tails that add no behavioral evidence. Acceptance scenarios must still reach and assert their required outcome.
 - Copy-paste assertions whose values come from FEEL inside the process. The process already evaluates the FEEL; asserting the same value tests the test, not the process.
 
 ## Schema-version reminder
@@ -449,4 +449,4 @@ public class ExpenseApprovalJavaTest {
 
 The mock auto-completes `Task_SendNotification` instead of requiring `COMPLETE_JOB` in JSON.
 
-Same scope rules apply: do not assert produced data values. The Java surface offers richer assertions; that does not change what is in scope for process tests.
+This worker mock is a process-routing diagnostic only. For acceptance of notification behavior, run the real worker and observe its declared outcome at the external boundary. Assert produced values when they are part of the required public contract; process completion alone does not prove those values.

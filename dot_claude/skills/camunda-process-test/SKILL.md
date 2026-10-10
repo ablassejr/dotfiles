@@ -1,13 +1,13 @@
 ---
 name: camunda-process-test
 description: |
-  Use this skill to author and run Camunda Process Test (CPT) suites that cover every BPMN gateway branch, DMN rule, and error boundary to 100%.
+  Use this skill to author and run Camunda Process Test (CPT) suites that verify required business outcomes with minimal behavior-driven acceptance scenarios.
 
-  Use for: scaffolding the `camunda-process-test-spring` harness, planning the minimum set of test segments for full element coverage, authoring `.test.json` instruction-based scenarios, running `mvn test`, parsing the CPT coverage report, deduplicating redundant segments.
+  Use for: scaffolding the `camunda-process-test-spring` harness, planning a minimal acceptance suite and supplemental process diagnostics, authoring `.test.json` instruction-based scenarios, running `mvn test`, parsing the CPT coverage report, deduplicating redundant segments.
 
   Do not use for: authoring the BPMN (use camunda-bpmn), writing FEEL or DMN expressions (use camunda-feel), deploying to a live cluster (use camunda-process-mgmt), UI or E2E tests against Operate or Tasklist.
 
-  **Workflow skill** — segment-based authoring loop covering `mvn test`, coverage report parsing, and scenario deduplication.
+  **Workflow skill** — behavior-driven acceptance planning and execution covering `mvn test`, coverage report parsing, and scenario deduplication.
 ---
 
 # Camunda Process Test
@@ -17,188 +17,54 @@ description: |
 Use [the bundled setup instructions](references/setup.md) and [dependency manifest](dependencies.json) when this workflow needs a utility. Check availability first; the skill’s scripts install selected missing tools without relying on another skill’s setup files. Optional media, engine operations, and repository-specific toolchains are selected for the actual task. Existing session permissions and account configuration still apply.
 
 
-Author and run Camunda Process Test suites for Camunda 8.8+ that reach **100% BPMN element coverage** with the minimum number of test segments. Test assertions are limited to reachability and routing — CPT exercises that the engine traverses the right elements, not the data values produced by service tasks or external systems.
+## Acceptance strategy
 
-## Prerequisites
+Use the smallest nonredundant suite of behavior-driven acceptance tests that verifies the stated functionality, fix, or other change. Map the minimal acceptance criteria to observable outcomes and reuse or adapt existing coverage before adding tests. Prefer end-to-end tests through the real user or system entry point when a usable environment can exercise the path. When end-to-end execution is unavailable or impractical, use integration tests through the closest stable public boundary with the real affected components; state the concrete limitation, the boundary exercised, and what remains unverified. Do not silently substitute unit tests or count mocked provider behavior as end-to-end proof. Add separate integration checks only for material contract gaps the selected suite does not exercise, not automatically for every seam. Cover intended success and meaningful in-scope failure or recovery cases without multiplying tests for internal paths or arbitrary coverage quotas.
 
-- Java 21+, Maven (or `./mvnw`), Docker runtime (OrbStack, Docker Desktop, or Rancher Desktop) — see [references/setup.md](references/setup.md)
-- `camunda-process-test-spring` 8.9+ on the test classpath (instruction-based JSON format requires 8.9)
-- A working BPMN file (lint clean — see camunda-bpmn). DMN and form files referenced by the BPMN must also be present.
+CPT supplies a process-engine test harness. Name its actual scope: an engine-only scenario with manually completed jobs verifies process behavior, not worker execution or external system success. When the requested change concerns a worker or connector, exercise its real implementation with the engine and assert the resulting public contract. Use a true external boundary fake only when needed and report what live behavior remains unverified.
 
-## Cross-References
+The acceptance gate is the intended business outcome. BPMN element and sequence-flow coverage help diagnose missed scenarios; they are not a default 100% quota or sufficient evidence that a feature works. Use a separately requested structural coverage target only as an additional diagnostic requirement.
 
-- **camunda-bpmn**: Run `c8ctl bpmn lint` on the process under test before authoring scenarios — failing lints surface as deploy-time `@TestDeployment` failures.
-- **camunda-feel**: Use when a gateway condition or DMN entry is unclear; FEEL semantics drive which segment hits which branch.
-- **camunda-dmn**: Use when a DMN decision is the unit under test — CPT exercises it via the calling business rule task; pair with `npx dmnlint` for structural checks.
-- **camunda-job-workers**: Use when the handler code that backs a service task is itself under test — CPT drives BPMN reachability; worker unit tests drive handler behaviour.
-- **camunda-connectors-development**: Use when a custom connector is the unit under test — CPT exercises it from the BPMN side; SDK-side tests cover the connector class directly.
-- **camunda-ai-agents**: Use when testing an AI Agent Sub-process — drives the BPMN shape that `COMPLETE_JOB_AD_HOC_SUB_PROCESS` and `context.when().then()` orchestrate.
-- **camunda-process-mgmt**: CPT runs against an **embedded** Zeebe engine — it does **not** use the c8ctl-managed cluster or any profile. No `c8ctl` call deploys a process under test.
+## Prerequisites and scope
 
-## Scope boundaries
+Use [setup.md](references/setup.md) for Java, Maven or the repository wrapper, Docker, CPT dependencies, and the harness. Instruction-based JSON scenarios require the compatible CPT version documented in [authoring.md](references/authoring.md). Read the repository's actual dependency versions before selecting an API.
 
-- **In scope**: BPMN reachability (every element visited at least once), gateway-branch selection, DMN rule selection, error-boundary firing, timer / escalation boundary firing, end-event selection.
-- **Out of scope**: asserting data values produced by service tasks, external system payloads, UI behavior, agent / LLM output. Do not write `ASSERT_VARIABLE` instructions on service-task output unless the variable is the FEEL input to a downstream gateway you also test.
+Exercise affected process routing, business decisions, observable task states, outcomes, errors, and recovery. Assert data values when they are part of the required public result; do not assert private intermediate variables solely because they exist. Process completion alone is insufficient when the requirement includes a produced value, notification, or other external effect.
+
+CPT does not itself provide a browser workflow or proof of a production deployment. Prefer the repository's existing E2E harness when the acceptance criterion crosses the UI or a deployed service. If that environment cannot run, use the closest useful integration boundary and state the remaining gap. Routine scenario and boundary choices do not require user approval; ask only when ambiguity changes required behavior or scope.
 
 ## Workflow
 
-### 1. Detect
+### Establish behavior and existing coverage
 
-Find the BPMN under test in priority order:
+Locate the affected BPMN, referenced decisions/forms, worker or connector implementations, and existing tests from the request and repository context. Common process locations include src/main/resources/processes/, src/main/resources/bpmn/, and ../resources/ for a separate harness. Select the affected files from evidence before asking the user to choose among unrelated processes.
 
-1. `src/main/resources/processes/`
-2. `src/main/resources/bpmn/`
-3. `../resources/` (Node.js layouts where the test harness lives in `test/`)
+Derive minimal acceptance criteria from the stated goal and established contracts. For a fix, diagnose the missing observable contract and reuse or improve coverage that would have caught it. Inspect relevant existing tests and replace private-element, internal-call, or source-pattern assertions when they do not represent a declared public contract. Keep unrelated tests out of scope.
 
-Skip `target/`, `node_modules/`, `.git/`, `build/`. If multiple files match, list them and ask which to target.
+### Plan the smallest useful suite
 
-Check `pom.xml` (or `test/pom.xml`) for `camunda-process-test-spring`. If missing, go to step 2.
+Use [coverage-strategy.md](references/coverage-strategy.md). Map each required outcome to an existing or proposed scenario, the entry point, the observable result, and the actual E2E or integration boundary. Include only meaningful in-scope success, failure, preservation, and recovery cases. One scenario can prove several related criteria. Do not create a test for each BPMN element or remove a test merely because its visited elements overlap another scenario.
 
-If scenarios already exist, run a drift check before editing tests:
+### Author and run
 
-```bash
-git diff <base-branch>...HEAD -- <bpmn-path>
-```
+Configure a missing harness through the bundled setup instructions. Use [authoring.md](references/authoring.md) for JSON instructions and [test-context.md](references/test-context.md) for the Java fallback when richer outcome assertions or real worker integration are needed. Name each scenario for its actor or trigger and expected result.
 
-Use the PR base branch or repository default branch as `<base-branch>` (often `main`).
+Drive the process through its actual entry point when possible. Starting at an internal element is a focused process diagnostic; it does not prove the omitted path. Assert required outputs or publicly meaningful task states, not every internal node. Keep real workers and collaborators in the path whose behavior is under test; manual job completion and worker mocks cannot prove that worker's behavior.
 
-Then classify current suite gaps:
+Run the repository's documented test command, such as mvn test for a compatible Maven harness, after the applicable CLI documentation lookup. Establish the failing baseline when feasible, implement the fix, and rerun against the final change. An unavailable baseline is a reported limitation, not a reason to claim unobserved red/green evidence.
 
-- **Broken**: scenario references an `elementId` or `processDefinitionId` that no longer exists.
-- **Stale**: IDs still exist, but branch-driving variables or assumptions no longer match gateway/DMN behavior.
-- **Missing**: new branches, boundary events, or end events have no segment coverage.
+On failure, distinguish harness problems, invalid expectations, and actual process or worker defects. Use [troubleshooting.md](references/troubleshooting.md) and [run-and-diagnose.md](references/run-and-diagnose.md). Repair and rerun affected checks; a skipped scenario or infrastructure error is not a passing acceptance result.
 
-Fix in this order: broken → stale → missing, then run `mvn test` and continue with coverage verification.
+### Assess and report
 
-### 2. Setup (only if missing)
+Compare actual observations with the minimal acceptance criteria. Use the CPT report at target/coverage-report/report.html, when generated, to investigate suspicious gaps. An uncovered internal element does not automatically require another test, and a fully covered model does not establish correct outputs. Missing report generation leaves structural coverage unverified; static inspection cannot substitute for executed behavior.
 
-Follow [references/setup.md](references/setup.md): run the readiness preflight (Java, Maven/wrapper, Docker), add the CPT dependency, scaffold `src/test/java/io/camunda/tests/ProcessTest.java` and `src/test/resources/scenarios/`. Confirm with `mvn test-compile`.
-
-### 3. Plan segments (set-cover, not per-element)
-
-Plan the minimum number of segments **before** authoring anything. Apply [references/coverage-strategy.md](references/coverage-strategy.md):
-
-1. Parse the BPMN: `processId`, element IDs and types, gateway outgoing flows + conditions, error / timer / escalation boundaries, end events, called DMN decisions (`<zeebe:calledDecision decisionId="…">`) and the DMN rules inside them.
-2. **Enumerate candidate segments.** For every gateway branch, DMN rule, boundary event, and alternate end event, define one minimal candidate segment rooted at the nearest upstream decision point. For each candidate, **statically predict its full visited-element + sequence-flow set** by walking the BPMN forward from the root through the targeted branch to the next rejoin or end event.
-3. **Greedy set-cover.** Repeatedly pick the candidate whose predicted set covers the largest number of still-uncovered ids. Tie-break by shortest path (cheapest to author). Stop when the union covers every id.
-4. **Diagnostic-isolation override (optional).** If two chosen segments share a root but exercise different failure modes (e.g. one fires a boundary event, the other completes the user task normally), keep both so a failure points at one cause cleanly. Apply only when the user is debugging a specific area; default is pure set-cover.
-5. Print the segment plan as a table: `segment name | root | predicted ids covered | end condition`. Authoring then implements exactly this list — no speculative scenarios that may be deduped later.
-
-### 4. Author
-
-For each segment, write one entry inside `src/test/resources/scenarios/<processId>.test.json` using [references/authoring.md](references/authoring.md). Naming: `"<who/what> — <outcome>"`. Assertions: `ASSERT_ELEMENT_INSTANCES` on the elements the segment must visit, `ASSERT_PROCESS_INSTANCE` only when the segment runs to an end event.
-
-Use the Java fallback only when the segment needs Spring bean mocking, parameterized data tables, non-deterministic runtime races (`context.when().then()` *(8.9+)*), or assertions richer than the JSON instruction set offers — see [references/test-context.md](references/test-context.md). Accept that Java tests are invisible to Web Modeler.
-
-### 5. Run
-
-```bash
-mvn test
-```
-
-On failure, diagnose with [references/troubleshooting.md](references/troubleshooting.md). Distinguish **test problems** (variable typo, wrong element id, missing instruction) from **process problems** (wrong FEEL condition, wrong DMN rule, wrong error code). Fix the right side. Re-run. Stop after 3 repair cycles with no progress.
-
-When the run exits — pass or fail — proceed straight to step 6 and open the coverage report.
-
-### 6. Coverage check — exit gate (100% loop)
-
-CPT emits a coverage report at `target/coverage-report/report.html` (per-process HTML; the page embeds the full coverage dataset in a `window.COVERAGE_DATA` JSON literal). Parse it:
-
-```bash
-python3 - <<'PY'
-import re, json
-html = open("target/coverage-report/report.html").read()
-# Balanced-brace extraction. Walk character by character, but track string
-# state so braces inside JSON strings (e.g. inside a description) don't
-# unbalance the counter.
-m = re.search(r"window\.COVERAGE_DATA\s*=\s*", html)
-start = html.index("{", m.end())
-depth = 0; in_str = False; esc = False; end = start
-for k, ch in enumerate(html[start:], start):
-    if in_str:
-        if esc: esc = False
-        elif ch == "\\": esc = True
-        elif ch == '"': in_str = False
-    else:
-        if ch == '"': in_str = True
-        elif ch == "{": depth += 1
-        elif ch == "}":
-            depth -= 1
-            if depth == 0:
-                end = k + 1
-                break
-data = json.loads(html[start:end])
-el = set(); flows = set(); total = None
-for s in data["suites"]:
-    for r in s["runs"]:
-        for c in r["coverages"]:
-            el.update(c.get("completedElements", []))
-            flows.update(c.get("takenSequenceFlows", []))
-            total = c.get("totalElementCount", total)
-covered = len(el) + len(flows)
-print(f"coverage={covered}/{total}={100*covered/total:.2f}%")
-print("covered_elements:", sorted(el))
-print("covered_flows:", sorted(flows))
-PY
-```
-
-Diff against the BPMN element + sequenceFlow id list (`grep -oE 'id="[A-Za-z0-9_]+"' <bpmn>`, exclude `_di`, `BPMNDiagram`, `BPMNPlane`, `Definitions_`, `ErrorDef_`, `TimerDef_`, `Signal_`, `Message_`).
-
-**Surface the HTML report path to the user as soon as `mvn test` exits — pass or fail.** The agent already verifies coverage from the JSON data above; the HTML report is for the user to inspect. Print the absolute path (`target/coverage-report/report.html`) in the final reply so they can open it themselves. In an interactive local session you may additionally offer to open it on their behalf (`open` on macOS, `xdg-open` on Linux, `start` on Windows) — do not run that unprompted in a sandboxed / remote environment where it has no effect.
-
-**Patch-loop on prediction misses — default behavior.** Set-cover planning in step 3 should reach 100% on the first authoring pass. When it does not, the gap is a *prediction miss*: the static walk for some candidate did not match runtime behavior. For each uncovered id:
-
-1. Classify the miss: element (visit it directly), or sequence flow (its source must be hit *and* the condition routing through it must be satisfied — usually a gateway branch the planner failed to attribute).
-2. Re-run greedy set-cover restricted to the remaining uncovered ids. Add the chosen candidates (often one) to the scenario file.
-3. For timer boundary events: use `INCREASE_TIME` with an ISO 8601 `duration` greater than the timer cycle (e.g. `"PT25H"` for `R/PT24H`). The boundary fires; the outgoing path's job is created; complete it with `COMPLETE_JOB`.
-4. For message boundary events: `PUBLISH_MESSAGE` instruction with matching name + correlationKey.
-5. Re-run step 5 (`mvn test`) → step 6. Each iteration should strictly reduce the uncovered set; if it does not, the planner's path prediction is wrong — fix the prediction logic in [references/coverage-strategy.md](references/coverage-strategy.md), do not paper over with more scenarios.
-
-Hard blockers that terminate the loop:
-
-- Same set of ids uncovered after 2 consecutive iterations — surface the list and stop.
-- An uncovered element is dead code (no inbound flow, or its inbound condition is unsatisfiable) — flag as a BPMN defect, point at camunda-bpmn, stop.
-- Test infrastructure failure repeats (Docker down, deploy parse error) — stop and route to [references/troubleshooting.md](references/troubleshooting.md).
-
-Do not declare the suite done while ids remain uncovered and no hard blocker applies.
-
-> **Note**: in early 8.9 SNAPSHOT releases the report generator may throw `IllegalStateException: Report resources not found` and skip the HTML output. Tests still pass. Walk the BPMN against scenarios from source to confirm coverage in that case.
-
-### 7. Verify no redundancy slipped through
-
-Set-cover planning in step 3 should produce a non-redundant suite by construction. Verify with a leave-one-out check against the runtime coverage data: for each scenario, compute the union of all *other* scenarios' covered ids; if removing the scenario loses zero ids, it is redundant and the planner has a bug — fix the planner, then drop the scenario.
-
-Also flag (cheap, do unconditionally):
-
-- Scenario names that do not match `<who/what> — <outcome>` (e.g. `"test1"`, `"happy"`).
-- Duplicated descriptions across scenarios.
-- `ASSERT_VARIABLE` instructions on variables that no gateway or DMN downstream consumes — data assertions are out of scope.
-
-### 8. Report
-
-Print the Surefire result line, the coverage percentage, the segment count, and any flagged duplicates.
-
-```text
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
-Coverage: 100% (24/24 elements)
-Segments: 1 happy path + 5 secondary
-Duplicates flagged: 0
-```
-
-## Maintenance workflows for existing suites
-
-When tests already exist and the user asks to run, diagnose, or improve them (without generating a brand-new suite), use these focused workflows:
-
-1. **Run and diagnose failures** — execute `mvn test`, classify each failure as infrastructure/test/process, then fix in batches. Use [references/troubleshooting.md](references/troubleshooting.md) plus [references/run-and-diagnose.md](references/run-and-diagnose.md).
-2. **Evaluate coverage gaps before writing new tests** — explain current suite coverage in business terms, list uncovered branches/boundaries/rules, and recommend the smallest next set of scenarios. See [references/evaluation.md](references/evaluation.md).
-3. **Wire tests into CI** — configure CI to run CPT reliably and publish JUnit artifacts, with optional integration profile runs gated to trusted branches. See [references/ci.md](references/ci.md).
-
-These workflows are complementary: evaluate gaps first, implement new scenarios, then run/diagnose locally and in CI.
+Complete selected acceptance tests and repository-required checks. Report which outcomes passed, the boundary actually exercised, the suite size, and any blocked or unverified behavior. Include a coverage report link when useful for diagnosis. Keep this evidence in the existing review record rather than creating a duplicate artifact. Use [evaluation.md](references/evaluation.md) to assess gaps and [ci.md](references/ci.md) for CI integration.
 
 ## References
 
 - [setup.md](references/setup.md) — Java, Maven, Docker prereqs; CPT dependency; test scaffold layout; Spring Boot 4.x pin
-- [coverage-strategy.md](references/coverage-strategy.md) — segment selection rules per BPMN element type, including ad-hoc subprocess tool activation
+- [coverage-strategy.md](references/coverage-strategy.md) — minimal outcome-based scenario selection and process diagnostics, including ad-hoc subprocess tool activation
 - [authoring.md](references/authoring.md) — `.test.json` schema, full 8.9 instruction reference, Java fallback
 - [test-context.md](references/test-context.md) — `CamundaProcessTestContext` Java API surface (job/decision/child-process mocking, time control, conditional behavior)
 - [connectors-runtime.md](references/connectors-runtime.md) — enabling the Connectors runtime alongside Zeebe; WireMock pattern; inbound webhooks

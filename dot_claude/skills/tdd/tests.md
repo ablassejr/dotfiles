@@ -1,5 +1,7 @@
 # Good and Bad Tests
 
+Prefer end-to-end acceptance through the actual entry point; use integration acceptance with real affected components when end-to-end execution is impractical, and report its limits. Reuse these examples only for a missing behavioral contract, not to require duplicate tests at every level.
+
 ## Good Tests
 
 **Integration-style**: Test through real interfaces, not mocks of internal parts.
@@ -20,7 +22,7 @@ Characteristics:
 - Uses public API only
 - Survives internal refactors
 - Describes WHAT, not HOW
-- One logical assertion per test
+- One coherent scenario per test, with the assertions needed to establish its observable outcome
 
 ## Bad Tests
 
@@ -42,7 +44,7 @@ Red flags:
 - Asserting on call counts/order
 - Test breaks when refactoring without behavior change
 - Test name describes HOW not WHAT
-- Verifying through external means instead of interface
+- Verifying private storage details when a public retrieval interface exists
 
 ```typescript
 // BAD: Bypasses interface to verify

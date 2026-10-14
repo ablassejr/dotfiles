@@ -199,28 +199,41 @@ After user confirmation, create or update decision records. Use the project's AD
 
 ## Diagram
 
-[Include a mermaid diagram if the decision involves architectural relationships, data flow, or component interactions]
+[Include a D2 diagram if the decision involves architectural relationships, data flow, or component interactions: embed its rendered SVG and keep the `.d2` source beside it]
 ```
 
 ### 5d. Diagrams and Visuals
 
-Include mermaid diagrams when the decision involves:
+Include D2 diagrams when the decision involves:
 - Component relationships or boundaries
 - Data flow or state transitions
 - Sequence of operations
 - System architecture changes
 - Before/after comparisons
 
-Example:
-````markdown
-```mermaid
-graph TD
-    A[Component A] --> B[Component B]
-    B --> C{Decision Point}
-    C -->|Option 1| D[Chosen Path]
-    C -->|Option 2| E[Rejected Path]
+Most Markdown renderers, GitHub included, do not render D2 code blocks. Write each diagram as a `.d2` source file beside the document, render it to SVG with the `d2` CLI, and embed the SVG with a relative link. Judge success by the command's exit status, not by the output file, because `d2` can write a partial render when it fails. Commit the source and the SVG together, and re-render the SVG whenever the source changes. When the documentation site renders D2 itself, use that support instead of a committed SVG. When the `d2` CLI is unavailable, tell the user; do not fall back to Mermaid.
+
+Example `decision-flow.d2`:
+```d2
+a: Component A
+b: Component B
+decision: Decision Point {shape: diamond}
+chosen: Chosen Path
+rejected: Rejected Path
+
+a -> b
+b -> decision
+decision -> chosen: Option 1
+decision -> rejected: Option 2
 ```
-````
+
+Render it, then embed the SVG in the document:
+```bash
+d2 decision-flow.d2 decision-flow.svg
+```
+```markdown
+![Decision flow](decision-flow.svg)
+```
 
 ## Phase 6: Final Commit for Documentation
 
@@ -249,4 +262,4 @@ After all documentation and decision records are created/updated:
 - ALWAYS preserve existing documentation style/format when updating files
 - If the documentation directory cannot be determined, ASK the user
 - Use relative paths in all documentation cross-references
-- Diagrams should use mermaid syntax for markdown compatibility
+- Diagrams use D2: commit the `.d2` source with its rendered SVG and embed the SVG, because Markdown renderers do not render D2 code blocks

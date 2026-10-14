@@ -22,7 +22,7 @@ Use available capture and rendering capabilities with their current documentatio
 
 ## Diagrams and static media
 
-Choose a renderer suited to the content, editing needs, and destination. Simple supported Mermaid, D2, Graphviz, or ASCII diagrams can be sufficient; use LikeC4 for modeled architecture, draw.io/Excalidraw/tldraw for appropriate visual composition, or Figma/Archify for richer governed or interactive views. Check current available capabilities rather than treating this list as exhaustive. An active caller's renderer contract still applies.
+Choose a renderer suited to the content, editing needs, and destination. Simple D2, Graphviz, or ASCII diagrams can be sufficient; use D2 rather than Mermaid for a simple diagram, rendering it to SVG with the `d2` CLI when the destination does not render D2 itself; use LikeC4 for modeled architecture, draw.io/Excalidraw/tldraw for appropriate visual composition, or Figma/Archify for richer governed or interactive views. Check current available capabilities rather than treating this list as exhaustive. An active caller's renderer contract still applies.
 
 Show only the implemented relationships needed for the current question. Label actors and boundaries with names the team recognizes, explain unfamiliar notation, and make the reading direction clear. Distinguish source-derived structure, configured behavior, and observed execution when that affects interpretation; mark unknown relationships instead of filling them with an ideal architecture. Color alone is insufficient. Keep readable text at the document's normal viewing size. Split an overloaded view by distinct questions rather than shrinking it.
 

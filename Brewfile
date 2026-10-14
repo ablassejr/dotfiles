@@ -88,6 +88,8 @@ brew "composer"
 brew "coreutils"
 # Tool for interacting with remote images and registries
 brew "crane"
+# Modern diagram scripting language that turns text to diagrams
+brew "d2"
 # Diff that understands syntax
 brew "difftastic"
 # Load/unload environment variables based on $PWD

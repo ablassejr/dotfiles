@@ -52,11 +52,11 @@ export PATH="/Users/Apple/.local/bin:$PATH"
 
 # sentry
 fpath=("/Users/Apple/.local/share/zsh/site-functions" $fpath)
-#compdef just
-source <(JUST_COMPLETE=zsh just)
-if [ "$funcstack[1]" = "_just" ]; then
-  _clap_dynamic_completer_just "$@"
-fi
+
+# just: static completion script from site-functions. compinit has already run
+# in .zprofile, before the fpath entry above exists, so it is registered here.
+autoload -Uz _just
+compdef _just just
 
 # direnv — per-directory env (e.g. per-repo gh account). Keep last.
 if command -v direnv >/dev/null 2>&1; then

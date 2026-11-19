@@ -5,7 +5,7 @@ description: >-
   and indexing documentation from URLs or local files, refreshing existing
   indexes with changed content, and removing libraries from the index.
   Use when you need to add, update, or delete indexed documentation.
-compatibility: Requires Node.js 22+ and npx
+compatibility: Requires the pinned launcher at ~/.local/bin/docs-mcp-server
 metadata:
   author: grounded.tools
 ---
@@ -21,6 +21,8 @@ Index, refresh, and remove library documentation in the local Grounded Docs
 store. These commands modify the index and produce plain-text status messages
 on stdout.
 
+Run these commands through the pinned launcher `~/.local/bin/docs-mcp-server`, not `npx @arabold/docs-mcp-server@latest`. A different docs-mcp-server version can migrate the shared documentation store past the pinned runtime, after which the running server stops storing newly scraped documentation.
+
 ## When to use
 
 - A library is not yet indexed and you need its docs available for search.
@@ -34,7 +36,7 @@ on stdout.
 Download and index documentation from a URL or local directory.
 
 ```bash
-npx @arabold/docs-mcp-server@latest scrape <library> <url> [options]
+~/.local/bin/docs-mcp-server scrape <library> <url> [options]
 ```
 
 | Flag | Alias | Default | Description |
@@ -61,20 +63,20 @@ Examples:
 
 ```bash
 # Scrape React docs, version-tagged
-npx @arabold/docs-mcp-server@latest scrape react https://react.dev/reference/react --version 19.0.0
+~/.local/bin/docs-mcp-server scrape react https://react.dev/reference/react --version 19.0.0
 
 # Scrape local files
-npx @arabold/docs-mcp-server@latest scrape mylib file:///Users/me/docs/my-library
+~/.local/bin/docs-mcp-server scrape mylib file:///Users/me/docs/my-library
 
 # Scrape with depth and page limits
-npx @arabold/docs-mcp-server@latest scrape nextjs https://nextjs.org/docs --max-pages 200 --max-depth 3
+~/.local/bin/docs-mcp-server scrape nextjs https://nextjs.org/docs --max-pages 200 --max-depth 3
 
 # Scrape with custom headers (e.g. authentication)
-npx @arabold/docs-mcp-server@latest scrape internal-api https://docs.internal.com \
+~/.local/bin/docs-mcp-server scrape internal-api https://docs.internal.com \
   --header "Authorization: Bearer tok_xxx"
 
 # Exclude changelog pages
-npx @arabold/docs-mcp-server@latest scrape react https://react.dev/reference/react \
+~/.local/bin/docs-mcp-server scrape react https://react.dev/reference/react \
   --exclude-pattern "**/changelog*"
 ```
 
@@ -86,7 +88,7 @@ Progress updates appear on stderr during the run.
 Re-scrape an existing library version, skipping unchanged pages via HTTP ETags.
 
 ```bash
-npx @arabold/docs-mcp-server@latest refresh <library> [options]
+~/.local/bin/docs-mcp-server refresh <library> [options]
 ```
 
 | Flag | Alias | Description |
@@ -100,7 +102,7 @@ npx @arabold/docs-mcp-server@latest refresh <library> [options]
 Example:
 
 ```bash
-npx @arabold/docs-mcp-server@latest refresh react --version 19.0.0
+~/.local/bin/docs-mcp-server refresh react --version 19.0.0
 ```
 
 The library and version must already be indexed. Use `scrape` for first-time
@@ -111,7 +113,7 @@ indexing.
 Delete a library (or a specific version) from the index.
 
 ```bash
-npx @arabold/docs-mcp-server@latest remove <library> [options]
+~/.local/bin/docs-mcp-server remove <library> [options]
 ```
 
 | Flag | Alias | Description |
@@ -124,7 +126,7 @@ npx @arabold/docs-mcp-server@latest remove <library> [options]
 Example:
 
 ```bash
-npx @arabold/docs-mcp-server@latest remove react --version 18.3.1
+~/.local/bin/docs-mcp-server remove react --version 18.3.1
 ```
 
 This is destructive and cannot be undone. Re-run `scrape` to re-index.
@@ -143,13 +145,13 @@ suppress all non-error diagnostics regardless of session type.
 
 ```bash
 # 1. Index documentation for the first time
-npx @arabold/docs-mcp-server@latest scrape react https://react.dev/reference/react --version 19.0.0
+~/.local/bin/docs-mcp-server scrape react https://react.dev/reference/react --version 19.0.0
 
 # 2. Later, refresh to pick up any changes
-npx @arabold/docs-mcp-server@latest refresh react --version 19.0.0
+~/.local/bin/docs-mcp-server refresh react --version 19.0.0
 
 # 3. Clean up old versions
-npx @arabold/docs-mcp-server@latest remove react --version 18.3.1
+~/.local/bin/docs-mcp-server remove react --version 18.3.1
 ```
 
 ## Important notes

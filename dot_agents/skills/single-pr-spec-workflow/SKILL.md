@@ -48,7 +48,7 @@ This skill ends at specification and handoff. It does not implement the change, 
 - Read [review and handoff](references/review-and-handoff.md) before review, publication, approval, or final output.
 - Use the [specification template](assets/specification-template.md) and [handoff template](assets/handoff-template.md) as adaptable artifact outlines. Merge them into one document when that improves readability; preserve the information and approval binding.
 
-These contracts are self-contained for standalone work. When the request is already governed by the epic framework, load the currently installed `$epic-spec-workflow` and applicable ticket skills for its actual authority, adapters, schemas, and process definition. This skill does not create a new Camunda process type or bypass an existing gate.
+These contracts are self-contained for standalone work. When the request is already governed by the epic framework, load the currently installed `$plan-materialization` and applicable ticket skills for its actual authority, adapters, schemas, and process definition. This skill does not create a new Camunda process type or bypass an existing gate.
 
 ## 1. Establish intent and the boundary
 

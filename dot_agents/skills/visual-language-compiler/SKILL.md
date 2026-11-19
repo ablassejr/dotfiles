@@ -12,7 +12,7 @@ Use [the bundled setup instructions](references/setup.md) and [dependency manife
 
 For human interactions and team outputs, follow [review and artifact design](references/bundled/epic-spec-workflow/references/review-and-artifact-design.md). Read it before preparing a question, review, publication, or handoff.
 
-Run the visual-language stage of `$epic-spec-workflow`. Start with the communication job and approved semantic IDs. Use FigJam for non-graph exploration, LikeC4 for formal architecture structure, Archify for validated interactive technical explanation, and Figma for the curated communicative projection; none of them may change semantic intent.
+Run the visual-language stage of `$plan-materialization`. Start with the communication job and approved semantic IDs. Use FigJam for non-graph exploration, LikeC4 for formal architecture structure, Archify for validated interactive technical explanation, and Figma for the curated communicative projection; none of them may change semantic intent.
 
 Maintain stable `VIEW-*` entries that bind source semantic IDs, LikeC4 views, Archify manifests/generations, Figma or FigJam nodes, embeds in the selected documentation home, source hashes, operation receipts, revisions, and verification state. Use the approved component library, connector grammar, variants, variables, styles, and auto layout rather than inventing one-off forms.
 

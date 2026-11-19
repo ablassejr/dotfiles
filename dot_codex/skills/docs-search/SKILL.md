@@ -6,7 +6,7 @@ description: >-
   and resolving library versions. Use when you need to look up API
   references, find code examples, or check which documentation is
   available in the local index.
-compatibility: Requires Node.js 22+ and npx
+compatibility: Requires the pinned launcher at ~/.local/bin/docs-mcp-server
 metadata:
   author: grounded.tools
 ---
@@ -21,6 +21,8 @@ Use [the bundled setup instructions](references/setup.md) and [dependency manife
 Search the local Grounded Docs index for library documentation. These commands
 return structured data (JSON by default in non-interactive sessions) and never
 modify the index.
+
+Run these commands through the pinned launcher `~/.local/bin/docs-mcp-server`, not `npx @arabold/docs-mcp-server@latest`. A different docs-mcp-server version can migrate the shared documentation store past the pinned runtime, after which the running server stops storing newly scraped documentation.
 
 ## When to use
 
@@ -39,7 +41,7 @@ before searching.
 List every indexed library and its available versions.
 
 ```bash
-npx @arabold/docs-mcp-server@latest list [--output yaml]
+~/.local/bin/docs-mcp-server list [--output yaml]
 ```
 
 | Flag | Description |
@@ -66,7 +68,7 @@ Example output (YAML):
 Search documents in an indexed library by natural-language query.
 
 ```bash
-npx @arabold/docs-mcp-server@latest search <library> "<query>" [options]
+~/.local/bin/docs-mcp-server search <library> "<query>" [options]
 ```
 
 | Flag | Alias | Default | Description |
@@ -83,7 +85,7 @@ npx @arabold/docs-mcp-server@latest search <library> "<query>" [options]
 Example:
 
 ```bash
-npx @arabold/docs-mcp-server@latest search react "useEffect cleanup" --version 18.x --limit 3 --output yaml
+~/.local/bin/docs-mcp-server search react "useEffect cleanup" --version 18.x --limit 3 --output yaml
 ```
 
 Each result contains a content snippet, source URL, and relevance score.
@@ -93,7 +95,7 @@ Each result contains a content snippet, source URL, and relevance score.
 Resolve the best matching documentation version for a library.
 
 ```bash
-npx @arabold/docs-mcp-server@latest find-version <library> [--version <pattern>]
+~/.local/bin/docs-mcp-server find-version <library> [--version <pattern>]
 ```
 
 | Flag | Alias | Description |
@@ -107,7 +109,7 @@ npx @arabold/docs-mcp-server@latest find-version <library> [--version <pattern>]
 Example:
 
 ```bash
-npx @arabold/docs-mcp-server@latest find-version react --version "18.x" --output yaml
+~/.local/bin/docs-mcp-server find-version react --version "18.x" --output yaml
 ```
 
 Returns the resolved version string and library metadata.
@@ -126,10 +128,10 @@ request `--output yaml` for a more readable format.
 
 ```bash
 # 1. Check what is indexed
-npx @arabold/docs-mcp-server@latest list --output yaml
+~/.local/bin/docs-mcp-server list --output yaml
 
 # 2. Search for relevant docs
-npx @arabold/docs-mcp-server@latest search react "server components" --version 19.x --output yaml
+~/.local/bin/docs-mcp-server search react "server components" --version 19.x --output yaml
 
 # 3. If no results, index the docs first (see docs-manage skill), then retry
 ```

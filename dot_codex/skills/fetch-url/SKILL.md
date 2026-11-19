@@ -4,7 +4,7 @@ description: >-
   Fetch a single URL and convert its content to Markdown. Use when you
   need to read a web page, documentation page, or API reference without
   indexing it. The content is returned as plain Markdown text on stdout.
-compatibility: Requires Node.js 22+ and npx
+compatibility: Requires the pinned launcher at ~/.local/bin/docs-mcp-server
 metadata:
   author: grounded.tools
 ---
@@ -19,6 +19,8 @@ Use [the bundled setup instructions](references/setup.md) and [dependency manife
 Fetch a single URL and convert its content to clean Markdown. This does **not**
 add anything to the documentation index; it is a one-shot read operation.
 
+Run these commands through the pinned launcher `~/.local/bin/docs-mcp-server`, not `npx @arabold/docs-mcp-server@latest`. A different docs-mcp-server version can migrate the shared documentation store past the pinned runtime, after which the running server stops storing newly scraped documentation.
+
 ## When to use
 
 - You need to read a single web page and get its content as Markdown.
@@ -31,7 +33,7 @@ skill (`scrape` command) instead.
 ## Command
 
 ```bash
-npx @arabold/docs-mcp-server@latest fetch-url <url> [options]
+~/.local/bin/docs-mcp-server fetch-url <url> [options]
 ```
 
 | Flag | Default | Description |
@@ -55,17 +57,17 @@ npx @arabold/docs-mcp-server@latest fetch-url <url> [options]
 
 ```bash
 # Fetch a documentation page
-npx @arabold/docs-mcp-server@latest fetch-url https://react.dev/reference/react/useEffect
+~/.local/bin/docs-mcp-server fetch-url https://react.dev/reference/react/useEffect
 
 # Fetch with custom auth header
-npx @arabold/docs-mcp-server@latest fetch-url https://docs.internal.com/api \
+~/.local/bin/docs-mcp-server fetch-url https://docs.internal.com/api \
   --header "Authorization: Bearer tok_xxx"
 
 # Force Playwright for a JS-heavy page
-npx @arabold/docs-mcp-server@latest fetch-url https://some-spa.dev/docs --scrape-mode playwright
+~/.local/bin/docs-mcp-server fetch-url https://some-spa.dev/docs --scrape-mode playwright
 
 # Disable redirect following
-npx @arabold/docs-mcp-server@latest fetch-url https://example.com/old-page --no-follow-redirects
+~/.local/bin/docs-mcp-server fetch-url https://example.com/old-page --no-follow-redirects
 ```
 
 ## Output
@@ -82,7 +84,7 @@ regardless of session type.
 ## Tips
 
 - Pipe the output to a file if you want to save it:
-  `npx @arabold/docs-mcp-server@latest fetch-url <url> > page.md`
+  `~/.local/bin/docs-mcp-server fetch-url <url> > page.md`
 - Combine with search: fetch a page to read its full content after `search`
   returns a relevant URL.
 - For pages behind authentication, use `--header` to pass cookies or tokens.

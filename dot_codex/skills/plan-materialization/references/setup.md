@@ -1,4 +1,4 @@
-# Utility setup for epic-spec-workflow
+# Utility setup for plan-materialization
 
 This package includes its own dependency manifest and installation scripts. Copying this skill does not require another skill directory for utility setup. The scripts support this user’s macOS environment; linked official sources cover other platforms.
 
@@ -38,7 +38,7 @@ bash scripts/bootstrap.sh --install-homebrew
 
 Homebrew may require macOS administrator access during bootstrap or a desktop application installation. The bootstrap does not edit shell startup files itself; upstream installation behavior is described by [Homebrew](https://docs.brew.sh/Installation). If system installation is unavailable, use an existing compatible runtime and the documented package-specific method.
 
-Npm packages and Python libraries go into ~/.local/share/agent-skill-tools/epic-spec-workflow by default. --prefix selects another directory; use the same prefix for installation, checking, and activation. Python libraries use a private virtual environment. Homebrew tools use Homebrew’s installation locations. No repository manifest, global Python environment, or agent credential settings are edited.
+Npm packages and Python libraries go into ~/.local/share/agent-skill-tools/plan-materialization by default. --prefix selects another directory; use the same prefix for installation, checking, and activation. Python libraries use a private virtual environment. Homebrew tools use Homebrew’s installation locations. No repository manifest, global Python environment, or agent credential settings are edited.
 
 After a successful check or install, activate the selected environment in the current shell:
 

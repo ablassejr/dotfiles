@@ -1,0 +1,6 @@
+interface:
+  display_name: "Plan materialization"
+  short_description: "Turn a plan into a legible, approved specification for team review"
+  default_prompt: "Use $plan-materialization to design or resume this epic, verify its immutable specification revision, and stop at HANDOFF_READY."
+policy:
+  allow_implicit_invocation: true

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "skill": "epic-spec-workflow",
+  "skill": "plan-materialization",
   "tools": [
     {
       "id": "specflow",

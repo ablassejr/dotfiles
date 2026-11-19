@@ -1,6 +1,6 @@
 # Workflow and scope contract
 
-The semantic scope establishes the problem, desired behavior, constraints, rationale, and approved basis. It ends with the approved specification and verified handoff, or an explicitly identified prepared draft when delivery conditions remain unmet. `$epic-spec-workflow` does not start delivery execution implicitly.
+The semantic scope establishes the problem, desired behavior, constraints, rationale, and approved basis. It ends with the approved specification and verified handoff, or an explicitly identified prepared draft when delivery conditions remain unmet. `$plan-materialization` does not start delivery execution implicitly.
 
 An explicit `$implementation-specification-compiler` invocation turns that source into an ownership and dependency plan for the actual team. It reuses approved intent, reconciles current repository evidence, resolves material program choices, and prepares reviewable work. `$tasks-to-issues` publishes that work only to a selected, authorized tracker; a portable plan remains useful without one.
 
